@@ -1,6 +1,6 @@
 {
-  "name": "javascript-template-api",
-  "description": "Um template de api para agilizar a vida do desenvolvedor.",
+  "name": "bonfire-api",
+  "description": "API modularizada do Bonfire.",
   "version": "1.0.0",
   "type": "module",
   "main": "src/server.js",
