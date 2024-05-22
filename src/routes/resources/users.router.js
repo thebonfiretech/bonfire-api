@@ -1,6 +1,6 @@
 import { Router } from "express";
 
-import usersController from "../../resources/users/users.controllers.js";
+import usersController from "../../modules/base/users.controllers.js";
 import auth from '../../middlewares/auth.js'
 
 const service = new usersController();

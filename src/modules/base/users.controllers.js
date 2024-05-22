@@ -10,4 +10,7 @@ export default class Controller {
 	users = async (req, res) => handleRequest(req, res, this.service.users);
 	update = async (req, res) => handleRequest(req, res, this.service.update);
 	delete = async (req, res) => handleRequest(req, res, this.service.delete);
+	ping = (req, res) => {
+		res.sendStatus(200);
+	  }
 }
