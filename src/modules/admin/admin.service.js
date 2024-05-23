@@ -1,7 +1,9 @@
 import jwt from "jsonwebtoken";
 import bcrypt from 'bcrypt';
 
+import schoolModel from "../../models/school.js";
 import userModel from "../../models/user.js";
+import school from "../../models/school.js";
 
 export default class Service {
 
@@ -35,7 +37,10 @@ export default class Service {
 
     async createSchool({ name, modules }){
         try {
-
+            if (!name) return { error: "invalid_data" }
+            const school = new schoolModel({ name, modules });
+            await school.save();
+            return school;
         } catch (err) {
             return { error: "internal_error" } ;
         }

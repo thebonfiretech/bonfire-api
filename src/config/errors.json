@@ -18,6 +18,10 @@
         "message": "No credentials send",
         "statusCode": 401
     },
+    "invalid_data": {
+        "message": "Data sent incompletely",
+        "statusCode": 401
+    },
     "user_not_found": {
         "message": "User not found",
         "statusCode": 404
