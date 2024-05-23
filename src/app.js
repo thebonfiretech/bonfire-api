@@ -11,7 +11,7 @@ import apiLimiter from './middlewares/apiLimiter.js';
 import connectDB from './database/connect.js';
 import { router } from './routes/index.js';
 import config from './config/default.js';
-import handleRequest from './util/handleRequest.js';
+import handleRequest from './middlewares/handleRequest.js';
 import Errors from './util/error.js';
 
 const { sendError } = new Errors();

@@ -3,6 +3,7 @@ import { sendError } from '../app.js';
 const handleRequest = async (req, res, serviceMethod) => {
 	try {
 		const requestData = { ...req.body };
+		console.log(serviceMethod)
 		const requestUserId = req.user;
 		const response = await serviceMethod(requestData, requestUserId);
 
@@ -12,6 +13,7 @@ const handleRequest = async (req, res, serviceMethod) => {
 
 		return res.status(200).json(response);
 	} catch (error) {
+		console.log(error)
 		return sendError(res, 'internal_error');
 	}
 };

@@ -72,6 +72,13 @@ export default class Service {
             return { error: "internal_error" } ;
         }
     }
+    async ping(){
+        try {
+					return true
+        } catch (err) {
+            return { error: "internal_error" } ;
+        }
+    }
 
     
 }
