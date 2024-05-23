@@ -13,7 +13,6 @@ const handleRequest = async (req, res, serviceMethod) => {
 
 		return res.status(200).json(response);
 	} catch (error) {
-		console.log(error)
 		return sendError(res, 'internal_error');
 	}
 };

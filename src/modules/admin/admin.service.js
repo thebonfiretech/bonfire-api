@@ -36,6 +36,17 @@ export default class Service {
         }
     }
 
+    async createUserPayload({ id, school }){
+        try {
+            if (!name) return { error: "invalid_data" }
+            const school = new schoolModel({ name, modules });
+            await school.save();
+            return school;
+        } catch (err) {
+            return { error: "internal_error" } ;
+        }
+    }
+
     async createSchool({ name, modules }){
         try {
             if (!name) return { error: "invalid_data" }
@@ -78,7 +89,6 @@ export default class Service {
             if (!school) return { error: "school_not_found"}
             return school;
         } catch (err) {
-            console.log(err)
             return { error: "internal_error" } ;
         }
     }
