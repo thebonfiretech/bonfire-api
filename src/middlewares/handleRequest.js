@@ -3,9 +3,9 @@ import { sendError } from '../app.js';
 const handleRequest = async (req, res, serviceMethod) => {
 	try {
 		const requestData = { ...req.body };
-		console.log(serviceMethod)
+		const requestParams = req.params;
 		const requestUserId = req.user;
-		const response = await serviceMethod(requestData, requestUserId);
+		const response = await serviceMethod(requestData, requestUserId, requestParams);
 
 		if (response?.error) {
 			return sendError(res, response.error);

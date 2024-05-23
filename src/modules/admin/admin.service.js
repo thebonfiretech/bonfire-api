@@ -4,6 +4,7 @@ import bcrypt from 'bcrypt';
 import schoolModel from "../../models/school.js";
 import userModel from "../../models/user.js";
 import school from "../../models/school.js";
+import { success } from "gulog";
 
 export default class Service {
 
@@ -41,6 +42,50 @@ export default class Service {
             const school = new schoolModel({ name, modules });
             await school.save();
             return school;
+        } catch (err) {
+            return { error: "internal_error" } ;
+        }
+    }
+
+    async deleteSchool({ id }){
+        try {
+            if (!id) return { error: "invalid_data" }
+            const school = schoolModel.findById(id);
+            if (!school) return { error: "school_not_found"}
+            await schoolModel.findByIdAndDelete(id)
+            return { success: true };
+        } catch (err) {
+            return { error: "internal_error" } ;
+        }
+    }
+
+    async updateSchool({ data, id }){
+        try {
+            if (!id) return { error: "invalid_data" }
+            const findSchool = schoolModel.findById(id);
+            if (!findSchool) return { error: "school_not_found"}
+            const school = await schoolModel.findByIdAndUpdate(id, { $set:{ ...data } }, { new: true });
+            return school;
+        } catch (err) {
+            return { error: "internal_error" } ;
+        }
+    }
+
+    async getSchool(body, user, { id }){
+        try {
+            if (!id) return { error: "invalid_data" }
+            const school = schoolModel.findById(id);
+            if (!school) return { error: "school_not_found"}
+            return school;
+        } catch (err) {
+            console.log(err)
+            return { error: "internal_error" } ;
+        }
+    }
+
+    async getSchools({}){
+        try {
+            return await schoolModel.find().sort({ date: -1 });
         } catch (err) {
             return { error: "internal_error" } ;
         }
