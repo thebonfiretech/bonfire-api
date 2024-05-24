@@ -1,10 +1,5 @@
-import jwt from "jsonwebtoken";
-import bcrypt from 'bcrypt';
-
 import schoolModel from "../../models/school.js";
 import userModel from "../../models/user.js";
-import school from "../../models/school.js";
-import { success } from "gulog";
 
 export default class Service {
 
@@ -36,12 +31,16 @@ export default class Service {
         }
     }
 
-    async createUserPayload({ id, school }){
+    async createUserPayload({ name, id, school }){
         try {
-            if (!name) return { error: "invalid_data" }
-            const school = new schoolModel({ name, modules });
-            await school.save();
-            return school;
+            if (!name || !id || !school) return { error: "invalid_data" }
+            const findUser = await userModel.findOne({id});
+            if (findUser) return { error: "user_already_exists"}
+            const findSchool = schoolModel.findById(school);
+            if (!findSchool) return { error: "school_not_found"}
+            const user = new userModel({ name, id, school });
+            await user.save();
+            return user;
         } catch (err) {
             return { error: "internal_error" } ;
         }

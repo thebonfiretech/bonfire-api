@@ -7,4 +7,6 @@ export default createRouter(service, [
     ["put", "/school/update", "updateSchool"],
     ["get", "/school/get-all", "getSchools"],
     ["get", "/school/get/:id", "getSchool"],
+
+    ["post", "/user/create", "createUserPayload"],
 ]);
