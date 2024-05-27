@@ -45,11 +45,11 @@ export default class Service {
         }
     }
 
-    async update({ data, id }){
+    async update({ data }, id){
         try {
             const user = await userModel.findById(id);
             if (!user) return { error: "user_not_found" };
-            const newUser = await userModel.findByIdAndUpdate(id, { $set:{ ...data } }, { new: true });
+            const newUser = await userModel.findByIdAndUpdate(id, { $set:{ ...data } }, { new: true }).select('-password');
             return newUser;
         } catch (err) {
             return { error: "internal_error" } ;
