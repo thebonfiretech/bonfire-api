@@ -12,8 +12,13 @@ const UserSchema = new mongoose.Schema({
 	  default: "normal",
 	  type: String
 	},
+	status:{
+		default: "never-logged-in",
+		type: String
+	},
 	contact: String,
 	descripton: String,
+	loginDay: Date,
 	date:{
 	  type: Date,
 	  default: Date.now()
