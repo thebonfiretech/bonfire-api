@@ -3,9 +3,16 @@ import userModel from "../../models/user.js";
 
 export default class Service {
 
-    async users(){
+    async getAllUsers(){
         try {
 			return await userModel.find().sort({ date: -1 }).select('-password');;
+        } catch (err) {
+            return { error: "internal_error" } ;
+        }
+    }
+    async getAllSchoolUsers({}, user, {school}){
+        try {
+			return await userModel.find({school}).sort({ date: -1 }).select('-password');;
         } catch (err) {
             return { error: "internal_error" } ;
         }
@@ -81,12 +88,22 @@ export default class Service {
         }
     }
 
-    async getSchool(body, user, { id }){
+    async getSchool({}, user, { id }){
         try {
             if (!id) return { error: "invalid_data" }
             const school = schoolModel.findById(id);
             if (!school) return { error: "school_not_found"}
             return school;
+        } catch (err) {
+            return { error: "internal_error" } ;
+        }
+    }
+    async getUser({}, user, { id }){
+        try {
+            if (!id) return { error: "invalid_data" }
+            const user = userModel.findById(id);
+            if (!user) return { error: "user_not_found"}
+            return user;
         } catch (err) {
             return { error: "internal_error" } ;
         }
