@@ -120,7 +120,7 @@ export default class Service {
 
     async getAllInvestments({}){
         try {
-			return await investmentsModel.find({ author }).sort({ date: -1 });
+			return await investmentsModel.find().sort({ date: -1 });
         } catch (err) {
             return { error: "internal_error" } ;
         }
