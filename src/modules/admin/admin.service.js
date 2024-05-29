@@ -54,10 +54,10 @@ export default class Service {
         }
     }
 
-    async createSchool({ name, modules }){
+    async createSchool({ name, modules, coins}){
         try {
             if (!name) return { error: "invalid_data" }
-            const school = new schoolModel({ name, modules });
+            const school = new schoolModel({ name, modules, coins });
             await school.save();
             return school;
         } catch (err) {

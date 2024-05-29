@@ -7,9 +7,13 @@ const SchoolSchema = new mongoose.Schema({
 	  type: Date,
 	  default: Date.now()
 	},
+	coins:{
+	  type: Number,
+	  default: 25000
+	},
 	modules: {
 		type: Array,
-		default: ["base"]
+		default: ["base", "admin"]
 	}
 });
 
