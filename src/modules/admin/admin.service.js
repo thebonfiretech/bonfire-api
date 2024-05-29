@@ -1,3 +1,4 @@
+import investmentsModel from "../../models/investments.js";
 import schoolModel from "../../models/school.js";
 import userModel from "../../models/user.js";
 
@@ -112,6 +113,25 @@ export default class Service {
     async getSchools({}){
         try {
             return await schoolModel.find().sort({ date: -1 });
+        } catch (err) {
+            return { error: "internal_error" } ;
+        }
+    }
+
+    async getAllInvestments({}){
+        try {
+			return await investmentsModel.find({ author }).sort({ date: -1 });
+        } catch (err) {
+            return { error: "internal_error" } ;
+        }
+    }
+
+    async createInvestments({ name, description, type, config }, author){
+        try {
+            if (!id || !name || !description || !type || !config) return { error: "invalid_data" }
+            const investments = new investmentsModel({ id, name, author, description, type, config});
+            await investments.save();
+            return investments;
         } catch (err) {
             return { error: "internal_error" } ;
         }
