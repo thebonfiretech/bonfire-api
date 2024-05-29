@@ -128,8 +128,8 @@ export default class Service {
 
     async createInvestments({ name, description, type, config }, author){
         try {
-            if (!id || !name || !description || !type || !config) return { error: "invalid_data" }
-            const investments = new investmentsModel({ id, name, author, description, type, config});
+            if (!name || !type) return { error: "invalid_data" }
+            const investments = new investmentsModel({ name, author, description, type, config});
             await investments.save();
             return investments;
         } catch (err) {
