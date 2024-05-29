@@ -30,6 +30,10 @@
         "message": "Key not found",
         "statusCode": 404
     },
+    "investment_not_found": {
+        "message": "Investment not found",
+        "statusCode": 404
+    },
     "favorite_not_found": {
         "message": "Favorite not found",
         "statusCode": 404

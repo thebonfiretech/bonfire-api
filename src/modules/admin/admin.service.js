@@ -126,12 +126,25 @@ export default class Service {
         }
     }
 
-    async createInvestments({ name, description, type, config }, author){
+    async createInvestment({ name, description, type, config }, author){
         try {
             if (!name || !type) return { error: "invalid_data" }
             const investments = new investmentsModel({ name, author, description, type, config});
             await investments.save();
             return investments;
+        } catch (err) {
+            return { error: "internal_error" } ;
+        }
+    }
+
+    async updateInvestment({ data, id }){
+        try {
+            if (!data || !id) return { error: "invalid_data" };
+            const findInvestment = investmentsModel.findById(id);
+            if (!findInvestment) return { error: "investment_not_found"};
+            const investment= await investmentsModel.findByIdAndUpdate(id, { $set:{ ...data } }, { new: true });
+            await investment.save();
+            return investment;
         } catch (err) {
             return { error: "internal_error" } ;
         }

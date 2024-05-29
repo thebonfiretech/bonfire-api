@@ -15,6 +15,7 @@ export default createRouter(service, [
     ["put", "/user/update", "updateUser", true],
     ["get", "/user/get/:id", "getUser", true],
 
-    ["post", "/investments/create", "createInvestments", true],
     ["get", "/investments/get-all", "getAllInvestments", true],
+    ["post", "/investments/create", "createInvestment", true],
+    ["put", "/investments/update", "updateInvestment", true],
 ]);
