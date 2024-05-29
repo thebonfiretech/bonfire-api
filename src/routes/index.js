@@ -1,6 +1,7 @@
 import { Router } from "express";
 
 import favoriteRouter from "./resources/favorite.router.js";
+import walletRouter from "./resources/wallet.router.js";
 import adminRouter from "./resources/admin.router.js";
 import usersRouter from "./resources/user.router.js";
 import keyRouter from "./resources/key.router.js";
@@ -12,6 +13,7 @@ router.get("/ping", (req, res) => {
 });
 
 router.use('/favorite', favoriteRouter);
+router.use('/wallet', walletRouter);
 router.use('/admin', adminRouter);
 router.use('/user', usersRouter);
 router.use('/key', keyRouter);

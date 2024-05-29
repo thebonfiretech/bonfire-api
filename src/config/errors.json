@@ -46,6 +46,14 @@
         "message": "User already exists",
         "statusCode": 401
     },
+    "wallet_already_exists": {
+        "message": "Wallet already exists",
+        "statusCode": 401
+    },
+    "insufficient_coins": {
+        "message": "insufficient coins for transaction",
+        "statusCode": 400
+    },
     "key_already_exists": {
         "message": "Key already exists",
         "statusCode": 401
