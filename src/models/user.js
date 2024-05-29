@@ -22,6 +22,10 @@ const UserSchema = new mongoose.Schema({
 	date:{
 	  type: Date,
 	  default: Date.now()
+	},
+	coins:{
+		type: Number,
+		default: 0
 	}
 });
 
