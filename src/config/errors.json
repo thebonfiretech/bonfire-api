@@ -30,6 +30,10 @@
         "message": "Key not found",
         "statusCode": 404
     },
+    "favorite_not_found": {
+        "message": "Favorite not found",
+        "statusCode": 404
+    },
     "school_not_found": {
         "message": "School not found",
         "statusCode": 404
