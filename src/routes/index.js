@@ -1,5 +1,6 @@
 import { Router } from "express";
 
+import transactionRouter from "./resources/transaction.router.js";
 import favoriteRouter from "./resources/favorite.router.js";
 import walletRouter from "./resources/wallet.router.js";
 import adminRouter from "./resources/admin.router.js";
@@ -12,6 +13,7 @@ router.get("/ping", (req, res) => {
   res.sendStatus(200);
 });
 
+router.use('/transaction', transactionRouter);
 router.use('/favorite', favoriteRouter);
 router.use('/wallet', walletRouter);
 router.use('/admin', adminRouter);
