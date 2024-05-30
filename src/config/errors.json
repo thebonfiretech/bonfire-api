@@ -42,6 +42,10 @@
         "message": "School not found",
         "statusCode": 404
     },
+    "wallet_not_found": {
+        "message": "Wallet not found",
+        "statusCode": 404
+    },
     "user_already_exists": {
         "message": "User already exists",
         "statusCode": 401
@@ -51,7 +55,7 @@
         "statusCode": 401
     },
     "insufficient_coins": {
-        "message": "insufficient coins for transaction",
+        "message": "Insufficient coins for transaction",
         "statusCode": 400
     },
     "key_already_exists": {

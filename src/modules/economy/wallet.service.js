@@ -15,7 +15,8 @@ export default class Service {
             var findWallet = await walletModel.findOne({author, id: investment._id});
             if (findWallet) return { error: "wallet_already_exists" };
             if (user.coins < coins) return { error: "insufficient_coins" };
-            const newUser = await userModel.findByIdAndUpdate(author, { $set:{ coins: (user.coins - coins) } }, { new: true });
+            user.coins -= coins;
+            await user.save();
             const wallet = new walletModel({ 
                 id: investment._id,
                 author,
@@ -27,7 +28,46 @@ export default class Service {
             });
 
             await wallet.save();
-            return { wallet, user: newUser };
+            return { wallet, user };
+
+        } catch (err) {
+            return { error: "internal_error" } ;
+        }
+    }
+
+    async addWallet({ wallet, coins }, author){
+        try {
+            if (!wallet || !coins) return { error: "invalid_data" }
+            const user = await userModel.findById(author);
+            if (!user) return { error: "user_not_found" };
+            var wallet = await walletModel.findById(wallet);
+            if (!wallet) return { error: "wallet_not_found"};
+            if (user.coins < coins) return { error: "insufficient_coins" };
+            user.coins -= coins;
+            await user.save();
+            wallet.transactions.push({ coins });
+            wallet.save();
+
+            return { wallet, user };
+
+        } catch (err) {
+            return { error: "internal_error" } ;
+        }
+    }
+
+    async getAllWallet({}, author){
+        try {
+            return await walletModel.find({author});
+        } catch (err) {
+            return { error: "internal_error" } ;
+        }
+    }
+
+    async getWallet({}, user, { wallet }){
+        try {
+            var wallet = await walletModel.findById(wallet);
+            if (!wallet) return { error: "wallet_not_found"};
+            return wallet;
 
         } catch (err) {
             return { error: "internal_error" } ;
