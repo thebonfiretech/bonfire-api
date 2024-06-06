@@ -50,6 +50,7 @@ export default class Service {
             await user.save();
             return user;
         } catch (err) {
+            console.log(err)
             return { error: "internal_error" } ;
         }
     }
