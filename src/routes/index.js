@@ -3,6 +3,7 @@ import { Router } from "express";
 import transactionRouter from "./resources/transaction.router.js";
 import favoriteRouter from "./resources/favorite.router.js";
 import walletRouter from "./resources/wallet.router.js";
+import extractRoute from "./resources/extract.route.js";
 import adminRouter from "./resources/admin.router.js";
 import usersRouter from "./resources/user.router.js";
 import keyRouter from "./resources/key.router.js";
@@ -15,6 +16,7 @@ router.get("/ping", (req, res) => {
 
 router.use('/transaction', transactionRouter);
 router.use('/favorite', favoriteRouter);
+router.use('/extract', extractRoute);
 router.use('/wallet', walletRouter);
 router.use('/admin', adminRouter);
 router.use('/user', usersRouter);
