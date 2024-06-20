@@ -2,7 +2,7 @@ import extractModel from "../../models/extract.js";
 
 export default class Service {
 
-    async getAllFavorites({}, author){
+    async getAllExtracts({}, author){
         try {
 			return await extractModel.find({ author }).sort({ date: -1 });
         } catch (err) {
