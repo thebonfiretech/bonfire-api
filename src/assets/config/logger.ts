@@ -1,6 +1,6 @@
 const loggerConfig = {
     usePrefix: true,
-    prefix: '[UaiLab]',
+    prefix: '[Bonfire API]',
     prefixColor: 'magenta',
     info: {
         prefix: '(info)',
