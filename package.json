@@ -1,24 +1,25 @@
 {
-  "name": "uailab-api",
+  "name": "bonfire-api",
   "version": "1.0.0",
-  "description": "API responsavel por gerir dados do UaiLab TJMG",
+  "description": "API responsavel por gerir dados dos sistemas do Bonfire",
   "main": "src/server.ts",
   "scripts": {
+    "control-access": "ts-node -r tsconfig-paths/register src/utils/functions/controlAccess.ts",
     "start:dev": "npx ts-node -r tsconfig-paths/register src/server.ts",
     "start": "node dist/server.js",
-    "dev": "npx nodemon",
-    "build": "tsc && tsc-alias"
+    "build": "tsc && tsc-alias",
+    "dev": "npx nodemon"
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@github.com/uailab/extension.git"
+    "url": "git+ssh://git@github.com/thebonfiretech/bonfire-api.git"
   },
   "author": "https://github.com/odutradev",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/uailab/extension/issues"
+    "url": "https://github.com/thebonfiretech/bonfire-api/issues"
   },
-  "homepage": "https://github.com/uailab/extension#readme",
+  "homepage": "https://github.com/thebonfiretech/bonfire-api#readme",
   "devDependencies": {
     "@types/chalk": "^0.4.31",
     "@types/cors": "^2.8.17",
