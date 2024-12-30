@@ -14,7 +14,8 @@ const server = app.listen(process.env.PORT, async () => {
     if (typeof address === 'object' && address !== null) {
         const host = address.address === '::' ? 'localhost' : address.address;
         logger.info(`🚀 Server started in: ${chalk.blueBright('http://' + host + ':' + address.port)}`);
-        await database.connectMongoose();
+        const databaseInfo = await database.connectMongoose();
+        defaultConfig.clusterName = databaseInfo.clusterName;
         logger.info(`mode: ${mode =='developing' ? chalk.green(mode) : chalk.red(mode)}`);
     };
 });

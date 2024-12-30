@@ -14,9 +14,17 @@ const database = {
                 process.exit(1);
             };
 
-            await mongoose.connect(MONGO_URI);
+            const connected = await mongoose.connect(MONGO_URI, {
+                writeConcern: {
+                    w: 'majority',
+                },
+            });
+            
+            const clusterName = connected.connection.name;
+            logger.info("Database connected: " + clusterName);
+            
+            return { clusterName };
 
-            logger.info("Database connected");
         } catch (error) {
             logger.error("[connectMongoose] Database connect error");
             console.log(error);
