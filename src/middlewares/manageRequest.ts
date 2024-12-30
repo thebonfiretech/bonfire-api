@@ -1,7 +1,10 @@
-import { Request, Response, NextFunction } from "express";
+import { Request, Response } from "express";
 
-import sendError, { SendErrorParams } from "@utils/functions/error";
 import { ResponseErrorsParams } from "@assets/config/errors";
+import defaultConfig from "@assets/config/default";
+import sendError from "@utils/functions/error";
+import packageJson from "../../package.json";
+import logger from "@utils/functions/logger";
 
 interface ManageErrorParams {
     code:  ResponseErrorsParams;
@@ -29,7 +32,7 @@ const manageRequest = (service: ManageRequestParams["service"]) => {
     return async (req: Request, res: Response) => {
         try {
             const manageError = ({ code, error}: ManageErrorParams) => {
-                return sendError({ code, error, res });
+                return sendError({ code, error, res, local: service.name });
             };
             
             const manageRequestBody: ManageRequestBody = {
@@ -37,15 +40,23 @@ const manageRequest = (service: ManageRequestParams["service"]) => {
                 params: req.params,
                 data: req.body,
                 manageError,
-                ids: {},
+                ids: {
+                    userID: res.locals?.userID
+                },
             };
             const result = await service(manageRequestBody);
             
             if (result === "error") return;
 
+            res.set("api-database-name", defaultConfig.clusterName);
+            res.set("api-version", packageJson.version);
+            res.set("api-mode", defaultConfig.mode);
             res.status(200).json(result);
         } catch (error) {
-            sendError({ code: "internal_error", res})
+            logger.error("[manageRequest] Request internal error");
+            console.log(error);
+            sendError({ code: "internal_error", res });
+            return;
         }
     };
 };
