@@ -1,6 +1,6 @@
 interface DefaultConfig {
     mode: 'developing' | 'production';
-    useMorganLogRequest: boolean;
+    useLogRequest: boolean;
     clusterName?: string,
     logError: {
         message: boolean;
@@ -11,14 +11,14 @@ interface DefaultConfig {
 const production = process.env.PRODUCTION == 'true';
 
 let defaultConfig: DefaultConfig = production ? {
-    useMorganLogRequest: false,
+    useLogRequest: false,
     logError: {
         message: false,
         data: false
     },
     mode: 'production'
 }  : {
-    useMorganLogRequest: true,
+    useLogRequest: true,
     logError: {
         message: true,
         data: true
