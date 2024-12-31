@@ -7,7 +7,7 @@ const userSchema = new mongoose.Schema({
     },
     name: String,
     role: {
-        enum: ["normal", "admin"],
+        enum: ["normal", "manager", "admin"],
         default: "normal",
         type: String,
     },
@@ -52,6 +52,6 @@ const userSchema = new mongoose.Schema({
     }
 });
 
-const usersModel = mongoose.model("user", userSchema);
+const userModel = mongoose.model("user", userSchema);
 
-export default usersModel;
+export default userModel;
