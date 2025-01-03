@@ -13,7 +13,7 @@ const userSchema = new mongoose.Schema({
         type: String,
     },
     status: {
-        enum: ["loggedIn", "registered", "pending", "blocked"],
+        enum: ["loggedIn", "registered", "blocked"],
         default: "registered",
         type: String,
     },

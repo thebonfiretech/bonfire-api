@@ -5,11 +5,12 @@ interface ResponseError {
 
 export type ResponseErrorsParams = 
 | "user_already_registered"
+| "space_already_exists" 
 | "admin_access_denied"
 | "no_credentials_send" 
 | "user_already_exists" 
-| "space_already_exists" 
 | "invalid_credentials" 
+| "user_not_registered"
 | "token_is_not_valid"
 | "space_not_found" 
 | "internal_error" 
@@ -81,4 +82,8 @@ export const ResponseErrors: Record<ResponseErrorsParams, ResponseError> = {
         message: "Invalid data send",
         statusCode: 400
     },
+    user_not_registered: {
+        message: "User not registered",
+        statusCode: 404
+    }
 };

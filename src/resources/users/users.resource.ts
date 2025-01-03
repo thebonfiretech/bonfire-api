@@ -32,6 +32,25 @@ const usersResource = {
         } catch (error) {
             manageError({ code: "internal_error", error });
         }
+    },
+    signIn: async ({ data, manageError }: ManageRequestBody) => {
+        try {
+            let { id, password } = data;
+            if (!id || !password) return manageError({ code: "no_credentials_send" });
+
+            const findUser = await userModel.findOne({ id });
+            if (!findUser) return manageError({ code: "user_not_found" });
+            
+            if (findUser.status !== "loggedIn") return manageError({ code: "user_already_registered" });
+
+            var isPasswordMatch = await bcrypt.compare(password, findUser?.password || "");
+            if (!isPasswordMatch) return manageError({ code: "invalid_credentials" });
+
+            const token = jwt.sign({ id }, process.env.SECRET || "");
+            return { token };		 
+        } catch (error) {
+            manageError({ code: "internal_error", error });
+        }
     }
 };
 
