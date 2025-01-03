@@ -61,6 +61,21 @@ const usersResource = {
             manageError({ code: "internal_error", error });
         }
     },
+    updateProfile: async ({  data, manageError, ids }: ManageRequestBody) => {
+        try {
+            const { userID } =  ids;
+            if (!userID) return manageError({ code: "invalid_params" });
+
+            const userExists = await hasUser({ _id: userID }, manageError);
+            if (!userExists) return;
+
+            const { name, description } = data;
+
+            return await userModel.findByIdAndUpdate(userID, { $set:{ data, lastUpdate: Date.now() } }, { new: true }).select("-password");
+        } catch (error) {
+            manageError({ code: "internal_error", error });
+        }
+    },
 };
 
 export default usersResource;
