@@ -1,4 +1,5 @@
 import userModel, { UserSpaceType } from "@database/model/user";
+import { hasUserAlreadyExists } from "@database/functions/user";
 import { ManageRequestBody } from "@middlewares/manageRequest";
 import spaceModel from "@database/model/space";
 
@@ -8,8 +9,7 @@ const adminResource = {
             const { id, name, space } = data;
             if (!id || !name) return manageError({ code: "invalid_data" });
 
-            const hasUser = await userModel.findOne({ id });
-            if (hasUser) return manageError({ code: "user_already_exists" });
+            await hasUserAlreadyExists({ id }, manageError);
 
             const userModelCount = await userModel.countDocuments();
 
