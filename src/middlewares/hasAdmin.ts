@@ -12,7 +12,7 @@ const hasAdmin = async (req: Request, res: Response, next: NextFunction): Promis
       return;
     };
 
-    const user = await userModel.findOne({ id: userID });
+    const user = await userModel.findOne({ _id: userID });
     if (!user){
       sendError({ code: "admin_access_denied", res })
       return;
