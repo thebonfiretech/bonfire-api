@@ -45,6 +45,13 @@ const adminResource = {
         } catch (error) {
             manageError({ code: "internal_error", error });
         }
+    },
+    getAllUsers: async ({ manageError }: ManageRequestBody) => {
+        try {
+           return await userModel.find().sort({ date: -1 }).select('-password');
+        } catch (error) {
+            manageError({ code: "internal_error", error });
+        }
     }
 };
 
