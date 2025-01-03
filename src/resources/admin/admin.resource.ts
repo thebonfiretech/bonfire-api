@@ -1,6 +1,7 @@
-import userModel, { UserSpaceType } from "@database/model/user";
 import { hasNoUserAlreadyExists, hasUserAlreadyExists } from "@database/functions/user";
+import userModel, { UserSpaceType } from "@database/model/user";
 import { ManageRequestBody } from "@middlewares/manageRequest";
+import objectService from "@utils/services/objectServices";
 import spaceModel from "@database/model/space";
 
 const adminResource = {
@@ -53,7 +54,9 @@ const adminResource = {
 
             await hasNoUserAlreadyExists({ _id: userID }, manageError);
 
-  
+            const filteredUser = objectService.filterObject(data, ["id", "order", "role", "createAt", "password", "_id"]);
+
+            return await userModel.findByIdAndUpdate(userID, { $set:{ ...filteredUser, lastUpdate: Date.now() } }, { new: true });
         } catch (error) {
             manageError({ code: "internal_error", error });
         }
