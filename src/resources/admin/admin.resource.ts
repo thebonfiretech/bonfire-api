@@ -56,7 +56,17 @@ const adminResource = {
 
             const filteredUser = objectService.filterObject(data, ["id", "order", "role", "createAt", "password", "_id"]);
 
-            return await userModel.findByIdAndUpdate(userID, { $set:{ ...filteredUser, lastUpdate: Date.now() } }, { new: true });
+            return await userModel.findByIdAndUpdate(userID, { $set:{ ...filteredUser, lastUpdate: Date.now() } }, { new: true }).select("-password");
+        } catch (error) {
+            manageError({ code: "internal_error", error });
+        }
+    },
+    getUser: async ({ manageError, params }: ManageRequestBody) => {
+        try {
+            const { userID } =  params;
+            if (!userID) return manageError({ code: "invalid_params" });
+
+           return await hasNoUserAlreadyExists({ _id: userID }, manageError);
         } catch (error) {
             manageError({ code: "internal_error", error });
         }
