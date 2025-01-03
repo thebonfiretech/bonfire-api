@@ -3,7 +3,7 @@ import bcrypt from "bcrypt";
 
 import { ManageRequestBody } from "@middlewares/manageRequest";
 import userModel, { UserModelType } from "@database/model/user";
-import { hasNoUserAlreadyExists } from "@database/functions/user";
+import { hasUser } from "@database/functions/user";
 
 const usersResource = {
     signUp: async ({ data, manageError }: ManageRequestBody) => {
@@ -55,7 +55,7 @@ const usersResource = {
     },
     getUser: async ({  manageError, ids }: ManageRequestBody) => {
         try {
-            return await hasNoUserAlreadyExists({ _id: ids.userID }, manageError);
+            return await hasUser({ _id: ids.userID }, manageError);
         } catch (error) {
             manageError({ code: "internal_error", error });
         }

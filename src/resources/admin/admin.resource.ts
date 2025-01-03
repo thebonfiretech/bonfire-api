@@ -1,4 +1,4 @@
-import { hasNoUserAlreadyExists, hasUserAlreadyExists } from "@database/functions/user";
+import { hasUser, hasExistsUser } from "@database/functions/user";
 import { hasNoSpaceAlreadyExists } from "@database/functions/space";
 import userModel, { UserSpaceType } from "@database/model/user";
 import { ManageRequestBody } from "@middlewares/manageRequest";
@@ -11,7 +11,8 @@ const adminResource = {
             const { id, name, space } = data;
             if (!id || !name) return manageError({ code: "invalid_data" });
 
-            await hasUserAlreadyExists({ id }, manageError);
+            const userExists = await hasExistsUser({ id }, manageError);
+            if (!userExists) return;
 
             const extra: any = {
                 lastUpdate: new Date(Date.now())
@@ -49,7 +50,8 @@ const adminResource = {
             const { userID } =  params;
             if (!userID) return manageError({ code: "invalid_params" });
 
-            await hasNoUserAlreadyExists({ _id: userID }, manageError);
+            const userExists = await hasUser({ _id: userID }, manageError);
+            if (!userExists) return;
 
             const filteredUser = objectService.filterObject(data, ["id", "order", "role", "createAt", "password", "_id"]);
 
@@ -63,8 +65,9 @@ const adminResource = {
             const { userID } =  params;
             if (!userID) return manageError({ code: "invalid_params" });
 
-            await hasNoUserAlreadyExists({ _id: userID }, manageError);
-
+            const userExists = await hasUser({ _id: userID }, manageError);
+            if (!userExists) return;
+            
             await userModel.findByIdAndDelete(userID);
 
             return {
@@ -79,7 +82,7 @@ const adminResource = {
             const { userID } =  params;
             if (!userID) return manageError({ code: "invalid_params" });
 
-           return await hasNoUserAlreadyExists({ _id: userID }, manageError);
+           return await hasUser({ _id: userID }, manageError);
         } catch (error) {
             manageError({ code: "internal_error", error });
         }

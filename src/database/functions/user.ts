@@ -2,17 +2,27 @@ import { isValidObjectId } from "mongoose";
 
 import userModel, { UserModelType } from "@database/model/user";
 
-export const hasUserAlreadyExists = async (user: Partial<UserModelType>, manageError: Function) => {
-    if (user._id && !isValidObjectId(user._id)) return manageError({ code: "user_not_found" }); 
-    const hasUser = await userModel.findOne(user).select("-password");
-    if (hasUser) return manageError({ code: "user_already_exists" });
-    return hasUser;
+export const hasExistsUser = async (user: Partial<UserModelType>, manageError: Function): Promise<boolean | undefined> => {
+    if (user._id && !isValidObjectId(user._id)){
+        return true;
+    };
+    const hasUser: UserModelType | null = await userModel.findOne(user).select("-password");
+    if (hasUser){
+        manageError({ code: "user_already_exists" }); 
+        return;
+    };
+    return true;
 };
 
-export const hasNoUserAlreadyExists = async (user: Partial<UserModelType>, manageError: Function) => {
-    console.log(user)
-    if (user._id && !isValidObjectId(user._id)) return manageError({ code: "user_not_found" }); 
-    const hasUser = await userModel.findOne(user).select("-password");
-    if (!hasUser) return manageError({ code: "user_not_found" });
+export const hasUser = async (user: Partial<UserModelType>, manageError: Function): Promise<UserModelType | undefined> => {
+    if (user._id && !isValidObjectId(user._id)){
+        manageError({ code: "invalid_params" }); 
+        return;
+    };
+    const hasUser: UserModelType | null = await userModel.findOne(user).select("-password");
+    if (!hasUser){
+        manageError({ code: "user_not_found" }); 
+        return;
+    };
     return hasUser;
 };
