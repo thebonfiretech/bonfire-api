@@ -5,6 +5,6 @@ import manageRequest from "@middlewares/manageRequest";
 
 const adminRouter = Router();
 
-adminRouter.post("/user/create", manageRequest(adminResource.createUser));
+adminRouter.post("/users/create", manageRequest(adminResource.createUser));
 
 export default adminRouter;
