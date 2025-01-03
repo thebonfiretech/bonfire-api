@@ -7,6 +7,7 @@ export type ResponseErrorsParams =
 | "admin_access_denied"
 | "no_credentials_send" 
 | "user_already_exists" 
+| "space_already_exists" 
 | "invalid_credentials" 
 | "token_is_not_valid"
 | "internal_error" 
@@ -53,6 +54,10 @@ export const ResponseErrors: Record<ResponseErrorsParams, ResponseError> = {
     },
     user_already_exists: {
         message: "User already exists",
+        statusCode: 409
+    },
+    space_already_exists: {
+        message: "Space already exists",
         statusCode: 409
     },
     access_denied: {
