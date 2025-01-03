@@ -23,7 +23,8 @@ const spaceSchema = new mongoose.Schema({
     badges: [],
     metrics:{
         users: {
-            default: 0
+            type: Number,
+            default: 0,
         }
     }
 });

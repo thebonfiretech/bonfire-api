@@ -12,6 +12,7 @@ export type ResponseErrorsParams =
 | "internal_error" 
 | "invalid_params" 
 | "user_not_found" 
+| "space_not_found" 
 | "access_denied"
 | "invalid_data" 
 | "no_data_send" 
@@ -44,6 +45,10 @@ export const ResponseErrors: Record<ResponseErrorsParams, ResponseError> = {
     },
     user_not_found: {
         message: "User not found",
+        statusCode: 404
+    },
+    space_not_found: {
+        message: "Space not found",
         statusCode: 404
     },
     user_already_exists: {

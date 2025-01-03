@@ -5,6 +5,7 @@ const userSchema = new mongoose.Schema({
         unique: true,
         type: String
     },
+    order: Number,
     name: String,
     role: {
         enum: ["normal", "admin"],
@@ -52,7 +53,15 @@ const userSchema = new mongoose.Schema({
     }
 });
 
+export type UserSpaceType = {
+    entryAt: Date;
+    role: "normal" | "editor" | "admin";
+    name: string;
+    id: string;
+};
+
 export type UserModelType = mongoose.InferSchemaType<typeof userSchema>; 
+
 
 const userModel = mongoose.model("user", userSchema);
 
