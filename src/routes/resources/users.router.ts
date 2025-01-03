@@ -5,6 +5,6 @@ import manageRequest from "@middlewares/manageRequest";
 
 const usersRouter = Router();
 
-usersRouter.post("/", manageRequest(usersResource.getUser))
+usersRouter.post("/signup", manageRequest(usersResource.signUp))
 
 export default usersRouter;

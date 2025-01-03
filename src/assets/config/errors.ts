@@ -4,16 +4,17 @@ interface ResponseError {
 };
 
 export type ResponseErrorsParams = 
+| "user_already_registered"
 | "admin_access_denied"
 | "no_credentials_send" 
 | "user_already_exists" 
 | "space_already_exists" 
 | "invalid_credentials" 
 | "token_is_not_valid"
+| "space_not_found" 
 | "internal_error" 
 | "invalid_params" 
 | "user_not_found" 
-| "space_not_found" 
 | "access_denied"
 | "invalid_data" 
 | "no_data_send" 
@@ -54,6 +55,10 @@ export const ResponseErrors: Record<ResponseErrorsParams, ResponseError> = {
     },
     user_already_exists: {
         message: "User already exists",
+        statusCode: 409
+    },
+    user_already_registered: {
+        message: "User already registered",
         statusCode: 409
     },
     space_already_exists: {
