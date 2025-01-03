@@ -1,5 +1,5 @@
 import userModel, { UserSpaceType } from "@database/model/user";
-import { hasUserAlreadyExists } from "@database/functions/user";
+import { hasNoUserAlreadyExists, hasUserAlreadyExists } from "@database/functions/user";
 import { ManageRequestBody } from "@middlewares/manageRequest";
 import spaceModel from "@database/model/space";
 
@@ -42,6 +42,18 @@ const adminResource = {
             return {
                 user: createdUser
             };
+        } catch (error) {
+            manageError({ code: "internal_error", error });
+        }
+    },
+    updateUser: async ({ data, manageError, params }: ManageRequestBody) => {
+        try {
+            const { userID } =  params;
+            if (!userID) return manageError({ code: "invalid_params" });
+
+            await hasNoUserAlreadyExists({ _id: userID }, manageError);
+
+  
         } catch (error) {
             manageError({ code: "internal_error", error });
         }

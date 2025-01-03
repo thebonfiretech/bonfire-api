@@ -60,7 +60,9 @@ export type UserSpaceType = {
     id: string;
 };
 
-export type UserModelType = mongoose.InferSchemaType<typeof userSchema>; 
+export type UserModelType = mongoose.InferSchemaType<typeof userSchema> & {
+    _id: String
+}; 
 
 
 const userModel = mongoose.model("user", userSchema);
