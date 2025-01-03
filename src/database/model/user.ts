@@ -24,6 +24,12 @@ const userSchema = new mongoose.Schema({
     lastUpdate: {
         type: Date,
     },
+    firstSignup: {
+        type: Date,
+    },
+    lastGetUser: {
+        type: Date,
+    },
     spaces: [{
         entryAt: Date,
         role: {

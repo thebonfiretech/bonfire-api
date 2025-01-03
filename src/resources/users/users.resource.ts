@@ -19,13 +19,14 @@ const usersResource = {
             password = await bcrypt.hash(password, salt);
 
             const extra: Partial<UserModelType> = {
+                firstSignup: new Date(Date.now()),
                 lastUpdate: new Date(Date.now()),
                 status: "loggedIn",
                 password
             };
 
             await userModel.findOneAndUpdate({ id }, { $set:{ ...extra } }, { new: true });
-            
+
             const token = jwt.sign({ id }, process.env.SECRET || "");
             return { token };		 
         } catch (error) {
