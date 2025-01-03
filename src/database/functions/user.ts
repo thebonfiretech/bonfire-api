@@ -10,6 +10,7 @@ export const hasUserAlreadyExists = async (user: Partial<UserModelType>, manageE
 };
 
 export const hasNoUserAlreadyExists = async (user: Partial<UserModelType>, manageError: Function) => {
+    console.log(user)
     if (user._id && !isValidObjectId(user._id)) return manageError({ code: "user_not_found" }); 
     const hasUser = await userModel.findOne(user).select("-password");
     if (!hasUser) return manageError({ code: "user_not_found" });

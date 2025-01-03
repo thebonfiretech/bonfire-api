@@ -3,6 +3,7 @@ import bcrypt from "bcrypt";
 
 import { ManageRequestBody } from "@middlewares/manageRequest";
 import userModel, { UserModelType } from "@database/model/user";
+import { hasNoUserAlreadyExists } from "@database/functions/user";
 
 const usersResource = {
     signUp: async ({ data, manageError }: ManageRequestBody) => {
@@ -27,7 +28,7 @@ const usersResource = {
 
             await userModel.findOneAndUpdate({ id }, { $set:{ ...extra } }, { new: true });
 
-            const token = jwt.sign({ id }, process.env.SECRET || "");
+            const token = jwt.sign({ id: findUser._id }, process.env.SECRET || "");
             return { token };		 
         } catch (error) {
             manageError({ code: "internal_error", error });
@@ -46,12 +47,19 @@ const usersResource = {
             var isPasswordMatch = await bcrypt.compare(password, findUser?.password || "");
             if (!isPasswordMatch) return manageError({ code: "invalid_credentials" });
 
-            const token = jwt.sign({ id }, process.env.SECRET || "");
+            const token = jwt.sign({ id: findUser._id }, process.env.SECRET || "");
             return { token };		 
         } catch (error) {
             manageError({ code: "internal_error", error });
         }
-    }
+    },
+    getUser: async ({  manageError, ids }: ManageRequestBody) => {
+        try {
+            return await hasNoUserAlreadyExists({ _id: ids.userID }, manageError);
+        } catch (error) {
+            manageError({ code: "internal_error", error });
+        }
+    },
 };
 
 export default usersResource;
