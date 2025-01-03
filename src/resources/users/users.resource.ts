@@ -5,6 +5,7 @@ import { ManageRequestBody } from "@middlewares/manageRequest";
 import { UserModelType } from "@utils/types/models/user";
 import { hasUser } from "@database/functions/user";
 import userModel from "@database/model/user";
+import objectService from "@utils/services/objectServices";
 
 const usersResource = {
     signUp: async ({ data, manageError }: ManageRequestBody) => {
@@ -69,9 +70,9 @@ const usersResource = {
             const userExists = await hasUser({ _id: userID }, manageError);
             if (!userExists) return;
 
-            const { name, description } = data;
+            let filteredUpdatedUser = objectService.getObject(data, ["name", "description"]);
 
-            return await userModel.findByIdAndUpdate(userID, { $set:{ data, lastUpdate: Date.now() } }, { new: true }).select("-password");
+            return await userModel.findByIdAndUpdate(userID, { $set:{ ...filteredUpdatedUser, lastUpdate: Date.now() } }, { new: true }).select("-password");
         } catch (error) {
             manageError({ code: "internal_error", error });
         }

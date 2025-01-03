@@ -10,4 +10,6 @@ usersRouter.get("/auth/me", [auth],  manageRequest(usersResource.getUser));
 usersRouter.post("/auth/signup", manageRequest(usersResource.signUp));
 usersRouter.post("/auth/signin", manageRequest(usersResource.signIn));
 
+usersRouter.patch("/profile/update", [auth], manageRequest(usersResource.updateProfile));
+
 export default usersRouter;
