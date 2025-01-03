@@ -2,7 +2,7 @@ import { UserModelType, UserSpaceType } from "@utils/types/models/user";
 import { hasUser, hasExistsUser } from "@database/functions/user";
 import { hasNoSpaceAlreadyExists } from "@database/functions/space";
 import { ManageRequestBody } from "@middlewares/manageRequest";
-import stringService from "@utils/services/stringServicees";
+import stringService from "@utils/services/stringServices";
 import objectService from "@utils/services/objectServices";
 import spaceModel from "@database/model/space";
 import userModel from "@database/model/user";

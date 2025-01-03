@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 
 import { ManageRequestBody } from "@middlewares/manageRequest";
-import stringService from "@utils/services/stringServicees";
+import stringService from "@utils/services/stringServices";
 import objectService from "@utils/services/objectServices";
 import { UserModelType } from "@utils/types/models/user";
 import { hasUser } from "@database/functions/user";

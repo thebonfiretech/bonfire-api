@@ -12,4 +12,4 @@ export interface SpaceModelType {
     metrics?: {
         users: number;
     };
-}
+};

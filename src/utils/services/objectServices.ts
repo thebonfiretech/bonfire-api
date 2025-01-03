@@ -9,7 +9,6 @@ const objectService = {
                 return filteredObj;
             }, {} as AnyObject);
     },
-    
     getObject: (obj: AnyObject, includedKeys: string[]): AnyObject => {
         return Object.keys(obj)
             .filter(key => includedKeys.includes(key))
@@ -17,7 +16,7 @@ const objectService = {
                 filteredObj[key] = obj[key];
                 return filteredObj;
             }, {} as AnyObject);
-    }
+    },
 };
 
 export default objectService;
