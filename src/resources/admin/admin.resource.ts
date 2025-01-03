@@ -20,6 +20,7 @@ const adminResource = {
 
             if (space) {
                 let hasSpace = await hasNoSpaceAlreadyExists({ _id: space.name }, manageError);
+                if (!hasSpace) return;
             
                 let newSpace: UserSpaceType = {
                     entryAt: new Date(),
