@@ -3,6 +3,7 @@ import userModel, { UserSpaceType } from "@database/model/user";
 import { ManageRequestBody } from "@middlewares/manageRequest";
 import objectService from "@utils/services/objectServices";
 import spaceModel from "@database/model/space";
+import { hasNoSpaceAlreadyExists } from "@database/functions/space";
 
 const adminResource = {
     createUser: async ({ data, manageError }: ManageRequestBody) => {
@@ -20,8 +21,7 @@ const adminResource = {
             };
 
             if (space) {
-                let hasSpace = await spaceModel.findById(space.id);
-                if (!hasSpace) return manageError({ code: "space_not_found" });
+                let hasSpace = await hasNoSpaceAlreadyExists({ _id: space.name }, manageError);
             
                 let newSpace: UserSpaceType = {
                     entryAt: new Date(),
