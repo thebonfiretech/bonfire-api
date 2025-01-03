@@ -29,10 +29,6 @@ const spaceSchema = new mongoose.Schema({
     }
 });
 
-export type SpaceModelType = mongoose.InferSchemaType<typeof spaceSchema> & {
-    _id: String
-}; 
-
 const spaceModel = mongoose.model("space", spaceSchema);
 
 export default spaceModel;

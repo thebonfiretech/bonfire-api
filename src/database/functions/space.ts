@@ -1,6 +1,7 @@
 import { isValidObjectId } from "mongoose";
 
-import spaceModel, { SpaceModelType } from "@database/model/space";
+import { SpaceModelType } from "@utils/types/models/space";
+import spaceModel from "@database/model/space";
 
 export const hasExistsSpace = async (space: Partial<SpaceModelType>, manageError: Function): Promise<boolean | undefined> => {
     if (space._id && !isValidObjectId(space._id)){
