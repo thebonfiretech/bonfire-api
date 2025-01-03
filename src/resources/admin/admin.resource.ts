@@ -13,11 +13,8 @@ const adminResource = {
 
             await hasUserAlreadyExists({ id }, manageError);
 
-            const userModelCount = await userModel.countDocuments();
-
             const extra: any = {
-                lastUpdate: new Date(Date.now()),
-                order: userModelCount + 1
+                lastUpdate: new Date(Date.now())
             };
 
             if (space) {
@@ -57,6 +54,22 @@ const adminResource = {
             const filteredUser = objectService.filterObject(data, ["id", "order", "role", "createAt", "password", "_id"]);
 
             return await userModel.findByIdAndUpdate(userID, { $set:{ ...filteredUser, lastUpdate: Date.now() } }, { new: true }).select("-password");
+        } catch (error) {
+            manageError({ code: "internal_error", error });
+        }
+    },
+    deleteUser: async ({ manageError, params }: ManageRequestBody) => {
+        try {
+            const { userID } =  params;
+            if (!userID) return manageError({ code: "invalid_params" });
+
+            await hasNoUserAlreadyExists({ _id: userID }, manageError);
+
+            await userModel.findByIdAndDelete(userID);
+
+            return {
+                delete: true
+            };
         } catch (error) {
             manageError({ code: "internal_error", error });
         }
