@@ -1,9 +1,10 @@
+import { UserModelType, UserSpaceType } from "@utils/types/models/user";
 import { hasUser, hasExistsUser } from "@database/functions/user";
 import { hasNoSpaceAlreadyExists } from "@database/functions/space";
-import userModel, { UserSpaceType } from "@database/model/user";
 import { ManageRequestBody } from "@middlewares/manageRequest";
 import objectService from "@utils/services/objectServices";
 import spaceModel from "@database/model/space";
+import userModel from "@database/model/user";
 
 const adminResource = {
     createUser: async ({ data, manageError }: ManageRequestBody) => {
@@ -14,8 +15,8 @@ const adminResource = {
             const userExists = await hasExistsUser({ id }, manageError);
             if (!userExists) return;
 
-            const extra: any = {
-                lastUpdate: new Date(Date.now())
+            const extra: Partial<UserModelType> = {
+                lastUpdate: new Date(Date.now()),
             };
 
             if (space) {

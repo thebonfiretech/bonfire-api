@@ -2,8 +2,9 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 
 import { ManageRequestBody } from "@middlewares/manageRequest";
-import userModel, { UserModelType } from "@database/model/user";
+import { UserModelType } from "@utils/types/models/user";
 import { hasUser } from "@database/functions/user";
+import userModel from "@database/model/user";
 
 const usersResource = {
     signUp: async ({ data, manageError }: ManageRequestBody) => {

@@ -1,6 +1,7 @@
 import { isValidObjectId } from "mongoose";
 
-import userModel, { UserModelType } from "@database/model/user";
+import { UserModelType } from "@utils/types/models/user";
+import userModel from "@database/model/user";
 
 export const hasExistsUser = async (user: Partial<UserModelType>, manageError: Function): Promise<boolean | undefined> => {
     if (user._id && !isValidObjectId(user._id)){

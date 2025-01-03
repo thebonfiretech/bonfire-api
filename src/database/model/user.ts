@@ -59,18 +59,6 @@ const userSchema = new mongoose.Schema({
     }
 });
 
-export type UserSpaceType = {
-    entryAt: Date;
-    role: "normal" | "editor" | "admin";
-    name: string;
-    id: string;
-};
-
-export type UserModelType = mongoose.InferSchemaType<typeof userSchema> & {
-    _id: String
-}; 
-
-
 const userModel = mongoose.model("user", userSchema);
 
 export default userModel;
