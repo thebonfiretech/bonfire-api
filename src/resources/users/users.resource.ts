@@ -2,10 +2,11 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 
 import { ManageRequestBody } from "@middlewares/manageRequest";
+import stringService from "@utils/services/stringServicees";
+import objectService from "@utils/services/objectServices";
 import { UserModelType } from "@utils/types/models/user";
 import { hasUser } from "@database/functions/user";
 import userModel from "@database/model/user";
-import objectService from "@utils/services/objectServices";
 
 const usersResource = {
     signUp: async ({ data, manageError }: ManageRequestBody) => {
@@ -71,6 +72,14 @@ const usersResource = {
             if (!userExists) return;
 
             let filteredUpdatedUser = objectService.getObject(data, ["name", "description"]);
+
+            if (filteredUpdatedUser.name){
+                filteredUpdatedUser.name = stringService.normalizeString(filteredUpdatedUser.name);
+            };
+
+            if (filteredUpdatedUser.description){
+                filteredUpdatedUser.description = stringService.normalizeString(filteredUpdatedUser.description);
+            };
 
             return await userModel.findByIdAndUpdate(userID, { $set:{ ...filteredUpdatedUser, lastUpdate: Date.now() } }, { new: true }).select("-password");
         } catch (error) {

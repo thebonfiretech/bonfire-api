@@ -2,6 +2,7 @@ import { UserModelType, UserSpaceType } from "@utils/types/models/user";
 import { hasUser, hasExistsUser } from "@database/functions/user";
 import { hasNoSpaceAlreadyExists } from "@database/functions/space";
 import { ManageRequestBody } from "@middlewares/manageRequest";
+import stringService from "@utils/services/stringServicees";
 import objectService from "@utils/services/objectServices";
 import spaceModel from "@database/model/space";
 import userModel from "@database/model/user";
@@ -9,8 +10,11 @@ import userModel from "@database/model/user";
 const adminResource = {
     createUser: async ({ data, manageError }: ManageRequestBody) => {
         try {
-            const { id, name, space } = data;
+            let { id, name, space } = data;
             if (!id || !name) return manageError({ code: "invalid_data" });
+
+            id = stringService.removeSpacesAndLowerCase(id);
+            name = stringService.normalizeString(name);
 
             const userExists = await hasExistsUser({ id }, manageError);
             if (!userExists) return;
@@ -56,6 +60,14 @@ const adminResource = {
             if (!userExists) return;
 
             const filteredUser = objectService.filterObject(data, ["id", "order", "role", "createAt", "password", "_id"]);
+
+            if (filteredUser.name){
+                filteredUser.name = stringService.normalizeString(filteredUser.name);
+            };
+
+            if (filteredUser.description){
+                filteredUser.description = stringService.normalizeString(filteredUser.description);
+            };
 
             return await userModel.findByIdAndUpdate(userID, { $set:{ ...filteredUser, lastUpdate: Date.now() } }, { new: true }).select("-password");
         } catch (error) {
