@@ -1,9 +1,9 @@
 import { hasNoUserAlreadyExists, hasUserAlreadyExists } from "@database/functions/user";
+import { hasNoSpaceAlreadyExists } from "@database/functions/space";
 import userModel, { UserSpaceType } from "@database/model/user";
 import { ManageRequestBody } from "@middlewares/manageRequest";
 import objectService from "@utils/services/objectServices";
 import spaceModel from "@database/model/space";
-import { hasNoSpaceAlreadyExists } from "@database/functions/space";
 
 const adminResource = {
     createUser: async ({ data, manageError }: ManageRequestBody) => {
