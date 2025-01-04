@@ -1,4 +1,4 @@
-import { S3Client, HeadBucketCommand, PutObjectCommand } from "@aws-sdk/client-s3";
+import { S3Client, HeadBucketCommand, PutObjectCommand, GetObjectCommand, ListObjectsV2Command } from "@aws-sdk/client-s3";
 import defaultConfig from "@assets/config/default";
 import logger from "@utils/functions/logger";
 
@@ -61,11 +61,40 @@ const storage = {
             logger.info(`File uploaded successfully: ${fileName}`);
             return response;
         } catch (error) {
-            logger.error(`[uploadFile] Failed to upload file: ${fileName}`);
-            console.error(error);
             throw error;
         }
-    }
+    },
+    getFile: async (filePath: string) => {
+        try {
+            const { s3Client, bucket } = await storage.createClient();
+
+            const command = new GetObjectCommand({
+                Bucket: bucket,
+                Key: filePath,
+            });
+
+            const response = await s3Client.send(command);
+            return response;
+        } catch (error) {
+            throw error;
+        }
+    },
+    listFiles: async (folderPath: string) => {
+        try {
+            const { s3Client, bucket } = await storage.createClient();
+
+            const command = new ListObjectsV2Command({
+                Bucket: bucket,
+                Prefix: folderPath,
+            });
+
+            const response = await s3Client.send(command);
+            const fileList = response.Contents?.map((item) => item.Key) || [];
+            return fileList;
+        } catch (error) {
+            throw error;
+        }
+    },
 };
 
 export default storage;
