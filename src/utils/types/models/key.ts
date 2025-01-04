@@ -7,5 +7,6 @@ export interface KeyModelType {
     lastUpdate?: Date;
     description?: string;
     keyType: "pix" | "favorite";
+    slotType?: "normal" | "special";
     userID: Types.ObjectId;
 };

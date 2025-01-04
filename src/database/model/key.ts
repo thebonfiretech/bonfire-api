@@ -17,6 +17,10 @@ const keySchema = new mongoose.Schema({
         enum: ["pix", "favorite"],
         required: true
     },
+    slotType: {
+        type: String,
+        enum: ["normal", "special"],
+    },
     userID: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "user"

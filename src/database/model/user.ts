@@ -56,6 +56,16 @@ const userSchema = new mongoose.Schema({
     },
     email: {
         type: String
+    },
+    keys: {
+        slots: {
+            type: Number,
+            default: 1
+        },
+        specialSlots: {
+            type: Number,
+            default: 0
+        },
     }
 });
 
