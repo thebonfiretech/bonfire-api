@@ -1,3 +1,5 @@
+import badwords from "@assets/content/badwords";
+
 const stringService = {
     normalizeString: (str: string): string => {
         return str
@@ -12,6 +14,17 @@ const stringService = {
     },
     removeSpacesAndLowerCase: (str: string): string => {
         return str.replace(/\s+/g, '').toLowerCase();
+    },
+    filterBadwords: (str: string): string => {
+        return str
+            .split(' ')
+            .map(word => {
+                if (badwords.includes(word.toLowerCase())) {
+                    return '****';
+                }
+                return word;
+            })
+            .join(' ');
     }
 };
 

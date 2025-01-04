@@ -74,11 +74,11 @@ const usersResource = {
             let filteredUpdatedUser = objectService.getObject(data, ["name", "description"]);
 
             if (filteredUpdatedUser.name){
-                filteredUpdatedUser.name = stringService.normalizeString(filteredUpdatedUser.name);
+                filteredUpdatedUser.name = stringService.filterBadwords(stringService.normalizeString(filteredUpdatedUser.name));
             };
 
             if (filteredUpdatedUser.description){
-                filteredUpdatedUser.description = stringService.normalizeString(filteredUpdatedUser.description);
+                filteredUpdatedUser.description = stringService.filterBadwords(stringService.normalizeString(filteredUpdatedUser.description));
             };
 
             return await userModel.findByIdAndUpdate(userID, { $set:{ ...filteredUpdatedUser, lastUpdate: Date.now() } }, { new: true }).select("-password");
