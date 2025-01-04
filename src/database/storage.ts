@@ -1,4 +1,12 @@
-import { S3Client, HeadBucketCommand, PutObjectCommand, GetObjectCommand, ListObjectsV2Command } from "@aws-sdk/client-s3";
+import { 
+    S3Client, 
+    HeadBucketCommand, 
+    PutObjectCommand, 
+    GetObjectCommand, 
+    ListObjectsV2Command, 
+    DeleteObjectCommand, 
+    HeadObjectCommand 
+} from "@aws-sdk/client-s3";
 
 import defaultConfig from "@assets/config/default";
 import logger from "@utils/functions/logger";
@@ -91,6 +99,42 @@ const storage = {
             const response = await s3Client.send(command);
             const fileList = response.Contents?.map((item) => item.Key) || [];
             return fileList;
+        } catch (error) {
+            throw error;
+        }
+    },
+    deleteFile: async (filePath: string) => {
+        try {
+            const { s3Client, bucket } = await storage.createClient();
+
+            const command = new DeleteObjectCommand({
+                Bucket: bucket,
+                Key: filePath,
+            });
+
+            const response = await s3Client.send(command);
+            return response;
+        } catch (error) {
+            throw error
+        }
+    },
+    getFileInfo: async (filePath: string) => {
+        try {
+            const { s3Client, bucket } = await storage.createClient();
+
+            const command = new HeadObjectCommand({
+                Bucket: bucket,
+                Key: filePath,
+            });
+
+            const response = await s3Client.send(command);
+            return {
+                contentLength: response.ContentLength,
+                lastModified: response.LastModified,
+                contentType: response.ContentType,
+                metadata: response.Metadata,
+                etag: response.ETag,
+            };
         } catch (error) {
             throw error;
         }
