@@ -1,4 +1,5 @@
 import { S3Client, HeadBucketCommand, PutObjectCommand, GetObjectCommand, ListObjectsV2Command } from "@aws-sdk/client-s3";
+
 import defaultConfig from "@assets/config/default";
 import logger from "@utils/functions/logger";
 
@@ -58,7 +59,6 @@ const storage = {
             });
 
             const response = await s3Client.send(command);
-            logger.info(`File uploaded successfully: ${fileName}`);
             return response;
         } catch (error) {
             throw error;
