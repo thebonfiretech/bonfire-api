@@ -44,6 +44,28 @@ const storage = {
             process.exit(1);
         }
     },
+    uploadFile: async (fileName: string, fileContent: Buffer | Uint8Array | Blob | string, mimeType: string, folderPath: string = '') => {
+        try {
+            const { s3Client, bucket } = await storage.createClient();
+
+            const filePath = folderPath ? `${folderPath}/${fileName}` : fileName;
+
+            const command = new PutObjectCommand({
+                Bucket: bucket,
+                Key: filePath,
+                Body: fileContent,
+                ContentType: mimeType,
+            });
+
+            const response = await s3Client.send(command);
+            logger.info(`File uploaded successfully: ${fileName}`);
+            return response;
+        } catch (error) {
+            logger.error(`[uploadFile] Failed to upload file: ${fileName}`);
+            console.error(error);
+            throw error;
+        }
+    }
 };
 
 export default storage;
