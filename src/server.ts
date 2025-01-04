@@ -5,7 +5,7 @@ import chalk from "chalk";
 
 import defaultConfig from "@assets/config/default";
 import logger from "@utils/functions/logger";
-import database from "@database/index";
+import database from "@database/database";
 import app  from "./app";
 
 const server = app.listen(process.env.PORT, async () => {
