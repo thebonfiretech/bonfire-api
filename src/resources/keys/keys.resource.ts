@@ -114,7 +114,7 @@ const keysResource = {
             manageError({ code: "internal_error", error });
         }
     },
-    getUserKeys: async ({ data, manageError, ids }: ManageRequestBody) => {
+    getUserKeys: async ({ manageError, ids }: ManageRequestBody) => {
         try {
             const { userID } =  ids;
             if (!userID) return manageError({ code: "invalid_params" });
@@ -122,8 +122,12 @@ const keysResource = {
             const user = await hasUser({ _id: userID }, manageError);
             if (!user) return;
 
-            let {  }: Partial<KeyModelType> = data;
+            const keys = await keyModel.find({ userID });
 
+            return {
+                favorite: keys.filter(x => x.keyType == "favorite"),
+                pix: keys.filter(x => x.keyType == "pix")
+            };
         } catch (error) {
             manageError({ code: "internal_error", error });
         }

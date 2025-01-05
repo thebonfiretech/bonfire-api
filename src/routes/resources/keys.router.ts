@@ -5,7 +5,8 @@ import manageRequest from "@middlewares/manageRequest";
 
 const keysRouter = Router();
 
-keysRouter.post("/create", manageRequest(keysResource.createKey));
 keysRouter.get("/info/:keyID", manageRequest(keysResource.getKeyInfo));
+keysRouter.post("/create", manageRequest(keysResource.createKey));
+keysRouter.get("/", manageRequest(keysResource.getUserKeys));
 
 export default keysRouter;
