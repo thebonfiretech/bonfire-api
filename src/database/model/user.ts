@@ -38,7 +38,10 @@ const userSchema = new mongoose.Schema({
             default: "normal"
         },
         name: String,
-        id: String 
+        id: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "space"
+        } 
     }],
     description: {
         type: String
