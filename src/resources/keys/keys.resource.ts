@@ -100,16 +100,29 @@ const keysResource = {
             manageError({ code: "internal_error", error });
         }
     },
-    deleteKey: async ({ data, manageError, ids }: ManageRequestBody) => {
+    deleteKey: async ({ params, manageError, ids }: ManageRequestBody) => {
         try {
+            const { keyID } = params;
             const { userID } =  ids;
+
             if (!userID) return manageError({ code: "invalid_params" });
 
             const user = await hasUser({ _id: userID }, manageError);
             if (!user) return;
 
-            let {  }: Partial<KeyModelType> = data;
+            const key = await keyModel.findOne({ name: keyID, userID });
+            if (!key) return manageError({ code: "key_not_found" });
 
+            await keyModel.findOneAndDelete({ name: keyID });
+
+            const linkedKeys = await keyModel.find({ key: keyID, keyType: "favorite" });
+            Promise.all(linkedKeys.map(async (linkedKey) => {
+                await keyModel.findByIdAndDelete(linkedKey._id);
+            }));
+
+            return {
+                delete: true
+            };
         } catch (error) {
             manageError({ code: "internal_error", error });
         }
