@@ -25,4 +25,8 @@ export interface UserModelType {
     coins?: number;
     password?: string;
     email?: string;
+    keys: {
+        slots: number;
+        specialSlots: number;
+    };
 };
