@@ -1,6 +1,5 @@
 # The Bonfire API
-API responsavel por suprir demandas de uma extensão de automatização de processos juridicos.
-
+API modularizada do Bonfire, vem com destinaçao a ser a API principal, otimizando assim manutençao geral dos sistemas.
 
 ### Linguagem de Programação: 
 ![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white)
@@ -15,6 +14,15 @@ API responsavel por suprir demandas de uma extensão de automatização de proce
 ### Outros
 ![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white)
 ![Nginx](https://img.shields.io/badge/nginx-%23009639.svg?style=for-the-badge&logo=nginx&logoColor=white)
+![Insomnia](https://img.shields.io/badge/Insomnia-black?style=for-the-badge&logo=insomnia&logoColor=5849BE)
+  
+## Funcionalidades
+
+- autenticação
+- gerencimento de escolas
+- gerencimento de alunos
+- gerencimento dos modulos
+- gerenciamento do banco de dados
 
 ## Instalação
 

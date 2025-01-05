@@ -6,16 +6,18 @@ import logger from "./logger";
 
 export interface SendErrorParams {
     code:  ResponseErrorsParams;
+    local?: String;
     res: Response;
     options?: {};
     error?: any;
 };
 
-const sendError = ({ code, res, error } : SendErrorParams) => {
+const sendError = ({ code, res, error, local } : SendErrorParams) => {
     try {
+        const localMessage = local ? `[${local}] ` : "";
         const responseError = ResponseErrors[code];
 
-        if (defaultConfig.logError.message) logger.error(responseError.message);
+        if (defaultConfig.logError.message) logger.error(localMessage + responseError.message);
         if (error && defaultConfig.logError.data) console.log(error);
 
         res.status(responseError.statusCode).json(responseError);

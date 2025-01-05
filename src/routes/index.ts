@@ -1,6 +1,11 @@
 import { Router } from "express";
 
-import usersRouter from "./resources/user.router";
+import controlAccess from "@middlewares/controlAccess";
+import usersRouter from "./resources/users.router";
+import adminRouter from "./resources/admin.router";
+import keysRouter from "./resources/keys.router";
+import hasAdmin from "@middlewares/hasAdmin";
+import auth from "@middlewares/auth";
 
 const router = Router();
 
@@ -8,6 +13,8 @@ router.get("/ping", (req, res) => {
     res.sendStatus(200);
 });
 
-router.use("/users", usersRouter);
+router.use("/admin", [controlAccess, auth, hasAdmin],  adminRouter);
+router.use("/keys", [controlAccess, auth],  keysRouter);
+router.use("/users", [controlAccess],  usersRouter);
 
 export default router;
