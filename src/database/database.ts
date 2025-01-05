@@ -8,7 +8,7 @@ const database = {
         try {            
             mongoose.set("strictQuery", true);
             
-            const MONGO_URI = defaultConfig.mode == "developing" ? process.env.MONGO_URI_DEV : process.env.MONGO_URI_PRD;
+            const MONGO_URI = process.env.MONGO_URI;
             if (!MONGO_URI) {
                 logger.error("[connectMongoose] No database URI");
                 process.exit(1);

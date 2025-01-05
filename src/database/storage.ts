@@ -14,8 +14,8 @@ import logger from "@utils/functions/logger";
 const storage = {
     createClient: async (check?: boolean) => {
         try {            
-            const STORAGE_URL = defaultConfig.mode === "developing" ? process.env.STORAGE_URL_DEV : process.env.STORAGE_URL_PRD;
-            const STORAGE_BUCKET = defaultConfig.mode === "developing" ? process.env.STORAGE_BUCKET_NAME_DEV : process.env.STORAGE_BUCKET_NAME_PRD;
+            const STORAGE_BUCKET = process.env.STORAGE_BUCKET_NAME;
+            const STORAGE_URL = process.env.STORAGE_URL;
 
             if (!STORAGE_URL || !STORAGE_BUCKET) {
                 logger.error("[createClient] Storage URI or Bucket Name is missing.");
