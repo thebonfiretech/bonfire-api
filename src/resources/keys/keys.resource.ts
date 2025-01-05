@@ -18,23 +18,32 @@ const keysResource = {
             if (keyType == "pix"){
                 const isNormalSlot = slotType === "normal";
 
-                const userKeysCount = await keyModel.countDocuments({ userID, keyType: slotType });
-                if (!(user.keys.slots > userKeysCount)) return manageError({ code: "no_slots_available" });
+                const userKeysCount = await keyModel.countDocuments({ userID, slotType });
+                
+                const availableSlot = (isNormalSlot ? user.keys.slots : user.keys.specialSlots) > userKeysCount;
+                if (!availableSlot) return manageError({ code: "no_slots_available" });
 
                 if (!isNormalSlot){
+                    if (!name) return manageError({ code: "invalid_data" });
+                    name = stringService.normalizeString(name);
 
+                    if (stringService.containsBadwords(name)) return manageError({ code: "content_contains_badwords" });
                 } else {
                     name = stringService.normalizeString(user.id);
                 };
 
                 if (description) description = stringService.filterBadwords(stringService.normalizeString(description));
 
+                const hasExistentKey = await keyModel.findOne({ name });
+                if (hasExistentKey) return manageError({ code: "key_already_exists" });
+
                 const key = new keyModel({
                     lastUpdate: Date.now(),
                     description,
                     slotType,
                     keyType,
-                    userID
+                    userID,
+                    name
                 });
 
                 return await key.save();

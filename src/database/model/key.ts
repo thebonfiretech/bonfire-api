@@ -1,7 +1,11 @@
 import mongoose from "mongoose";
 
 const keySchema = new mongoose.Schema({
-    name: String,
+    name: {
+        required: true,
+        type: String,
+        unique: true,
+    },
     createAt: {
         default: Date.now(),
         type: Date,
@@ -23,6 +27,7 @@ const keySchema = new mongoose.Schema({
     },
     userID: {
         type: mongoose.Schema.Types.ObjectId,
+        required: true,
         ref: "user"
     }
 });

@@ -38,7 +38,7 @@ const badwords: string[] = [
     "motherfucker", "prick", "cock", "twat", "scumbag", "bastards", "retarded", "moron", "shithead", "douchebag", "bimbo", 
     "cocksucker", "shit", "shithead", "dickhead", "piss", "slutty", "cum", "ballsack", "penis", "pussyhole", "fucking", 
     "fucked", "shitfaced", "whorehouse", "prostitute", "jackass", "ass", "nigger", "cocksucker", "scumbag", "shithead", "maggot",
-    "bastard", "douche", "fucking", "cuntface", "dickhead", "fuckhead", "shitface", "clit", "testicle", "rape", "asswipe"
+    "bastard", "douche", "fucking", "cuntface", "dickhead", "fuckhead", "shitface", "clit", "testicle", "rape", "asswipe", "poha"
   ];
   
   export default badwords;

@@ -2,13 +2,13 @@ interface ResponseError {
     statusCode: 100 | 101 | 102 | 200 | 201 | 202 | 204 | 301 | 302 | 304 | 400 | 401 | 403 | 404 | 409 | 429 | 500 | 501 | 502 | 503;
     message: string;
 };
-
 export type ResponseErrorsParams = 
   | "user_already_registered"
   | "space_already_exists" 
   | "admin_access_denied"
   | "no_credentials_send" 
   | "user_already_exists" 
+  | "key_already_exists" 
   | "invalid_credentials" 
   | "user_not_registered"
   | "token_is_not_valid"
@@ -20,7 +20,8 @@ export type ResponseErrorsParams =
   | "invalid_data" 
   | "no_data_send" 
   | "no_token"
-  | "no_slots_available";
+  | "no_slots_available"
+  | "content_contains_badwords";
 
 export const ResponseErrors: Record<ResponseErrorsParams, ResponseError> = {
   internal_error: {
@@ -67,6 +68,10 @@ export const ResponseErrors: Record<ResponseErrorsParams, ResponseError> = {
     message: "Space already exists",
     statusCode: 409,
   },
+  key_already_exists: {
+    message: "Key already exists",
+    statusCode: 409,
+  },
   access_denied: {
     message: "Access Denied",
     statusCode: 401,
@@ -90,5 +95,9 @@ export const ResponseErrors: Record<ResponseErrorsParams, ResponseError> = {
   no_slots_available: { 
     message: "No slots available",
     statusCode: 409,
+  },
+  content_contains_badwords: {
+    message: "Content contains prohibited words",
+    statusCode: 400,
   },
 };

@@ -25,6 +25,11 @@ const stringService = {
                 return word;
             })
             .join(' ');
+    },
+    containsBadwords: (str: string): boolean => {
+        return str
+            .split(' ')
+            .some(word => badwords.includes(word.toLowerCase()));
     }
 };
 
