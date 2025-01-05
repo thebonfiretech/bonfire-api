@@ -78,7 +78,56 @@ const keysResource = {
         } catch (error) {
             manageError({ code: "internal_error", error });
         }
-    }
+    },
+    getKeyInfo: async ({ manageError, params }: ManageRequestBody) => {
+        try {
+            const { keyID } = params;
+            if (!keyID) return manageError({ code: "invalid_params" });
+
+            const key = await keyModel.findOne({ name: keyID });
+            if (!key) return manageError({ code: "key_not_found" });
+
+            const user = await hasUser({ _id: key.userID.toString() }, manageError);
+            if (!user) return;
+
+            return {
+                user: {
+                    name: user.name
+                },
+                key
+            };
+        } catch (error) {
+            manageError({ code: "internal_error", error });
+        }
+    },
+    deleteKey: async ({ data, manageError, ids }: ManageRequestBody) => {
+        try {
+            const { userID } =  ids;
+            if (!userID) return manageError({ code: "invalid_params" });
+
+            const user = await hasUser({ _id: userID }, manageError);
+            if (!user) return;
+
+            let {  }: Partial<KeyModelType> = data;
+
+        } catch (error) {
+            manageError({ code: "internal_error", error });
+        }
+    },
+    getUserKeys: async ({ data, manageError, ids }: ManageRequestBody) => {
+        try {
+            const { userID } =  ids;
+            if (!userID) return manageError({ code: "invalid_params" });
+
+            const user = await hasUser({ _id: userID }, manageError);
+            if (!user) return;
+
+            let {  }: Partial<KeyModelType> = data;
+
+        } catch (error) {
+            manageError({ code: "internal_error", error });
+        }
+    },
 };
 
 export default keysResource;
