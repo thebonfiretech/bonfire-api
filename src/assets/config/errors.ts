@@ -13,6 +13,7 @@ export type ResponseErrorsParams =
   | "user_not_registered"
   | "token_is_not_valid"
   | "space_not_found" 
+  | "key_not_found" 
   | "internal_error" 
   | "invalid_params" 
   | "user_not_found" 
@@ -50,6 +51,10 @@ export const ResponseErrors: Record<ResponseErrorsParams, ResponseError> = {
   },
   user_not_found: {
     message: "User not found",
+    statusCode: 404,
+  },
+  key_not_found: {
+    message: "Key not found",
     statusCode: 404,
   },
   space_not_found: {

@@ -28,5 +28,6 @@ export interface UserModelType {
     keys: {
         slots: number;
         specialSlots: number;
+        favoriteSlots: number;
     };
 };

@@ -13,23 +13,23 @@ const keysResource = {
             const user = await hasUser({ _id: userID }, manageError);
             if (!user) return;
 
-            let { name, description, keyType, slotType }: Partial<KeyModelType> = data;
+            let { name, description, keyType, slotType, key }: Partial<KeyModelType> = data;
 
             if (keyType == "pix"){
                 const isNormalSlot = slotType === "normal";
 
                 const userKeysCount = await keyModel.countDocuments({ userID, slotType });
-                
+
                 const availableSlot = (isNormalSlot ? user.keys.slots : user.keys.specialSlots) > userKeysCount;
                 if (!availableSlot) return manageError({ code: "no_slots_available" });
 
                 if (!isNormalSlot){
                     if (!name) return manageError({ code: "invalid_data" });
-                    name = stringService.normalizeString(name);
+                    name = stringService.removeSpacesAndLowerCase(name);
 
                     if (stringService.containsBadwords(name)) return manageError({ code: "content_contains_badwords" });
                 } else {
-                    name = stringService.normalizeString(user.id);
+                    name = stringService.removeSpacesAndLowerCase(user.id);
                 };
 
                 if (description) description = stringService.filterBadwords(stringService.normalizeString(description));
@@ -37,7 +37,7 @@ const keysResource = {
                 const hasExistentKey = await keyModel.findOne({ name });
                 if (hasExistentKey) return manageError({ code: "key_already_exists" });
 
-                const key = new keyModel({
+                const newKey = new keyModel({
                     lastUpdate: Date.now(),
                     description,
                     slotType,
@@ -46,8 +46,33 @@ const keysResource = {
                     name
                 });
 
-                return await key.save();
-            }
+                return await newKey.save();
+            } else {
+                const userFavoritesCount = await keyModel.countDocuments({ userID, keyType });
+
+                const availableSlot = user.keys.favoriteSlots > userFavoritesCount;
+                if (!availableSlot) return manageError({ code: "no_slots_available" });
+
+                if (!name || !key) return manageError({ code: "invalid_data" });
+                name = stringService.normalizeString(name);
+                key = stringService.removeSpacesAndLowerCase(key);
+
+                if (description) description = stringService.filterBadwords(stringService.normalizeString(description));
+
+                const hasExistentKey = await keyModel.findOne({ name: key, keyType: "pix" });
+                if (!hasExistentKey) return manageError({ code: "key_not_found" });
+
+                const newKey = new keyModel({
+                    lastUpdate: Date.now(),
+                    description,
+                    keyType,
+                    userID,
+                    name,
+                    key
+                });
+
+                return await newKey.save();
+            };
 
 
         } catch (error) {

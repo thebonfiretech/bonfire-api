@@ -4,7 +4,9 @@ const keySchema = new mongoose.Schema({
     name: {
         required: true,
         type: String,
-        unique: true,
+    },
+    key: {
+        type: String,
     },
     createAt: {
         default: Date.now(),
