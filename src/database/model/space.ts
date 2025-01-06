@@ -55,6 +55,38 @@ const spaceSchema = new mongoose.Schema({
             }
         ],
         default: []
+    },
+    coins: {
+        type: Number,
+        default: 0
+    },
+    modules:{
+        economy: {
+            updateStatusAt: Date,
+            lastUpdate: Date,
+            moduleAlreadyUsed: {
+                type: Boolean,
+                default: false
+            },
+            status: {
+                type: String,
+                enum: ["active", "inactive"],
+                default: "inactive",
+            },
+            systemConfig: {
+                initialCoins: {
+                    type: Number,
+                    default: 5000
+                },
+                coinPerAddeduser: {
+                    type: Number,
+                    default: 25
+                },
+            },
+            config: {
+
+            }
+        }
     }
 });
 

@@ -31,5 +31,19 @@ export interface SpaceModelType {
     metrics?: {
         users: number;
     };
-    roles: SpaceRoleType
+    roles: SpaceRoleType,
+    coins: number;
+    modules: {
+        economy: {
+            updateStatusAt?: Date;
+            lastUpdate?: Date;
+            moduleAlreadyUsed: boolean;
+            status: "active" | "inactive";
+            systemConfig: {
+                initialCoins: number;
+                coinPerAddeduser: number;
+            };
+            config: {}
+        };
+    };
 };
