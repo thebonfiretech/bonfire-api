@@ -31,6 +31,7 @@ const userSchema = new mongoose.Schema({
         type: Date,
     },
     spaces: [{
+        _id: false,
         entryAt: Date,
         role: {
             type: mongoose.Schema.Types.ObjectId,

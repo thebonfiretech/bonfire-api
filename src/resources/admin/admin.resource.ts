@@ -3,7 +3,6 @@ import { hasExistsSpace, hasSpace } from "@database/functions/space";
 import { hasUser, hasExistsUser } from "@database/functions/user";
 import { ManageRequestBody } from "@middlewares/manageRequest";
 import stringService from "@utils/services/stringServices";
-import { SpaceModelType, SpaceRoleType } from "@utils/types/models/space";
 import objectService from "@utils/services/objectServices";
 import spaceModel from "@database/model/space";
 import userModel from "@database/model/user";
