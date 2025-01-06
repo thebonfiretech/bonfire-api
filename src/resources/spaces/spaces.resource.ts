@@ -103,6 +103,37 @@ const spacesResource = {
             manageError({ code: "internal_error", error });
         }
     },
+    deleteSpaceRole: async ({ manageError, params }: ManageRequestBody) => {
+        try {
+            const { spaceID, roleID } =  params;
+            if (!spaceID || !roleID) return manageError({ code: "invalid_params" });
+
+            const space = await hasSpace({ _id: spaceID }, manageError);
+            if (!space) return;
+
+            const spaceRole = Array.isArray(space.roles) ? space.roles.find((x) => String(x._id) === roleID) : null;
+            if (!spaceRole) return manageError({ code: "role_not_found" });
+            
+            const normalRole = Array.isArray(space.roles) ? space.roles.find((x) => x.name === "normal") : null;
+            if (!normalRole) return manageError({ code: "role_not_found" });
+
+            if (spaceRole.system) return manageError({ code: "system_role_modification_forbidden" });
+
+            const usersWithSpace = await userModel.find({ "spaces.id": spaceID, "spaces.role": roleID });
+            for (const spaceUser of usersWithSpace) {
+                const userSpace = spaceUser.spaces.find((space) => String(space.id) === spaceID && String(space.role) === roleID);
+                if (userSpace) {
+                    userSpace.role = normalRole._id; 
+                }
+                await spaceUser.save();
+            }
+    
+            const newRoles = Array.isArray(space.roles) ? space.roles.filter((x) => String(x._id) !== roleID) : null;
+            return await spaceModel.findByIdAndUpdate(spaceID, { $set: { roles: newRoles, lastUpdate: Date.now() } }, { new: true });   
+        } catch (error) { 
+            manageError({ code: "internal_error", error });
+        }
+    },
 };
 
 export default spacesResource;
