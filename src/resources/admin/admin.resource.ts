@@ -163,6 +163,29 @@ const adminResource = {
             manageError({ code: "internal_error", error });
         }
     },
+    deleteSpace: async ({ manageError, params }: ManageRequestBody) => {
+        try {
+            const { spaceID } =  params;
+            if (!spaceID) return manageError({ code: "invalid_params" });
+
+            const spaceExists = await hasSpace({ _id: spaceID }, manageError);
+            if (!spaceExists) return;
+            
+            const usersWithSpace = await userModel.find({ "spaces.id": spaceID });
+            for (const spaceUser of usersWithSpace) {
+                spaceUser.spaces.pull({ id: spaceID });
+                await spaceUser.save();
+            };
+
+            await spaceModel.findByIdAndDelete(spaceID);
+
+            return {
+                delete: true
+            };
+        } catch (error) {
+            manageError({ code: "internal_error", error });
+        }
+    },
 };
 
 export default adminResource;
