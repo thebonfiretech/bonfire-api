@@ -198,13 +198,13 @@ const adminResource = {
 
             if (filteredSpace.name){
                 filteredSpace.name = stringService.normalizeString(filteredSpace.name);
-
-                const spaceExists = await hasExistsSpace({ name: filteredSpace.name }, manageError);
-                if (!spaceExists) return;
-
+    
                 const usersWithSpace = await userModel.find({ "spaces.id": spaceID });
                 for (const spaceUser of usersWithSpace) {
-                    spaceUser.spaces.pull({ id: spaceID });
+                    const userSpace = spaceUser.spaces.find(space => String(space.id) === String(spaceID));
+                    if (userSpace) {
+                        userSpace.name = filteredSpace.name;
+                    };
                     await spaceUser.save();
                 };
             };
