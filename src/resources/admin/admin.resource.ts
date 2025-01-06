@@ -131,6 +131,7 @@ const adminResource = {
                 },
                 roles: [{
                     permissions: ["owner"],
+                    system: true,
                     name: "owner"
                 }],
                 owner: {
@@ -149,8 +150,9 @@ const adminResource = {
             };
 
             newSpace.roles.push({
+                permissions: [],
                 name: "normal",
-                permissions: []
+                system: true,
             });
 
             owner.spaces?.push(userSpace);

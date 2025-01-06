@@ -3,7 +3,8 @@ interface ResponseError {
     message: string;
 };
 export type ResponseErrorsParams = 
-| "content_contains_badwords"
+  | "system_role_modification_forbidden"
+  | "content_contains_badwords"
   | "user_already_registered"
   | "space_already_exists" 
   | "admin_access_denied"
@@ -27,6 +28,10 @@ export type ResponseErrorsParams =
   | "no_token"
 
 export const ResponseErrors: Record<ResponseErrorsParams, ResponseError> = {
+  system_role_modification_forbidden: {
+    message: "Not allowed to modify or delete system-created roles",
+    statusCode: 403,
+  },
   internal_error: {
     message: "Server Error",
     statusCode: 500,

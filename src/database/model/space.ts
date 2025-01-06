@@ -40,6 +40,10 @@ const spaceSchema = new mongoose.Schema({
         type: [
             {
                 name: String,
+                system: {
+                    type: Boolean,
+                    default: false
+                },
                 createAt: {
                     default: Date.now(),
                     type: Date,

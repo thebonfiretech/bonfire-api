@@ -8,6 +8,7 @@ export type SpaceRolePermissions = typeof SpaceRolePermissionsValues[number];
 
 export interface SpaceRoleType {
     permissions: SpaceRolePermissions[];
+    system: boolean;
     createAt?: Date;
     name: string;
 };

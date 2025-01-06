@@ -80,8 +80,9 @@ const spacesResource = {
             if (!space) return;
 
             const spaceRole = Array.isArray(space.roles) ? space.roles.find((x) => String(x._id) === roleID) : null;
-            console.log(space.roles, roleID, spaceRole)
             if (!spaceRole) return manageError({ code: "role_not_found" });
+
+            if (spaceRole.system) return manageError({ code: "system_role_modification_forbidden" });
 
             let { name, permissions } = data;
 
