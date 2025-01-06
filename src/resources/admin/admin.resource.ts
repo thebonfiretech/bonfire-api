@@ -156,6 +156,13 @@ const adminResource = {
             manageError({ code: "internal_error", error });
         }
     },
+    getAllSpaces: async ({ manageError }: ManageRequestBody) => {
+        try {
+            return await spaceModel.find();
+        } catch (error) {
+            manageError({ code: "internal_error", error });
+        }
+    },
 };
 
 export default adminResource;
