@@ -9,8 +9,8 @@ export interface SpaceModelType {
         profile?: string;
     };
     owner: {
-        name: string;
         id: string;
+        name: string
     };
     badges?: any[];
     metrics?: {

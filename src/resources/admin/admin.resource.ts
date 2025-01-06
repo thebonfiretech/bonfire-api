@@ -186,6 +186,38 @@ const adminResource = {
             manageError({ code: "internal_error", error });
         }
     },
+    updateSpace: async ({ manageError, params, data }: ManageRequestBody) => {
+        try {
+            const { spaceID } =  params;
+            if (!spaceID) return manageError({ code: "invalid_params" });
+
+            const spaceExists = await hasSpace({ _id: spaceID }, manageError);
+            if (!spaceExists) return;
+
+            const filteredSpace = objectService.filterObject(data, ["createAt", "_id", "owner"]);
+
+            if (filteredSpace.name){
+                filteredSpace.name = stringService.normalizeString(filteredSpace.name);
+
+                const spaceExists = await hasExistsSpace({ name: filteredSpace.name }, manageError);
+                if (!spaceExists) return;
+
+                const usersWithSpace = await userModel.find({ "spaces.id": spaceID });
+                for (const spaceUser of usersWithSpace) {
+                    spaceUser.spaces.pull({ id: spaceID });
+                    await spaceUser.save();
+                };
+            };
+
+            if (filteredSpace.description){
+                filteredSpace.description = stringService.filterBadwords(stringService.normalizeString(filteredSpace.description));
+            };
+
+            return await spaceModel.findByIdAndUpdate(spaceID, { $set:{ ...filteredSpace, lastUpdate: Date.now() } }, { new: true });
+        } catch (error) {
+            manageError({ code: "internal_error", error });
+        }
+    },
 };
 
 export default adminResource;
