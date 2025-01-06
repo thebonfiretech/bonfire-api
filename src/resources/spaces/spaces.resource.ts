@@ -14,6 +14,19 @@ const spacesResource = {
             manageError({ code: "internal_error", error });
         }
     },
+    getSpaceRoles: async ({ manageError, params }: ManageRequestBody) => {
+        try {
+            const { spaceID } =  params;
+            if (!spaceID) return manageError({ code: "invalid_params" });
+
+            const space = await hasSpace({ _id: spaceID }, manageError);
+            if (!space) return;
+
+            return space.roles || [];
+        } catch (error) {
+            manageError({ code: "internal_error", error });
+        }
+    },
     getSpaceUsers: async ({ manageError, params }: ManageRequestBody) => {
         try {
             const { spaceID } =  params;

@@ -6,6 +6,7 @@ import manageRequest from "@middlewares/manageRequest";
 const spacesRouter = Router();
 
 spacesRouter.get("/:spaceID/users", manageRequest(spacesResource.getSpaceUsers));
+spacesRouter.get("/:spaceID/roles", manageRequest(spacesResource.getSpaceRoles));
 spacesRouter.get("/:spaceID", manageRequest(spacesResource.getSpace));
 
 export default spacesRouter;
