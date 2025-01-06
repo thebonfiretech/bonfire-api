@@ -1,3 +1,16 @@
+export const SpaceRolePermissionsValues = [
+    "administrator", 
+    "space_edit"
+] as const;
+
+export type SpaceRolePermissions = typeof SpaceRolePermissionsValues[number];
+
+export interface SpaceRoleType {
+    permissions: string[];
+    createAt: Date;
+    name: string;
+};
+
 export interface SpaceModelType {
     _id: string;
     name: string;
@@ -16,4 +29,5 @@ export interface SpaceModelType {
     metrics?: {
         users: number;
     };
+    roles: SpaceRoleType
 };

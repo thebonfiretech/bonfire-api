@@ -5,7 +5,6 @@ import spaceModel from "@database/model/space";
 
 export const hasExistsSpace = async (space: Partial<SpaceModelType>, manageError: Function): Promise<boolean | undefined> => {
     if (space._id && !isValidObjectId(space._id)){
-        console.log("aqui")
         return true;
     };
     const hasSpace: SpaceModelType | null = await spaceModel.findOne(space);

@@ -1,5 +1,7 @@
 import mongoose from "mongoose";
 
+import { SpaceRolePermissionsValues } from "@utils/types/models/space";
+
 const spaceSchema = new mongoose.Schema({
     name: String,
     owner: {
@@ -33,7 +35,20 @@ const spaceSchema = new mongoose.Schema({
             type: Number,
             default: 0,
         }
-    }
+    },
+    roles: [
+        {
+            name: String,
+            createAt: {
+                default: Date.now(),
+                type: Date,
+            },
+            permissions: {
+                type: [String],
+                enum: SpaceRolePermissionsValues,
+            }
+        }
+    ]
 });
 
 const spaceModel = mongoose.model("space", spaceSchema);
