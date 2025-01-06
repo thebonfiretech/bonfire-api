@@ -226,6 +226,49 @@ const adminResource = {
             manageError({ code: "internal_error", error });
         }
     },
+    configSpaceModule: async ({ manageError, params, data }: ManageRequestBody) => {
+        try {
+            const { spaceID, module } = params;
+            if (!spaceID || !module) return manageError({ code: "invalid_params" });
+    
+            const space = await spaceModel.findById(spaceID);
+            if (!space) return manageError({ code: "space_not_found" });
+    
+            if (!space.modules || !(module in space.modules)) {
+                return manageError({ code: "invalid_params" });
+            }
+    
+            const currentModule = space.modules[module as keyof typeof space.modules] as any;
+            if (!currentModule) return manageError({ code: "invalid_params" });
+
+            const filteredModule = objectService.getObject(data, ["systemConfig", "config", "status"]);
+
+            if (currentModule.status !== filteredModule?.status) {
+                if (filteredModule.status === "active") {
+                    if (currentModule.moduleAlreadyUsed == false){
+                        const coinsPerUser = (space.metrics?.users || 0) * currentModule.systemConfig.coinPerAddeduser;
+                        space.coins = currentModule.systemConfig.initialCoins + coinsPerUser;
+                    };
+
+                    currentModule.updateStatusAt = new Date();
+                    currentModule.moduleAlreadyUsed = true;
+
+                };
+            };
+    
+            currentModule.systemConfig = {...currentModule.systemConfig, ...filteredModule.systemConfig};
+            currentModule.config = {...currentModule.config, ...filteredModule.config};
+            
+            if (filteredModule.status) currentModule.status = filteredModule.status;
+    
+            currentModule.lastUpdate = new Date();
+    
+            space.markModified(`modules.${module}`);
+            return await space.save();
+        } catch (error) {
+            manageError({ code: "internal_error", error });
+        }
+    }
 };
 
 export default adminResource;

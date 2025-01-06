@@ -61,7 +61,7 @@ const spaceSchema = new mongoose.Schema({
         default: 0
     },
     modules:{
-        economy: {
+        "economy": {
             updateStatusAt: Date,
             lastUpdate: Date,
             moduleAlreadyUsed: {
@@ -84,7 +84,7 @@ const spaceSchema = new mongoose.Schema({
                 },
             },
             config: {
-
+                default: {}
             }
         }
     }
