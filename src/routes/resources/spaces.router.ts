@@ -5,6 +5,7 @@ import manageRequest from "@middlewares/manageRequest";
 
 const spacesRouter = Router();
 
+spacesRouter.patch("/:spaceID/roles/update/:roleID", manageRequest(spacesResource.updateSpaceRole));
 spacesRouter.post("/:spaceID/roles/create", manageRequest(spacesResource.createSpaceRole));
 spacesRouter.get("/:spaceID/users", manageRequest(spacesResource.getSpaceUsers));
 spacesRouter.get("/:spaceID/roles", manageRequest(spacesResource.getSpaceRoles));

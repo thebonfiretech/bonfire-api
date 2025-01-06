@@ -1,8 +1,8 @@
+import { ManageRequestBody } from "@middlewares/manageRequest";
+import stringService from "@utils/services/stringServices";
 import { hasSpace } from "@database/functions/space";
 import spaceModel from "@database/model/space";
 import userModel from "@database/model/user";
-import { ManageRequestBody } from "@middlewares/manageRequest";
-import stringService from "@utils/services/stringServices";
 
 const spacesResource = {
     getSpace: async ({ manageError, params }: ManageRequestBody) => {
@@ -68,6 +68,37 @@ const spacesResource = {
 
             return await spaceModel.findByIdAndUpdate(spaceID, { $set:{ ...space, lastUpdate: Date.now() } }, { new: true });          
         } catch (error) {
+            manageError({ code: "internal_error", error });
+        }
+    },
+    updateSpaceRole: async ({ manageError, params, data }: ManageRequestBody) => {
+        try {
+            const { spaceID, roleID } =  params;
+            if (!spaceID || !roleID) return manageError({ code: "invalid_params" });
+
+            const space = await hasSpace({ _id: spaceID }, manageError);
+            if (!space) return;
+
+            const spaceRole = Array.isArray(space.roles) ? space.roles.find((x) => String(x._id) === roleID) : null;
+            console.log(space.roles, roleID, spaceRole)
+            if (!spaceRole) return manageError({ code: "role_not_found" });
+
+            let { name, permissions } = data;
+
+            if (name) {
+                name = stringService.removeSpacesAndLowerCase(name);
+    
+                if (name !== spaceRole.name) {
+                    const hasExistentRole = Array.isArray(space.roles) ? space.roles.find((x) => x.name === name) : null;
+                    if (hasExistentRole) return manageError({ code: "role_already_exists" });
+                };
+            };
+
+            if (permissions) spaceRole.permissions = permissions;
+            if (name) spaceRole.name = name;
+
+            return await spaceModel.findByIdAndUpdate(spaceID, { $set: { roles: space.roles, lastUpdate: Date.now() } }, { new: true });          
+        } catch (error) { 
             manageError({ code: "internal_error", error });
         }
     },
