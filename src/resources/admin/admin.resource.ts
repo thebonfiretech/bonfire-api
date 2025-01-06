@@ -3,7 +3,7 @@ import { hasExistsSpace, hasSpace } from "@database/functions/space";
 import { hasUser, hasExistsUser } from "@database/functions/user";
 import { ManageRequestBody } from "@middlewares/manageRequest";
 import stringService from "@utils/services/stringServices";
-import { SpaceModelType } from "@utils/types/models/space";
+import { SpaceModelType, SpaceRoleType } from "@utils/types/models/space";
 import objectService from "@utils/services/objectServices";
 import spaceModel from "@database/model/space";
 import userModel from "@database/model/user";
@@ -122,28 +122,30 @@ const adminResource = {
 
             const owner = await hasUser({ _id: ownerID }, manageError);
             if (!owner) return;
-
-            const extra: Partial<SpaceModelType> = {
-                lastUpdate: new Date(Date.now()),
-                metrics: {
-                    users: 1
-                }
-            };
-
+            
             const newSpace = new spaceModel({
-                ...extra,
+                lastUpdate: new Date(Date.now()),
                 description,
                 name,
+                metrics: {
+                    users: 1
+                },
+                roles: [{
+                    permissions: ["owner"],
+                    name: "owner"
+                }],
                 owner: {
                     name: owner.name,
                     id: owner._id,
                 },
             });
 
+            const userRoleId = newSpace.roles[0]._id;
+
             const userSpace: UserSpaceType = {
                 entryAt: new Date(Date.now()),
                 id: newSpace._id.toString(),
-                role: "owner",
+                role: userRoleId.toString(),
                 name
             };
 

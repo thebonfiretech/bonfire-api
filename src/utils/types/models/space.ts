@@ -1,13 +1,14 @@
 export const SpaceRolePermissionsValues = [
     "administrator", 
-    "space_edit"
+    "space_edit",
+    "owner", 
 ] as const;
 
 export type SpaceRolePermissions = typeof SpaceRolePermissionsValues[number];
 
 export interface SpaceRoleType {
-    permissions: string[];
-    createAt: Date;
+    permissions: SpaceRolePermissions[];
+    createAt?: Date;
     name: string;
 };
 
