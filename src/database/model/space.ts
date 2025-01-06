@@ -36,19 +36,22 @@ const spaceSchema = new mongoose.Schema({
             default: 0,
         }
     },
-    roles: [
-        {
-            name: String,
-            createAt: {
-                default: Date.now(),
-                type: Date,
-            },
-            permissions: {
-                type: [String],
-                enum: SpaceRolePermissionsValues,
+    roles: {
+        type: [
+            {
+                name: String,
+                createAt: {
+                    default: Date.now(),
+                    type: Date,
+                },
+                permissions: {
+                    type: [String],
+                    enum: SpaceRolePermissionsValues,
+                }
             }
-        }
-    ]
+        ],
+        default: []
+    }
 });
 
 const spaceModel = mongoose.model("space", spaceSchema);
