@@ -103,6 +103,22 @@ const spacesResource = {
             manageError({ code: "internal_error", error });
         }
     },
+    getSpaceRole: async ({ manageError, params }: ManageRequestBody) => {
+        try {
+            const { spaceID, roleID } =  params;
+            if (!spaceID || !roleID) return manageError({ code: "invalid_params" });
+
+            const space = await hasSpace({ _id: spaceID }, manageError);
+            if (!space) return;
+
+            const spaceRole = Array.isArray(space.roles) ? space.roles.find((x) => String(x._id) === roleID) : null;
+            if (!spaceRole) return manageError({ code: "role_not_found" });
+
+            return spaceRole;
+        } catch (error) { 
+            manageError({ code: "internal_error", error });
+        }
+    },
     deleteSpaceRole: async ({ manageError, params }: ManageRequestBody) => {
         try {
             const { spaceID, roleID } =  params;
