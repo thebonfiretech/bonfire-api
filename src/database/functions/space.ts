@@ -5,6 +5,7 @@ import spaceModel from "@database/model/space";
 
 export const hasExistsSpace = async (space: Partial<SpaceModelType>, manageError: Function): Promise<boolean | undefined> => {
     if (space._id && !isValidObjectId(space._id)){
+        console.log("aqui")
         return true;
     };
     const hasSpace: SpaceModelType | null = await spaceModel.findOne(space);
@@ -15,7 +16,7 @@ export const hasExistsSpace = async (space: Partial<SpaceModelType>, manageError
     return true;
 };
 
-export const hasNoSpaceAlreadyExists = async (space: Partial<SpaceModelType>, manageError: Function): Promise<SpaceModelType | undefined> => {
+export const hasSpace = async (space: Partial<SpaceModelType>, manageError: Function): Promise<SpaceModelType | undefined> => {
     if (space._id && !isValidObjectId(space._id)){
         manageError({ code: "invalid_params" }); 
         return;

@@ -1,12 +1,12 @@
 import { UserModelType, UserSpaceType } from "@utils/types/models/user";
+import { hasExistsSpace, hasSpace } from "@database/functions/space";
 import { hasUser, hasExistsUser } from "@database/functions/user";
-import { hasExistsSpace, hasNoSpaceAlreadyExists } from "@database/functions/space";
 import { ManageRequestBody } from "@middlewares/manageRequest";
 import stringService from "@utils/services/stringServices";
+import { SpaceModelType } from "@utils/types/models/space";
 import objectService from "@utils/services/objectServices";
 import spaceModel from "@database/model/space";
 import userModel from "@database/model/user";
-import { SpaceModelType } from "@utils/types/models/space";
 
 const adminResource = {
     createUser: async ({ data, manageError }: ManageRequestBody) => {
@@ -25,8 +25,8 @@ const adminResource = {
             };
 
             if (space) {
-                let hasSpace = await hasNoSpaceAlreadyExists({ _id: space.name }, manageError);
-                if (!hasSpace) return;
+                let spaceExists = await hasSpace({ _id: space.name }, manageError);
+                if (!spaceExists) return;
             
                 let newSpace: UserSpaceType = {
                     entryAt: new Date(),
@@ -37,7 +37,7 @@ const adminResource = {
             
                 extra.spaces = [newSpace];
 
-                let spaceUserMetrics = hasSpace.metrics?.users || 0;
+                let spaceUserMetrics = spaceExists.metrics?.users || 0;
 
                 await spaceModel.findByIdAndUpdate(space.id, { $set:{ metrics: { user: spaceUserMetrics + 1 } } }, { new: true });
             };
@@ -118,7 +118,7 @@ const adminResource = {
             name = stringService.normalizeString(name);
 
             const spaceExists = await hasExistsSpace({ name }, manageError);
-
+            if (!spaceExists) return;
 
             const owner = await hasUser({ _id: ownerID }, manageError);
             if (!owner) return;
