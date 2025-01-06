@@ -11,4 +11,6 @@ adminRouter.post("/users/create", manageRequest(adminResource.createUser));
 adminRouter.get("/users/:userID", manageRequest(adminResource.getUser));
 adminRouter.get("/users", manageRequest(adminResource.getAllUsers));
 
+adminRouter.post("/spaces/create", manageRequest(adminResource.createSpace));
+
 export default adminRouter;

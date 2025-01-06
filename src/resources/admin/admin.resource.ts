@@ -1,11 +1,12 @@
 import { UserModelType, UserSpaceType } from "@utils/types/models/user";
 import { hasUser, hasExistsUser } from "@database/functions/user";
-import { hasNoSpaceAlreadyExists } from "@database/functions/space";
+import { hasExistsSpace, hasNoSpaceAlreadyExists } from "@database/functions/space";
 import { ManageRequestBody } from "@middlewares/manageRequest";
 import stringService from "@utils/services/stringServices";
 import objectService from "@utils/services/objectServices";
 import spaceModel from "@database/model/space";
 import userModel from "@database/model/user";
+import { SpaceModelType } from "@utils/types/models/space";
 
 const adminResource = {
     createUser: async ({ data, manageError }: ManageRequestBody) => {
@@ -107,7 +108,54 @@ const adminResource = {
         } catch (error) {
             manageError({ code: "internal_error", error });
         }
-    }
+    },
+    createSpace: async ({ manageError, data }: ManageRequestBody) => {
+        try {
+            let { name, description, ownerID } = data;
+            if (!name || !ownerID) return manageError({ code: "invalid_data" });
+
+            if (description) description = stringService.filterBadwords(stringService.normalizeString(description));
+            name = stringService.normalizeString(name);
+
+            const spaceExists = await hasExistsSpace({ name }, manageError);
+
+
+            const owner = await hasUser({ _id: ownerID }, manageError);
+            if (!owner) return;
+
+            const extra: Partial<SpaceModelType> = {
+                lastUpdate: new Date(Date.now()),
+                metrics: {
+                    users: 1
+                }
+            };
+
+            const newSpace = new spaceModel({
+                ...extra,
+                description,
+                name,
+                owner: {
+                    name: owner.name,
+                    id: owner._id,
+                },
+            });
+
+            const userSpace: UserSpaceType = {
+                entryAt: new Date(Date.now()),
+                id: newSpace._id.toString(),
+                role: "owner",
+                name
+            };
+
+            owner.spaces?.push(userSpace);
+            
+            await userModel.findByIdAndUpdate(ownerID, { $set:{ ...owner, lastUpdate: Date.now() } });
+
+            return await newSpace.save()
+        } catch (error) {
+            manageError({ code: "internal_error", error });
+        }
+    },
 };
 
 export default adminResource;

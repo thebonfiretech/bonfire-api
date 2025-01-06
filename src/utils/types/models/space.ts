@@ -8,6 +8,10 @@ export interface SpaceModelType {
     images?: {
         profile?: string;
     };
+    owner: {
+        name: string;
+        id: string;
+    };
     badges?: any[];
     metrics?: {
         users: number;

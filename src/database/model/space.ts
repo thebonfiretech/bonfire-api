@@ -2,6 +2,13 @@ import mongoose from "mongoose";
 
 const spaceSchema = new mongoose.Schema({
     name: String,
+    owner: {
+        id:{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "user"
+        },
+        name: String
+    }, 
     status: {
         enum: ["active", "inactive"],
         default: "active",
