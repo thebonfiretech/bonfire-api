@@ -148,6 +148,11 @@ const adminResource = {
                 name
             };
 
+            newSpace.roles.push({
+                name: "normal",
+                permissions: []
+            });
+
             owner.spaces?.push(userSpace);
             
             await userModel.findByIdAndUpdate(ownerID, { $set:{ ...owner, lastUpdate: Date.now() } });
