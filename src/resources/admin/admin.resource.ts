@@ -252,8 +252,10 @@ const adminResource = {
 
                     currentModule.updateStatusAt = new Date();
                     currentModule.moduleAlreadyUsed = true;
-
-                };
+                    
+                } else {
+                    currentModule.updateStatusAt = new Date();
+                }
             };
     
             currentModule.systemConfig = {...currentModule.systemConfig, ...filteredModule.systemConfig};
