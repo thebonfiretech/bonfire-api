@@ -27,3 +27,9 @@ export const hasSpace = async (space: Partial<SpaceModelType>, manageError: Func
     };
     return hasSpace;
 };
+
+export const hasRolePermission = async (roleID: string, permissions: string[]): Promise<boolean> => {
+
+
+    return true;
+};
