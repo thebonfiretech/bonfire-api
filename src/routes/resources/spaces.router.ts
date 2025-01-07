@@ -11,6 +11,8 @@ spacesRouter.post("/:spaceID/roles/create", manageRequest(spacesResource.createS
 spacesRouter.get("/:spaceID/roles/:roleID", manageRequest(spacesResource.getSpaceRole));
 spacesRouter.get("/:spaceID/roles", manageRequest(spacesResource.getSpaceRoles));
 
+spacesRouter.patch("/:spaceID/modules/config/:module", manageRequest(spacesResource.configSpaceModule));
+
 spacesRouter.get("/:spaceID/users", manageRequest(spacesResource.getSpaceUsers));
 spacesRouter.get("/:spaceID", manageRequest(spacesResource.getSpace));
 

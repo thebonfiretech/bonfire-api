@@ -150,6 +150,33 @@ const spacesResource = {
             manageError({ code: "internal_error", error });
         }
     },
+    configSpaceModule: async ({ manageError, params, data }: ManageRequestBody) => {
+        try {
+            const { spaceID, module } = params;
+            if (!spaceID || !module) return manageError({ code: "invalid_params" });
+    
+            const space = await spaceModel.findById(spaceID);
+            if (!space) return manageError({ code: "space_not_found" });
+    
+            if (!space.modules || !(module in space.modules)) {
+                return manageError({ code: "invalid_params" });
+            }
+    
+            const currentModule = space.modules[module as keyof typeof space.modules] as any;
+            if (!currentModule) return manageError({ code: "invalid_params" });
+
+            const { config } = data;
+
+            currentModule.config = {...currentModule.config, ...config};
+    
+            currentModule.lastUpdate = new Date();
+    
+            space.markModified(`modules.${module}`);
+            return await space.save();
+        } catch (error) {
+            manageError({ code: "internal_error", error });
+        }
+    }
 };
 
 export default spacesResource;
