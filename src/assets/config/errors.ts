@@ -3,28 +3,35 @@ interface ResponseError {
     message: string;
 };
 export type ResponseErrorsParams = 
+  | "system_role_modification_forbidden"
+  | "content_contains_badwords"
   | "user_already_registered"
   | "space_already_exists" 
   | "admin_access_denied"
   | "no_credentials_send" 
   | "user_already_exists" 
-  | "key_already_exists" 
+  | "role_already_exists" 
   | "invalid_credentials" 
   | "user_not_registered"
+  | "key_already_exists" 
+  | "no_slots_available"
   | "token_is_not_valid"
   | "space_not_found" 
-  | "key_not_found" 
   | "internal_error" 
   | "invalid_params" 
   | "user_not_found" 
+  | "role_not_found" 
+  | "key_not_found" 
   | "access_denied"
   | "invalid_data" 
   | "no_data_send" 
   | "no_token"
-  | "no_slots_available"
-  | "content_contains_badwords";
 
 export const ResponseErrors: Record<ResponseErrorsParams, ResponseError> = {
+  system_role_modification_forbidden: {
+    message: "Not allowed to modify or delete system-created roles",
+    statusCode: 403,
+  },
   internal_error: {
     message: "Server Error",
     statusCode: 500,
@@ -57,12 +64,20 @@ export const ResponseErrors: Record<ResponseErrorsParams, ResponseError> = {
     message: "Key not found",
     statusCode: 404,
   },
+  role_not_found: {
+    message: "Role not found",
+    statusCode: 404,
+  },
   space_not_found: {
     message: "Space not found",
     statusCode: 404,
   },
   user_already_exists: {
     message: "User already exists",
+    statusCode: 409,
+  },
+  role_already_exists: {
+    message: "Role already exists",
     statusCode: 409,
   },
   user_already_registered: {

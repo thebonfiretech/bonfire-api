@@ -1,3 +1,18 @@
+export const SpaceRolePermissionsValues = [
+    "administrator", 
+    "space_edit",
+    "owner", 
+] as const;
+
+export type SpaceRolePermissions = typeof SpaceRolePermissionsValues[number];
+
+export interface SpaceRoleType {
+    permissions: SpaceRolePermissions[];
+    system: boolean;
+    createAt?: Date;
+    name: string;
+};
+
 export interface SpaceModelType {
     _id: string;
     name: string;
@@ -8,8 +23,27 @@ export interface SpaceModelType {
     images?: {
         profile?: string;
     };
+    owner: {
+        id: string;
+        name: string
+    };
     badges?: any[];
     metrics?: {
         users: number;
+    };
+    roles: SpaceRoleType,
+    coins: number;
+    modules: {
+        economy: {
+            updateStatusAt?: Date;
+            lastUpdate?: Date;
+            moduleAlreadyUsed: boolean;
+            status: "active" | "inactive";
+            systemConfig: {
+                initialCoins: number;
+                coinPerAddeduser: number;
+            };
+            config: {}
+        };
     };
 };

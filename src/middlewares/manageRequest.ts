@@ -3,7 +3,6 @@ import { Request, Response } from "express";
 import { ResponseErrorsParams } from "@assets/config/errors";
 import defaultConfig from "@assets/config/default";
 import sendError from "@utils/functions/error";
-import packageJson from "../../package.json";
 import logger from "@utils/functions/logger";
 
 interface ManageErrorParams {
@@ -54,7 +53,7 @@ const manageRequest = (service: ManageRequestParams["service"]) => {
             if (headersSent) return;
 
             res.set("api-database-name", defaultConfig.clusterName);
-            res.set("api-version", packageJson.version);
+            res.set("api-version", defaultConfig.version);
             res.set("api-mode", defaultConfig.mode);
             res.status(200).json(result);
             headersSent = true;

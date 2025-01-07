@@ -31,11 +31,10 @@ const userSchema = new mongoose.Schema({
         type: Date,
     },
     spaces: [{
+        _id: false,
         entryAt: Date,
         role: {
-            type: String,
-            enum: ["normal", "editor", "admin"],
-            default: "normal"
+            type: mongoose.Schema.Types.ObjectId,
         },
         name: String,
         id: {

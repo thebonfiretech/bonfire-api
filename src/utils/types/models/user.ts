@@ -1,6 +1,6 @@
 export interface UserSpaceType {
     entryAt?: Date;
-    role: "normal" | "editor" | "admin";
+    role: string;
     name: string;
     id: string;
 };
