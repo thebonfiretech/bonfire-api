@@ -1,8 +1,9 @@
 import { ManageRequestBody } from "@middlewares/manageRequest";
 import stringService from "@utils/services/stringServices";
-import { hasSpace } from "@database/functions/space";
+import { hasRolePermission, hasSpace } from "@database/functions/space";
 import spaceModel from "@database/model/space";
 import userModel from "@database/model/user";
+import { hasUser } from "@database/functions/user";
 
 const spacesResource = {
     getSpace: async ({ manageError, params }: ManageRequestBody) => {
@@ -71,14 +72,23 @@ const spacesResource = {
             manageError({ code: "internal_error", error });
         }
     },
-    updateSpaceRole: async ({ manageError, params, data }: ManageRequestBody) => {
+    updateSpaceRole: async ({ manageError, params, data, ids }: ManageRequestBody) => {
         try {
             const { spaceID, roleID } =  params;
-            if (!spaceID || !roleID) return manageError({ code: "invalid_params" });
+            const { userID } =  ids;
+            if (!spaceID || !roleID || !userID) return manageError({ code: "invalid_params" });
 
+            const user = await hasUser({ _id: userID }, manageError);
+            if (!user) return;
+            
             const space = await hasSpace({ _id: spaceID }, manageError);
+
             if (!space) return;
 
+            const userSpace = user.spaces?.find(x => x.id === spaceID);
+            const hasPermisson = await hasRolePermission(userSpace?.role || "", ["administrator", "manage_roles", "owner"]);
+            if (!hasPermisson) return manageError({ code: "no_execution_permission" });
+ 
             const spaceRole = Array.isArray(space.roles) ? space.roles.find((x) => String(x._id) === roleID) : null;
             if (!spaceRole) return manageError({ code: "role_not_found" });
 

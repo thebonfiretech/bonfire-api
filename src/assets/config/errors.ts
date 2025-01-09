@@ -6,6 +6,7 @@ export type ResponseErrorsParams =
   | "system_role_modification_forbidden"
   | "content_contains_badwords"
   | "user_already_registered"
+  | "no_execution_permission"
   | "space_already_exists" 
   | "admin_access_denied"
   | "no_credentials_send" 
@@ -30,6 +31,10 @@ export type ResponseErrorsParams =
 export const ResponseErrors: Record<ResponseErrorsParams, ResponseError> = {
   system_role_modification_forbidden: {
     message: "Not allowed to modify or delete system-created roles",
+    statusCode: 403,
+  },
+  no_execution_permission: {
+    message: "Permission denied for execution",
     statusCode: 403,
   },
   internal_error: {

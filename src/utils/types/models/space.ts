@@ -1,6 +1,9 @@
 export const SpaceRolePermissionsValues = [
     "administrator", 
-    "space_edit",
+    "manage_space",
+    "manage_roles",
+    "manage_users",
+    "manage_coins",
     "owner", 
 ] as const;
 
