@@ -1,10 +1,10 @@
+import { hasRolePermission, hasSpace } from "@database/functions/space";
+import { UserModelType, UserSpaceType } from "@utils/types/models/user";
+import { hasExistsUser, hasUser } from "@database/functions/user";
 import { ManageRequestBody } from "@middlewares/manageRequest";
 import stringService from "@utils/services/stringServices";
-import { hasRolePermission, hasSpace } from "@database/functions/space";
 import spaceModel from "@database/model/space";
 import userModel from "@database/model/user";
-import { hasExistsUser, hasUser } from "@database/functions/user";
-import { UserModelType, UserSpaceType } from "@utils/types/models/user";
 
 const spacesResource = {
     getSpace: async ({ manageError, params }: ManageRequestBody) => {
@@ -133,6 +133,60 @@ const spacesResource = {
 
             return {
                 user: createdUser
+            };
+        } catch (error) {
+            manageError({ code: "internal_error", error });
+        }
+    },
+    addSpaceUser: async ({ manageError, params, data, ids }: ManageRequestBody) => {
+        try {
+            const { spaceID } =  params;
+            if (!spaceID) return manageError({ code: "invalid_params" });
+
+            const space = await hasSpace({ _id: spaceID }, manageError);
+            if (!space) return;
+
+            let { id, roleID } = data;
+            if (!id) return manageError({ code: "invalid_data" });
+
+            const { userID } = ids;
+
+            const user = await hasUser({ _id: userID }, manageError);
+            if (!user) return;
+
+            const userSpace = user.spaces?.find(x => x.id == spaceID);
+            const hasPermisson = await hasRolePermission(userSpace?.role.toString() || "", ["administrator", "manage_users", "owner"]);
+            if (!hasPermisson) return manageError({ code: "no_execution_permission" });
+
+
+            id = stringService.removeSpacesAndLowerCase(id);
+
+            const invitedUser = await hasUser({ id }, manageError);
+            if (!invitedUser) return;
+
+            const extra: Partial<UserModelType> = {
+                lastUpdate: new Date(Date.now()),
+            };
+
+            const normalRole = Array.isArray(space.roles) ? space.roles.find((x) =>  x.name == "normal") : null;
+
+            let newSpace: UserSpaceType= {
+                role: roleID ? roleID : normalRole._id,
+                entryAt: new Date(),
+                name: space.name,
+                id: space._id
+            };
+        
+            extra.spaces = [...(invitedUser.spaces || []), newSpace];
+
+            let spaceUserMetrics = space.metrics?.users || 0;
+
+            await spaceModel.findByIdAndUpdate(space._id, { $set:{ metrics: { user: spaceUserMetrics + 1 } } }, { new: true });
+            
+            const updatedUser  = await userModel.findByIdAndUpdate(invitedUser._id, { $set:{ ...invitedUser, extra } }, { new: true }).select("-password");
+
+            return {
+                user: updatedUser
             };
         } catch (error) {
             manageError({ code: "internal_error", error });
