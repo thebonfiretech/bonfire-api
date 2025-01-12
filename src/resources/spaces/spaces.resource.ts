@@ -3,7 +3,8 @@ import stringService from "@utils/services/stringServices";
 import { hasRolePermission, hasSpace } from "@database/functions/space";
 import spaceModel from "@database/model/space";
 import userModel from "@database/model/user";
-import { hasUser } from "@database/functions/user";
+import { hasExistsUser, hasUser } from "@database/functions/user";
+import { UserModelType, UserSpaceType } from "@utils/types/models/user";
 
 const spacesResource = {
     getSpace: async ({ manageError, params }: ManageRequestBody) => {
@@ -77,6 +78,62 @@ const spacesResource = {
             };
 
             return await spaceModel.findByIdAndUpdate(spaceID, { $set:{ ...space, lastUpdate: Date.now() } }, { new: true });          
+        } catch (error) {
+            manageError({ code: "internal_error", error });
+        }
+    },
+    createSpaceUser: async ({ manageError, params, data, ids }: ManageRequestBody) => {
+        try {
+            const { spaceID } =  params;
+            if (!spaceID) return manageError({ code: "invalid_params" });
+
+            const space = await hasSpace({ _id: spaceID }, manageError);
+            if (!space) return;
+
+            let { id, name, roleID } = data;
+            if (!id || !name) return manageError({ code: "invalid_data" });
+
+            const { userID } = ids;
+
+            const user = await hasUser({ _id: userID }, manageError);
+            if (!user) return;
+
+            const userSpace = user.spaces?.find(x => x.id == spaceID);
+            const hasPermisson = await hasRolePermission(userSpace?.role.toString() || "", ["administrator", "manage_users", "owner"]);
+            if (!hasPermisson) return manageError({ code: "no_execution_permission" });
+
+
+            id = stringService.removeSpacesAndLowerCase(id);
+            name = stringService.normalizeString(name);
+
+            const userExists = await hasExistsUser({ id }, manageError);
+            if (!userExists) return;
+
+            const extra: Partial<UserModelType> = {
+                lastUpdate: new Date(Date.now()),
+            };
+
+            const normalRole = Array.isArray(space.roles) ? space.roles.find((x) =>  x.name == "normal") : null;
+
+            let newSpace: UserSpaceType= {
+                entryAt: new Date(),
+                role: roleID ? roleID : normalRole._id,
+                name: space.name,
+                id: space._id
+            };
+        
+            extra.spaces = [newSpace];
+
+            let spaceUserMetrics = space.metrics?.users || 0;
+
+            await spaceModel.findByIdAndUpdate(space._id, { $set:{ metrics: { user: spaceUserMetrics + 1 } } }, { new: true });
+            
+            const createdUser = new userModel({ id, name, ...extra });
+            await createdUser.save();
+
+            return {
+                user: createdUser
+            };
         } catch (error) {
             manageError({ code: "internal_error", error });
         }
