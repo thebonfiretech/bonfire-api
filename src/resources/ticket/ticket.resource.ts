@@ -34,6 +34,19 @@ const ticketResource = {
         } catch (error) {
             manageError({ code: "internal_error", error });
         }
+    },
+    getUserTickets: async ({ manageError, ids }: ManageRequestBody) => {
+        try {
+            const { userID } =  ids;
+            if (!userID) return manageError({ code: "invalid_params" });
+
+            const user = await hasUser({ _id: userID }, manageError);
+            if (!user) return;
+
+            return await ticketModel.find({ userID });
+        } catch (error) {
+            manageError({ code: "internal_error", error });
+        }
     }
 };
 
