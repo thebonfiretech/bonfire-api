@@ -22,6 +22,10 @@ const ticketSchema = new mongoose.Schema({
         type: String,
         enum: ["space", "system"],     
     },
+    displayName: {
+        type: Boolean,
+        default: false
+    },
     userID: {
         type: mongoose.Schema.Types.ObjectId,
         required: true,

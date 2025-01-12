@@ -17,4 +17,5 @@ export interface TicketModelType {
     userID: Types.ObjectId;
     attachments: string[];
     messages: TicketMessageType[];
+    displayName: boolean;
 };
