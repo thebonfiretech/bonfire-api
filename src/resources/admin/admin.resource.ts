@@ -6,6 +6,7 @@ import stringService from "@utils/services/stringServices";
 import objectService from "@utils/services/objectServices";
 import spaceModel from "@database/model/space";
 import userModel from "@database/model/user";
+import keyModel from "@database/model/key";
 
 const adminResource = {
     createUser: async ({ data, manageError }: ManageRequestBody) => {
@@ -79,10 +80,31 @@ const adminResource = {
             const { userID } =  params;
             if (!userID) return manageError({ code: "invalid_params" });
 
-            const userExists = await hasUser({ _id: userID }, manageError);
-            if (!userExists) return;
+            const user = await hasUser({ _id: userID }, manageError);
+            if (!user) return;
             
             await userModel.findByIdAndDelete(userID);
+
+            const spacesWithUser = user.spaces?.map(x => String(x.id)) || [];
+            for (const spaceUser of spacesWithUser) {
+                const space = await hasSpace({ _id: spaceUser }, manageError);
+                if (space){
+                    let spaceUserMetrics = space.metrics?.users || 0;
+                    await spaceModel.findByIdAndUpdate(space._id, { $set:{ metrics: { user: spaceUserMetrics - 1 } } }, { new: true });
+                };
+            };
+
+            const keysWithUser = await keyModel.find({ userID });
+            for (const key of keysWithUser) {
+                await keyModel.findByIdAndDelete(key._id);
+
+                if (key.keyType == "pix"){
+                    const keysAddedInFavorite = await keyModel.find({ keyType: "favorite", key: key.name });
+                    for (const keyFavorite of keysAddedInFavorite){
+                        await keyModel.findByIdAndDelete(keyFavorite._id);
+                    };
+                };
+            };
 
             return {
                 delete: true
