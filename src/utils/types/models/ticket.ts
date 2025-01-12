@@ -13,6 +13,7 @@ export interface TicketModelType {
     lastUpdate?: Date;
     description?: string;
     type: "suggestion" | "report" | "feedback" | "other";
+    scope: "space" | "system";
     userID: Types.ObjectId;
     attachments: string[];
     messages: TicketMessageType[];

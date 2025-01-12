@@ -18,6 +18,10 @@ const ticketSchema = new mongoose.Schema({
         type: String,
         enum: ["suggestion", "report", "feedback", "other"],
     },
+    scope: {
+        type: String,
+        enum: ["space", "system"],     
+    },
     userID: {
         type: mongoose.Schema.Types.ObjectId,
         required: true,
