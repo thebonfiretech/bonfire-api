@@ -14,7 +14,7 @@ const ticketSchema = new mongoose.Schema({
     description: {
         type: String
     },
-    slotType: {
+    type: {
         type: String,
         enum: ["suggestion", "report", "feedback", "other"],
     },
@@ -34,7 +34,8 @@ const ticketSchema = new mongoose.Schema({
                 default: Date.now(),
                 type: Date
             }
-        }]
+        }],
+        default: []
     },
     attachments: {
         type: [String],
