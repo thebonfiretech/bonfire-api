@@ -32,9 +32,7 @@ export const hasRolePermission = async (roleID: string, permissions: string[]): 
     const space: SpaceModelType | null = await spaceModel.findOne({ "space.role.id": roleID });
     if (!space) return false;
     
-    const role =  Array.isArray(space.roles) ? space.roles.find((x) => x._id == roleID) : null;
+    const role =  Array.isArray(space.roles) ? space.roles.find((x) =>  String(x._id), String(roleID)) : null;
 
-    console.log(space, role, .map(x => x.id))
-
-    return permissions.some((permission) => role.permissions.includes(permission));
+    return permissions.some((permission) => role?.permissions.lenght == 0 ? true :  role.permissions.includes(permission));
 };

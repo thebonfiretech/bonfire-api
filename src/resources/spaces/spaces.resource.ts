@@ -85,8 +85,8 @@ const spacesResource = {
 
             if (!space) return;
 
-            const userSpace = user.spaces?.find(x => x.id === spaceID);
-            const hasPermisson = await hasRolePermission(userSpace?.role || "", ["administrator", "manage_roles", "owner"]);
+            const userSpace = user.spaces?.find(x => x.id == spaceID);
+            const hasPermisson = await hasRolePermission(userSpace?.role.toString() || "", ["administrator", "manage_roles", "owner"]);
             if (!hasPermisson) return manageError({ code: "no_execution_permission" });
  
             const spaceRole = Array.isArray(space.roles) ? space.roles.find((x) => String(x._id) === roleID) : null;
