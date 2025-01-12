@@ -192,6 +192,46 @@ const spacesResource = {
             manageError({ code: "internal_error", error });
         }
     },
+    removeSpaceUser: async ({ manageError, params, data, ids }: ManageRequestBody) => {
+        try {
+            const { spaceID } =  params;
+            if (!spaceID) return manageError({ code: "invalid_params" });
+
+            const space = await hasSpace({ _id: spaceID }, manageError);
+            if (!space) return;
+
+            let { id } = data;
+            if (!id) return manageError({ code: "invalid_data" });
+
+            const { userID } = ids;
+
+            const user = await hasUser({ _id: userID }, manageError);
+            if (!user) return;
+
+            const userSpace = user.spaces?.find(x => x.id == spaceID);
+            const hasPermisson = await hasRolePermission(userSpace?.role.toString() || "", ["administrator", "manage_users", "owner"]);
+            if (!hasPermisson) return manageError({ code: "no_execution_permission" });
+
+            id = stringService.removeSpacesAndLowerCase(id);
+
+            const removeUser = await hasUser({ id }, manageError);
+            if (!removeUser) return;
+
+            const spaces = removeUser.spaces?.filter(x => x.id == spaceID);
+        
+            let spaceUserMetrics = space.metrics?.users || 0;
+
+            await spaceModel.findByIdAndUpdate(space._id, { $set:{ metrics: { user: spaceUserMetrics - 1 } } }, { new: true });
+            
+            const removedUser  = await userModel.findByIdAndUpdate(removeUser._id, { $set:{ spaces, lastUpdate: Date.now() } }, { new: true }).select("-password");
+
+            return {
+                user: removedUser
+            };
+        } catch (error) {
+            manageError({ code: "internal_error", error });
+        }
+    },
     updateSpaceRole: async ({ manageError, params, data, ids }: ManageRequestBody) => {
         try {
             const { spaceID, roleID } =  params;
