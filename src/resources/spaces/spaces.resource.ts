@@ -161,12 +161,11 @@ const spacesResource = {
 
             id = stringService.removeSpacesAndLowerCase(id);
 
-            const invitedUser = await hasUser({ id }, manageError);
+            const invitedUser = await hasUser({ _id: id }, manageError);
             if (!invitedUser) return;
 
-            const extra: Partial<UserModelType> = {
-                lastUpdate: new Date(Date.now()),
-            };
+            const hasExistentSpace = invitedUser.spaces?.find(x => String(x.id) == spaceID);
+            if (hasExistentSpace) return manageError({ code: "user_already_in_space"});
 
             const normalRole = Array.isArray(space.roles) ? space.roles.find((x) =>  x.name == "normal") : null;
 
@@ -177,13 +176,13 @@ const spacesResource = {
                 id: space._id
             };
         
-            extra.spaces = [...(invitedUser.spaces || []), newSpace];
+            const spaces  = [...(invitedUser.spaces || []), newSpace];
 
             let spaceUserMetrics = space.metrics?.users || 0;
 
             await spaceModel.findByIdAndUpdate(space._id, { $set:{ metrics: { user: spaceUserMetrics + 1 } } }, { new: true });
             
-            const updatedUser  = await userModel.findByIdAndUpdate(invitedUser._id, { $set:{ ...invitedUser, extra } }, { new: true }).select("-password");
+            const updatedUser  = await userModel.findByIdAndUpdate(invitedUser._id, { $set:{ spaces, lastUpdate: Date.now() } }, { new: true }).select("-password");
 
             return {
                 user: updatedUser
@@ -214,10 +213,13 @@ const spacesResource = {
 
             id = stringService.removeSpacesAndLowerCase(id);
 
-            const removeUser = await hasUser({ id }, manageError);
+            const removeUser = await hasUser({ _id: id }, manageError);
             if (!removeUser) return;
 
-            const spaces = removeUser.spaces?.filter(x => x.id == spaceID);
+            const hasExistentSpace = removeUser.spaces?.find(x => String(x.id) == spaceID);
+            if (!hasExistentSpace) return manageError({ code: "user_not_in_space" });
+
+            const spaces = removeUser.spaces?.filter(x => String(x.id) != spaceID);
         
             let spaceUserMetrics = space.metrics?.users || 0;
 

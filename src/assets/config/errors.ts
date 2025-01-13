@@ -1,12 +1,13 @@
 interface ResponseError {
-    statusCode: 100 | 101 | 102 | 200 | 201 | 202 | 204 | 301 | 302 | 304 | 400 | 401 | 403 | 404 | 409 | 429 | 500 | 501 | 502 | 503;
-    message: string;
+  statusCode: 100 | 101 | 102 | 200 | 201 | 202 | 204 | 301 | 302 | 304 | 400 | 401 | 403 | 404 | 409 | 429 | 500 | 501 | 502 | 503;
+  message: string;
 };
 export type ResponseErrorsParams = 
   | "system_role_modification_forbidden"
   | "content_contains_badwords"
   | "user_already_registered"
   | "no_execution_permission"
+  | "user_already_in_space"
   | "space_already_exists" 
   | "admin_access_denied"
   | "no_credentials_send" 
@@ -17,6 +18,7 @@ export type ResponseErrorsParams =
   | "key_already_exists" 
   | "no_slots_available"
   | "token_is_not_valid"
+  | "user_not_in_space"
   | "space_not_found" 
   | "internal_error" 
   | "invalid_params" 
@@ -124,5 +126,13 @@ export const ResponseErrors: Record<ResponseErrorsParams, ResponseError> = {
   content_contains_badwords: {
     message: "Content contains prohibited words",
     statusCode: 400,
+  },
+  user_already_in_space: {
+    message: "User is already in the space",
+    statusCode: 409,
+  },
+  user_not_in_space: {
+    message: "User is not in the space",
+    statusCode: 404,
   },
 };
