@@ -8,6 +8,7 @@ export type ResponseErrorsParams =
   | "user_already_registered"
   | "no_execution_permission"
   | "user_already_in_space"
+  | "user_already_in_class"
   | "space_already_exists" 
   | "admin_access_denied"
   | "no_credentials_send" 
@@ -19,6 +20,7 @@ export type ResponseErrorsParams =
   | "no_slots_available"
   | "token_is_not_valid"
   | "user_not_in_space"
+  | "user_not_in_class"
   | "ticket_not_found" 
   | "class_not_found" 
   | "space_not_found" 
@@ -148,6 +150,14 @@ export const ResponseErrors: Record<ResponseErrorsParams, ResponseError> = {
   },
   user_not_in_space: {
     message: "User is not in the space",
+    statusCode: 404,
+  },
+  user_already_in_class: {
+    message: "User is already in the class",
+    statusCode: 409,
+  },
+  user_not_in_class: {
+    message: "User is not in the class",
     statusCode: 404,
   },
 };

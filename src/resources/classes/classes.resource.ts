@@ -154,6 +154,54 @@ const classesResource = {
             manageError({ code: "internal_error", error });
         }
     },
+    addClassUser: async ({ manageError, params, data, ids }: ManageRequestBody) => {
+        try {
+            const { classID } =  params;
+            if (!classID) return manageError({ code: "invalid_params" });
+
+            const classe = await classModel.findById(classID);
+            if (!classe) return manageError({ code: "class_not_found" });
+            const { userID } = ids;
+
+            const user = await hasUser({ _id: userID }, manageError);
+            if (!user) return;
+
+            const userSpace = user.spaces?.find(x => x.id == String(classe?.space?.id || ""));
+            const hasPermisson = await hasRolePermission(userSpace?.role.toString() || "", ["administrator", "manage_users", "manage_classes", "owner"]);
+            if (!hasPermisson) return manageError({ code: "no_execution_permission" });
+
+            let { id } = data;
+            if (!id) return manageError({ code: "invalid_data" });
+
+            id = stringService.removeSpacesAndLowerCase(id);
+
+            const invitedUser = await hasUser({ _id: id }, manageError);
+            if (!invitedUser) return;
+
+            const hasExistentClass = invitedUser.classes?.find(x => String(x.id) == classID);
+            if (hasExistentClass) return manageError({ code: "user_already_in_class"});
+
+            let newClass = {
+                entryAt: new Date(),
+                name: classe.name,
+                id: classe._id
+            };
+        
+            const classes  = [...(invitedUser.classes || []), newClass];
+
+            let classUserMetrics = classe.metrics?.users || 0;
+
+            await classModel.findByIdAndUpdate(classID, { $set:{ metrics: { user: classUserMetrics + 1 } } }, { new: true });
+            
+            const updatedUser  = await userModel.findByIdAndUpdate(invitedUser._id, { $set:{ classes, lastUpdate: Date.now() } }, { new: true }).select("-password");
+
+            return {
+                user: updatedUser
+            };
+        } catch (error) {
+            manageError({ code: "internal_error", error });
+        }
+    },
 };
 
 export default classesResource;
