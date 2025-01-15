@@ -13,6 +13,7 @@ export interface TicketModelType {
     lastUpdate?: Date;
     description?: string;
     type: "suggestion" | "report" | "feedback" | "other";
+    status: "pending" | "answered" | "progress" | "completed";
     scope: "space" | "system";
     userID: Types.ObjectId;
     spaceID?: Types.ObjectId;

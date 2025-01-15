@@ -14,6 +14,11 @@ const ticketSchema = new mongoose.Schema({
     description: {
         type: String
     },
+    status: {
+        enum: ["pending", "answered", "progress", "completed"],
+        default: "pending",
+        type: String,
+    },
     type: {
         type: String,
         enum: ["suggestion", "report", "feedback", "other"],
