@@ -42,6 +42,28 @@ const foodResource = {
             manageError({ code: "internal_error", error });
         }
     },
+    deleteFood: async ({ manageError, params, ids}: ManageRequestBody) => {
+        try {
+            const { spaceID } = params;
+            const { userID } =  ids;
+            if (!userID || !spaceID) return manageError({ code: "invalid_params" });
+
+            const user = await hasUser({ _id: userID }, manageError);
+            if (!user) return;
+
+            const userSpace = user.spaces?.find(x => x.id == String(spaceID));
+            const hasPermisson = await hasRolePermission(userSpace?.role.toString() || "", ["administrator", "manage_food", "owner"]);
+            if (!hasPermisson) return manageError({ code: "no_execution_permission" });
+
+            await foodModel.findByIdAndDelete(spaceID);
+
+            return {
+                delete: true
+            };
+        } catch (error) {
+            manageError({ code: "internal_error", error });
+        }
+    },
 };
 
 export default foodResource;
