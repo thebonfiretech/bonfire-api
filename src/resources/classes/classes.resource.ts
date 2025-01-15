@@ -29,7 +29,7 @@ const classesResource = {
             const space = await spaceModel.findById(spaceID);
             if (!space) return manageError({ code: "space_not_found" });
             
-            const newClass = new spaceModel({
+            const newClass = new classModel({
                 lastUpdate: new Date(Date.now()),
                 description,
                 name,
@@ -85,7 +85,7 @@ const classesResource = {
     },
     getSpaceClasses: async ({ manageError, params }: ManageRequestBody) => {
         try {
-            const { classID: spaceID } =  params;
+            const { spaceID } =  params;
             if (!spaceID) return manageError({ code: "invalid_params" });
 
             return await classModel.find({ spaceID });
@@ -116,11 +116,11 @@ const classesResource = {
 
                 const usersWithClasses = await userModel.find({ "classes.id": classID });
                 for (const classUser of usersWithClasses) {
-                    const userClass = classUser.classes.find(classe => String(classe.id) === String(classID));
-                    if (userClass) {
-                        userClass.name = filteredClass.name;
+                    const index = classUser.classes.findIndex(classe => String(classe.id) === String(classID));
+                    if (index) {
+                        classUser.classes[index].name = filteredClass.name;
+                        await classUser.save();
                     };
-                    await classUser.save();
                 };
             };
 
@@ -151,7 +151,7 @@ const classesResource = {
 
             const usersWithClasses = await userModel.find({ "classes.id": classID });
             for (const classUser of usersWithClasses) {
-                classUser.spaces.pull({ id: classID });
+                classUser.classes.pull({ id: classID });
                 await classUser.save();
             };
            
