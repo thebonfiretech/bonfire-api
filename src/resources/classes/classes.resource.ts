@@ -5,6 +5,7 @@ import { ManageRequestBody } from "@middlewares/manageRequest";
 import stringService from "@utils/services/stringServices";
 import spaceModel from "@database/model/space";
 import userModel from "@database/model/user";
+import classModel from "@database/model/class";
 
 const classesResource = {
     createClass: async ({ manageError, data, ids }: ManageRequestBody) => {
@@ -54,7 +55,33 @@ const classesResource = {
         } catch (error) {
             manageError({ code: "internal_error", error });
         }
-    } 
+    },
+    getClass: async ({ manageError, params }: ManageRequestBody) => {
+        try {
+            const { classID } =  params;
+            if (!classID) return manageError({ code: "invalid_params" });
+
+            const classe = await classModel.findById(classID);
+            if (!classe) return manageError({ code: "class_not_found" });
+
+            return classe;
+        } catch (error) {
+            manageError({ code: "internal_error", error });
+        }
+    },
+    getClassUsers: async ({ manageError, params }: ManageRequestBody) => {
+        try {
+            const { classID } =  params;
+            if (!classID) return manageError({ code: "invalid_params" });
+
+            const classe = await classModel.findById(classID);
+            if (!classe) return manageError({ code: "class_not_found" });
+
+            return await userModel.find({ "classes.id": classID }).select("-password");
+        } catch (error) {
+            manageError({ code: "internal_error", error });
+        }
+    },
 };
 
 export default classesResource;
