@@ -1,9 +1,8 @@
-import { TicketModelType } from "@utils/types/models/ticket";
 import { ManageRequestBody } from "@middlewares/manageRequest";
 import { hasRolePermission } from "@database/functions/space";
-import stringService from "@utils/services/stringServices";
+import { FoodModelType } from "@utils/types/models/food";
 import { hasUser } from "@database/functions/user";
-import ticketModel from "@database/model/ticket";
+import foodModel from "@database/model/food";
 
 const foodResource = {
     createFood: async ({ data, manageError, ids }: ManageRequestBody) => {
@@ -14,25 +13,21 @@ const foodResource = {
             const user = await hasUser({ _id: userID }, manageError);
             if (!user) return;
 
-            let { title, description, type, scope, attachments, displayName, spaceID }: Partial<TicketModelType> = data;
-            if (!title || !description || !type || !scope) return manageError({ code: "invalid_data" });
+            let { meals, spaceID, date }: Partial<FoodModelType> = data;
+            if (!meals || !spaceID || !date) return manageError({ code: "invalid_data" });
 
-            description = stringService.filterBadwords(description);
-            title = stringService.filterBadwords(title);
+            const userSpace = user.spaces?.find(x => x.id == String(spaceID));
+            const hasPermisson = await hasRolePermission(userSpace?.role.toString() || "", ["administrator", "manage_food", "owner"]);
+            if (!hasPermisson) return manageError({ code: "no_execution_permission" });
 
-            const newTicket = new ticketModel({
-                createAt: Date.now(),
-                displayName,
-                attachments,
-                description,
+            const newFood = new foodModel({
                 spaceID,
                 userID,
-                scope,
-                title,
-                type,
+                meals,
+                date,
             }); 
 
-            return await newTicket.save();
+            return await newFood.save();
         } catch (error) {
             manageError({ code: "internal_error", error });
         }
