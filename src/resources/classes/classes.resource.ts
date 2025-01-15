@@ -6,6 +6,7 @@ import stringService from "@utils/services/stringServices";
 import spaceModel from "@database/model/space";
 import userModel from "@database/model/user";
 import classModel from "@database/model/class";
+import objectService from "@utils/services/objectServices";
 
 const classesResource = {
     createClass: async ({ manageError, data, ids }: ManageRequestBody) => {
@@ -82,6 +83,46 @@ const classesResource = {
             manageError({ code: "internal_error", error });
         }
     },
+    updateClass: async ({ manageError, params, data, ids }: ManageRequestBody) => {
+        try {
+            const { classID } =  params;
+            if (!classID) return manageError({ code: "invalid_params" });
+
+            const classe = await classModel.findById(classID);
+            if (!classe) return manageError({ code: "class_not_found" });
+            const { userID } = ids;
+
+            const user = await hasUser({ _id: userID }, manageError);
+            if (!user) return;
+
+            const userSpace = user.spaces?.find(x => x.id == String(classe?.space?.id || ""));
+            const hasPermisson = await hasRolePermission(userSpace?.role.toString() || "", ["administrator", "manage_space", "manage_classes", "owner"]);
+            if (!hasPermisson) return manageError({ code: "no_execution_permission" });
+
+            const filteredClass = objectService.filterObject(data, ["createAt", "_id", "space"]);
+
+            if (filteredClass.name){
+                filteredClass.name = stringService.normalizeString(filteredClass.name);
+
+                const usersWithClasses = await userModel.find({ "classes.id": classID });
+                for (const classUser of usersWithClasses) {
+                    const userClass = classUser.classes.find(classe => String(classe.id) === String(classID));
+                    if (userClass) {
+                        userClass.name = filteredClass.name;
+                    };
+                    await classUser.save();
+                };
+            };
+
+            if (filteredClass.description){
+                filteredClass.description = stringService.normalizeString(filteredClass.description);
+            };
+
+            return await classModel.findByIdAndUpdate(classID, { $set:{ ...filteredClass, lastUpdate: Date.now() } }, { new: true });
+        } catch (error) {
+            manageError({ code: "internal_error", error });
+        }
+    }
 };
 
 export default classesResource;
