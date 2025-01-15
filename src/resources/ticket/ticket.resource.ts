@@ -70,10 +70,10 @@ const ticketResource = {
     },
     getSpaceTickets: async ({ manageError, ids, params }: ManageRequestBody) => {
         try {
-            const { ticketID, spaceID} =  params;
+            const { spaceID } =  params;
 
             const { userID } = ids;
-            if (!userID || !ticketID || spaceID) return manageError({ code: "invalid_params" });
+            if (!userID || !spaceID) return manageError({ code: "invalid_params" });
 
             const user = await hasUser({ _id: userID }, manageError);
             if (!user) return;
@@ -83,6 +83,21 @@ const ticketResource = {
             if (!hasPermisson) return manageError({ code: "no_execution_permission" });
 
             return await ticketModel.find({ spaceID, scope: "space" });
+        } catch (error) {
+            manageError({ code: "internal_error", error });
+        }
+    },
+    getSystemTickets: async ({ manageError, ids }: ManageRequestBody) => {
+        try {
+            const { userID } = ids;
+            if (!userID) return manageError({ code: "invalid_params" });
+
+            const user = await hasUser({ _id: userID }, manageError);
+            if (!user) return;
+
+            if (user.role !== "admin") return manageError({ code: "admin_access_denied" });
+
+            return await ticketModel.find({ scope: "system" });
         } catch (error) {
             manageError({ code: "internal_error", error });
         }
