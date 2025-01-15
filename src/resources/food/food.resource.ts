@@ -79,7 +79,7 @@ const foodResource = {
     },
     updateFood: async ({ manageError, params, ids, data}: ManageRequestBody) => {
         try {
-            const { spaceID: foodID } = params;
+            const { foodID } = params;
             const { userID } =  ids;
             if (!userID || !foodID) return manageError({ code: "invalid_params" });
 

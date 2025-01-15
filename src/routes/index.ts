@@ -5,6 +5,7 @@ import ticketsRouter from "./resources/tickets.router";
 import spacesRouter from "./resources/spaces.router";
 import usersRouter from "./resources/users.router";
 import adminRouter from "./resources/admin.router";
+import foodsRouter from "./resources/food.router";
 import keysRouter from "./resources/keys.router";
 import hasAdmin from "@middlewares/hasAdmin";
 import auth from "@middlewares/auth";
@@ -15,6 +16,7 @@ router.get("/ping", (req, res) => {
     res.sendStatus(200);
 });
 
+router.use("/foods", [controlAccess, auth],  foodsRouter);
 router.use("/admin", [controlAccess, auth, hasAdmin],  adminRouter);
 router.use("/tickets", [controlAccess, auth],  ticketsRouter);
 router.use("/spaces", [controlAccess, auth],  spacesRouter);
