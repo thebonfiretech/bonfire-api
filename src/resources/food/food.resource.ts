@@ -42,6 +42,19 @@ const foodResource = {
             manageError({ code: "internal_error", error });
         }
     },
+    getFood: async ({ manageError, params }: ManageRequestBody) => {
+        try {
+            const { foodID } =  params;
+            if (!foodID) return manageError({ code: "invalid_params" });
+
+            const food = await foodModel.findById(foodID);
+            if (!food) return manageError({ code: "food_not_found" });
+
+            return food;
+        } catch (error) {
+            manageError({ code: "internal_error", error });
+        }
+    },
     deleteFood: async ({ manageError, params, ids}: ManageRequestBody) => {
         try {
             const { spaceID } = params;

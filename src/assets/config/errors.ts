@@ -25,6 +25,7 @@ export type ResponseErrorsParams =
   | "invalid_params" 
   | "user_not_found" 
   | "role_not_found" 
+  | "food_not_found" 
   | "key_not_found" 
   | "access_denied"
   | "invalid_data" 
@@ -70,6 +71,10 @@ export const ResponseErrors: Record<ResponseErrorsParams, ResponseError> = {
   },
   ticket_not_found: {
     message: "Ticket not found",
+    statusCode: 404,
+  },
+  food_not_found: {
+    message: "Food not found",
     statusCode: 404,
   },
   key_not_found: {
