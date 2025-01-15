@@ -1,8 +1,9 @@
 import { ManageRequestBody } from "@middlewares/manageRequest";
-import { TicketModelType } from "@utils/types/models/ticket";
+import { TicketMessageType, TicketModelType } from "@utils/types/models/ticket";
 import stringService from "@utils/services/stringServices";
 import { hasUser } from "@database/functions/user";
 import ticketModel from "@database/model/ticket";
+import { hasRolePermission } from "@database/functions/space";
 
 const ticketResource = {
     createTicket: async ({ data, manageError, ids }: ManageRequestBody) => {
@@ -13,7 +14,7 @@ const ticketResource = {
             const user = await hasUser({ _id: userID }, manageError);
             if (!user) return;
 
-            let { title, description, type, scope, attachments, displayName }: Partial<TicketModelType> = data;
+            let { title, description, type, scope, attachments, displayName, spaceID }: Partial<TicketModelType> = data;
             if (!title || !description || !type || !scope) return manageError({ code: "invalid_data" });
 
             description = stringService.filterBadwords(description);
@@ -24,8 +25,9 @@ const ticketResource = {
                 displayName,
                 attachments,
                 description,
-                scope,
+                spaceID,
                 userID,
+                scope,
                 title,
                 type,
             }); 
@@ -65,7 +67,49 @@ const ticketResource = {
         } catch (error) {
             manageError({ code: "internal_error", error });
         }
-    }
+    },
+    addTicketMessage: async ({ manageError, ids, params, data }: ManageRequestBody) => {
+        try {
+            const { ticketID } =  params;
+
+            const { userID } = ids;
+            if (!userID || !ticketID) return manageError({ code: "invalid_params" });
+
+            const user = await hasUser({ _id: userID }, manageError);
+            if (!user) return;
+
+            const ticket = await ticketModel.findById(ticketID);
+            if (!ticket) return manageError({ code: "ticket_not_found" });
+
+            let { content, spaceID } = data;
+
+            content = stringService.filterBadwords(content || "");
+
+            if (userID !== String(ticket.userID) && ticket.scope === "space"){
+                const userSpace = user.spaces?.find(x => x.id == spaceID);
+                const hasPermisson = await hasRolePermission(userSpace?.role.toString() || "", ["administrator", "manage_tickets", "owner"]);
+                if (!hasPermisson) return manageError({ code: "no_execution_permission" });
+            };
+
+            if (userID !== String(ticket.userID) && ticket.scope === "system"){   
+                if (user.role !== "admin") return manageError({ code: "admin_access_denied" });
+            };
+
+            const messages = [
+                ...ticket.messages,
+                {
+                    date: Date.now(),
+                    content,
+                    userID
+                }
+            ];
+
+            return await ticketModel.findByIdAndUpdate(ticketID, { $set:{ messages, lastUpdate: Date.now() } }, { new: true }); 
+        } catch (error) {
+            manageError({ code: "internal_error", error });
+        }
+    },
+    
 };
 
 export default ticketResource;

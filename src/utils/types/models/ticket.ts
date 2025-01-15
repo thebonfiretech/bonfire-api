@@ -15,6 +15,7 @@ export interface TicketModelType {
     type: "suggestion" | "report" | "feedback" | "other";
     scope: "space" | "system";
     userID: Types.ObjectId;
+    spaceID?: Types.ObjectId;
     attachments: string[];
     messages: TicketMessageType[];
     displayName: boolean;

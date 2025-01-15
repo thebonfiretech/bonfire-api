@@ -31,6 +31,10 @@ const ticketSchema = new mongoose.Schema({
         required: true,
         ref: "user"
     },
+    spaceID: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "space"
+    },
     messages: {
         type: [{
             content: String,
