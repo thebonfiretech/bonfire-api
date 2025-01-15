@@ -21,10 +21,10 @@ const foodResource = {
             if (!hasPermisson) return manageError({ code: "no_execution_permission" });
 
             const newFood = new foodModel({
+                date: new Date(date),
                 spaceID,
                 userID,
                 meals,
-                date,
             }); 
 
             return await newFood.save();

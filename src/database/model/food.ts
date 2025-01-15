@@ -19,8 +19,9 @@ const foodSchema = new mongoose.Schema({
     },
     meals: {
         type: [{
+            items: [String],
             time: String,
-            items: [String]
+            _id: false,
         }],
         default: []
     }
