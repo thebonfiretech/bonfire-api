@@ -47,6 +47,24 @@ const ticketResource = {
         } catch (error) {
             manageError({ code: "internal_error", error });
         }
+    },
+    getTicket: async ({ manageError, ids, params }: ManageRequestBody) => {
+        try {
+            const { ticketID } =  params;
+
+            const { userID } = ids;
+            if (!userID || !ticketID) return manageError({ code: "invalid_params" });
+
+            const user = await hasUser({ _id: userID }, manageError);
+            if (!user) return;
+
+            const ticket = await ticketModel.findById(ticketID);
+            if (!ticket) return manageError({ code: "ticket_not_found" });
+
+            return ticket;
+        } catch (error) {
+            manageError({ code: "internal_error", error });
+        }
     }
 };
 

@@ -19,6 +19,7 @@ export type ResponseErrorsParams =
   | "no_slots_available"
   | "token_is_not_valid"
   | "user_not_in_space"
+  | "ticket_not_found" 
   | "space_not_found" 
   | "internal_error" 
   | "invalid_params" 
@@ -65,6 +66,10 @@ export const ResponseErrors: Record<ResponseErrorsParams, ResponseError> = {
   },
   user_not_found: {
     message: "User not found",
+    statusCode: 404,
+  },
+  ticket_not_found: {
+    message: "Ticket not found",
     statusCode: 404,
   },
   key_not_found: {
