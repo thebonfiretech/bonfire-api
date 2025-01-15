@@ -83,6 +83,16 @@ const classesResource = {
             manageError({ code: "internal_error", error });
         }
     },
+    getSpaceClasses: async ({ manageError, params }: ManageRequestBody) => {
+        try {
+            const { classID: spaceID } =  params;
+            if (!spaceID) return manageError({ code: "invalid_params" });
+
+            return await classModel.find({ spaceID });
+        } catch (error) {
+            manageError({ code: "internal_error", error });
+        }
+    },
     updateClass: async ({ manageError, params, data, ids }: ManageRequestBody) => {
         try {
             const { classID } =  params;
