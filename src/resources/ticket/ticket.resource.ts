@@ -1,9 +1,9 @@
+import { TicketModelType } from "@utils/types/models/ticket";
 import { ManageRequestBody } from "@middlewares/manageRequest";
-import { TicketMessageType, TicketModelType } from "@utils/types/models/ticket";
+import { hasRolePermission } from "@database/functions/space";
 import stringService from "@utils/services/stringServices";
 import { hasUser } from "@database/functions/user";
 import ticketModel from "@database/model/ticket";
-import { hasRolePermission } from "@database/functions/space";
 
 const ticketResource = {
     createTicket: async ({ data, manageError, ids }: ManageRequestBody) => {

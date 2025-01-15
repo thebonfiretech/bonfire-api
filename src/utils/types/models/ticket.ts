@@ -8,17 +8,17 @@ export interface TicketMessageType  {
 };
 
 export interface TicketModelType {
-    _id: string;
-    title: string;
-    createAt?: Date;
-    lastUpdate?: Date;
-    description?: string;
+    status: "pending" | "answered" | "progress" | "completed"; 
     type: "suggestion" | "report" | "feedback" | "other";
-    status: "pending" | "answered" | "progress" | "completed";
-    scope: "space" | "system";
-    userID: Types.ObjectId;
-    spaceID?: Types.ObjectId;
-    attachments: string[];
     messages: TicketMessageType[];
+    scope: "space" | "system";
+    spaceID?: Types.ObjectId;
+    userID: Types.ObjectId;
+    attachments: string[];
+    description?: string;
     displayName: boolean;
+    lastUpdate?: Date;
+    createAt?: Date;
+    title: string;
+    _id: string;
 };
