@@ -68,6 +68,25 @@ const ticketResource = {
             manageError({ code: "internal_error", error });
         }
     },
+    getSpaceTickets: async ({ manageError, ids, params }: ManageRequestBody) => {
+        try {
+            const { ticketID, spaceID} =  params;
+
+            const { userID } = ids;
+            if (!userID || !ticketID || spaceID) return manageError({ code: "invalid_params" });
+
+            const user = await hasUser({ _id: userID }, manageError);
+            if (!user) return;
+
+            const userSpace = user.spaces?.find(x => x.id == spaceID);
+            const hasPermisson = await hasRolePermission(userSpace?.role.toString() || "", ["administrator", "manage_tickets", "owner"]);
+            if (!hasPermisson) return manageError({ code: "no_execution_permission" });
+
+            return await ticketModel.find({ spaceID, scope: "space" });
+        } catch (error) {
+            manageError({ code: "internal_error", error });
+        }
+    },
     addTicketMessage: async ({ manageError, ids, params, data }: ManageRequestBody) => {
         try {
             const { ticketID } =  params;
