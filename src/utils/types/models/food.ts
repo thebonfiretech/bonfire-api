@@ -6,9 +6,9 @@ export interface FoodMealsType {
 };
 
 export interface FoodModelType {
-    spaceID?: Types.ObjectId;
+    spaceID: Types.ObjectId;
     userID: Types.ObjectId;
-    meals: FoodMealsType;
+    meals: FoodMealsType[];
     createAt: Date;
     _id: string;
     date: Date;
