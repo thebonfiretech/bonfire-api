@@ -1,6 +1,7 @@
 import { Router } from "express";
 
 import controlAccess from "@middlewares/controlAccess";
+import classesRouter from "./resources/classes.router";
 import ticketsRouter from "./resources/tickets.router";
 import spacesRouter from "./resources/spaces.router";
 import usersRouter from "./resources/users.router";
@@ -16,10 +17,11 @@ router.get("/ping", (req, res) => {
     res.sendStatus(200);
 });
 
-router.use("/foods", [controlAccess, auth],  foodsRouter);
 router.use("/admin", [controlAccess, auth, hasAdmin],  adminRouter);
 router.use("/tickets", [controlAccess, auth],  ticketsRouter);
+router.use("/classes", [controlAccess, auth],  classesRouter);
 router.use("/spaces", [controlAccess, auth],  spacesRouter);
+router.use("/foods", [controlAccess, auth],  foodsRouter);
 router.use("/keys", [controlAccess, auth],  keysRouter);
 router.use("/users", [controlAccess],  usersRouter);
 

@@ -1,12 +1,12 @@
-import { hasRolePermission, hasSpace } from "@database/functions/space";
-import { UserClassType, UserModelType, UserSpaceType } from "@utils/types/models/user";
-import { hasExistsUser, hasUser } from "@database/functions/user";
 import { ManageRequestBody } from "@middlewares/manageRequest";
+import { hasRolePermission } from "@database/functions/space";
 import stringService from "@utils/services/stringServices";
-import spaceModel from "@database/model/space";
-import userModel from "@database/model/user";
-import classModel from "@database/model/class";
 import objectService from "@utils/services/objectServices";
+import { UserClassType } from "@utils/types/models/user";
+import { hasUser } from "@database/functions/user";
+import spaceModel from "@database/model/space";
+import classModel from "@database/model/class";
+import userModel from "@database/model/user";
 
 const classesResource = {
     createClass: async ({ manageError, data, ids }: ManageRequestBody) => {
