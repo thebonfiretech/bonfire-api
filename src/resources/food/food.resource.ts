@@ -31,7 +31,17 @@ const foodResource = {
         } catch (error) {
             manageError({ code: "internal_error", error });
         }
-    }
+    },
+    getSpaceFoods: async ({ manageError, params }: ManageRequestBody) => {
+        try {
+            const { spaceID } =  params;
+            if (!spaceID) return manageError({ code: "invalid_params" });
+
+            return await foodModel.find({ spaceID });
+        } catch (error) {
+            manageError({ code: "internal_error", error });
+        }
+    },
 };
 
 export default foodResource;
