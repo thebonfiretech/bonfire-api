@@ -1,6 +1,7 @@
 import { Router } from "express";
 
 import controlAccess from "@middlewares/controlAccess";
+import ticketsRouter from "./resources/tickets.router";
 import spacesRouter from "./resources/spaces.router";
 import usersRouter from "./resources/users.router";
 import adminRouter from "./resources/admin.router";
@@ -15,6 +16,7 @@ router.get("/ping", (req, res) => {
 });
 
 router.use("/admin", [controlAccess, auth, hasAdmin],  adminRouter);
+router.use("/tickets", [controlAccess, auth],  ticketsRouter);
 router.use("/spaces", [controlAccess, auth],  spacesRouter);
 router.use("/keys", [controlAccess, auth],  keysRouter);
 router.use("/users", [controlAccess],  usersRouter);
