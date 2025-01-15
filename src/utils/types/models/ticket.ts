@@ -2,6 +2,7 @@ import { Types } from "mongoose";
 
 export interface TicketMessageType  {
     userID: Types.ObjectId;
+    username: string;
     content: string;
     date: Date;
 };

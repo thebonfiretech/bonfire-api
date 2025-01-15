@@ -63,6 +63,16 @@ const ticketResource = {
             const ticket = await ticketModel.findById(ticketID);
             if (!ticket) return manageError({ code: "ticket_not_found" });
 
+            if (userID !== String(ticket.userID) && ticket.scope === "space"){
+                const userSpace = user.spaces?.find(x => x.id == String(ticket.spaceID));
+                const hasPermisson = await hasRolePermission(userSpace?.role.toString() || "", ["administrator", "manage_tickets", "owner"]);
+                if (!hasPermisson) return manageError({ code: "no_execution_permission" });
+            };
+
+            if (userID !== String(ticket.userID) && ticket.scope === "system"){   
+                if (user.role !== "admin") return manageError({ code: "admin_access_denied" });
+            };
+
             return ticket;
         } catch (error) {
             manageError({ code: "internal_error", error });
@@ -132,6 +142,7 @@ const ticketResource = {
             const messages = [
                 ...ticket.messages,
                 {
+                    username: user.name,
                     date: Date.now(),
                     content,
                     userID

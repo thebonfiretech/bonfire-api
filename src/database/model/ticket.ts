@@ -43,6 +43,7 @@ const ticketSchema = new mongoose.Schema({
     messages: {
         type: [{
             content: String,
+            username: String,
             user: {
                 type: mongoose.Schema.Types.ObjectId,
                 ref: "user"
