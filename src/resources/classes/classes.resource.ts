@@ -122,7 +122,38 @@ const classesResource = {
         } catch (error) {
             manageError({ code: "internal_error", error });
         }
-    }
+    },
+    deleteClass: async ({ manageError, params, data, ids }: ManageRequestBody) => {
+        try {
+            const { classID } =  params;
+            if (!classID) return manageError({ code: "invalid_params" });
+
+            const classe = await classModel.findById(classID);
+            if (!classe) return manageError({ code: "class_not_found" });
+            const { userID } = ids;
+
+            const user = await hasUser({ _id: userID }, manageError);
+            if (!user) return;
+
+            const userSpace = user.spaces?.find(x => x.id == String(classe?.space?.id || ""));
+            const hasPermisson = await hasRolePermission(userSpace?.role.toString() || "", ["owner"]);
+            if (!hasPermisson) return manageError({ code: "no_execution_permission" });
+
+            const usersWithClasses = await userModel.find({ "classes.id": classID });
+            for (const classUser of usersWithClasses) {
+                classUser.spaces.pull({ id: classID });
+                await classUser.save();
+            };
+           
+            await classModel.findByIdAndDelete(classID);
+
+            return {
+                delete: true
+            };
+        } catch (error) {
+            manageError({ code: "internal_error", error });
+        }
+    },
 };
 
 export default classesResource;
