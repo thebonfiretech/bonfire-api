@@ -5,7 +5,7 @@ export interface UserSpaceType {
     id: string;
 };
 
-export interface UserClasseType {
+export interface UserClassType {
     entryAt?: Date;
     name: string;
     id: string;
@@ -23,7 +23,7 @@ export interface UserModelType {
     firstSignup?: Date;
     lastGetUser?: Date;
     spaces?: UserSpaceType[];
-    classes?: UserClasseType[];
+    classes?: UserClassType[];
     description?: string;
     images?: {
         profile?: string;
