@@ -57,22 +57,42 @@ const foodResource = {
     },
     deleteFood: async ({ manageError, params, ids}: ManageRequestBody) => {
         try {
-            const { spaceID } = params;
+            const { foodID } = params;
             const { userID } =  ids;
-            if (!userID || !spaceID) return manageError({ code: "invalid_params" });
+            if (!userID || !foodID) return manageError({ code: "invalid_params" });
 
             const user = await hasUser({ _id: userID }, manageError);
             if (!user) return;
 
-            const userSpace = user.spaces?.find(x => x.id == String(spaceID));
+            const userSpace = user.spaces?.find(x => x.id == String(foodID));
             const hasPermisson = await hasRolePermission(userSpace?.role.toString() || "", ["administrator", "manage_food", "owner"]);
             if (!hasPermisson) return manageError({ code: "no_execution_permission" });
 
-            await foodModel.findByIdAndDelete(spaceID);
+            await foodModel.findByIdAndDelete(foodID);
 
             return {
                 delete: true
             };
+        } catch (error) {
+            manageError({ code: "internal_error", error });
+        }
+    },
+    updateFood: async ({ manageError, params, ids, data}: ManageRequestBody) => {
+        try {
+            const { spaceID: foodID } = params;
+            const { userID } =  ids;
+            if (!userID || !foodID) return manageError({ code: "invalid_params" });
+
+            const user = await hasUser({ _id: userID }, manageError);
+            if (!user) return;
+
+            const userSpace = user.spaces?.find(x => x.id == String(foodID));
+            const hasPermisson = await hasRolePermission(userSpace?.role.toString() || "", ["administrator", "manage_food", "owner"]);
+            if (!hasPermisson) return manageError({ code: "no_execution_permission" });
+
+            let { meals } = data;
+
+            return await foodModel.findByIdAndUpdate(foodID, { $set:{ meals, lastUpdate: Date.now() } }, { new: true });
         } catch (error) {
             manageError({ code: "internal_error", error });
         }
