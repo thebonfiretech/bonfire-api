@@ -30,6 +30,7 @@ export type ResponseErrorsParams =
   | "role_not_found" 
   | "food_not_found" 
   | "key_not_found" 
+  | "post_not_found" 
   | "access_denied"
   | "invalid_data" 
   | "no_data_send" 
@@ -70,6 +71,10 @@ export const ResponseErrors: Record<ResponseErrorsParams, ResponseError> = {
   },
   user_not_found: {
     message: "User not found",
+    statusCode: 404,
+  },
+  post_not_found: {
+    message: "Post not found",
     statusCode: 404,
   },
   ticket_not_found: {

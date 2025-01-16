@@ -79,8 +79,7 @@ const postsResource = {
                 creator: {
                     name: creator.name,
                     id: creator._id,
-                }
-                
+                }   
             });
 
             return await newPost.save()
@@ -88,15 +87,15 @@ const postsResource = {
             manageError({ code: "internal_error", error });
         }
     },
-    getClass: async ({ manageError, params }: ManageRequestBody) => {
+    getPost: async ({ manageError, params }: ManageRequestBody) => {
         try {
-            const { classID } =  params;
-            if (!classID) return manageError({ code: "invalid_params" });
+            const { postID } =  params;
+            if (!postID) return manageError({ code: "invalid_params" });
 
-            const classe = await classModel.findById(classID);
-            if (!classe) return manageError({ code: "class_not_found" });
+            const post = await postModel.findById(postID);
+            if (!post) return manageError({ code: "post_not_found" });
 
-            return classe;
+            return post;
         } catch (error) {
             manageError({ code: "internal_error", error });
         }
