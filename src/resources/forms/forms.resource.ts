@@ -1,12 +1,11 @@
-import { TicketModelType } from "@utils/types/models/ticket";
 import { ManageRequestBody } from "@middlewares/manageRequest";
-import { hasRolePermission } from "@database/functions/space";
+import formControlModel from "@database/model/formControl";
 import stringService from "@utils/services/stringServices";
 import { hasUser } from "@database/functions/user";
-import ticketModel from "@database/model/ticket";
 
-const ticketResource = {
-    createTicket: async ({ data, manageError, ids }: ManageRequestBody) => {
+
+const formsResource = {
+    createFormControl: async ({ data, manageError, ids }: ManageRequestBody) => {
         try {
             const { userID } =  ids;
             if (!userID) return manageError({ code: "invalid_params" });
@@ -16,19 +15,21 @@ const ticketResource = {
 
             if (user.role != "admin") return manageError({ code: "admin_access_denied" });
 
-            let { title, description, type, scope, attachments, displayName, spaceID }: Partial<TicketModelType> = data;
-            if (!title || !description || !type || !scope) return manageError({ code: "invalid_data" });
+            let { name, description, images, authenticationRequired, singleShipping, shuffle, collectEmail, questions } = data;
+            if (!name || !questions) return manageError({ code: "invalid_data" });
 
-            const newForm = new ticketModel({
+            name = stringService.removeSpacesAndLowerCase(name);
+
+            const newForm = new formControlModel({
                 createAt: Date.now(),
-                displayName,
-                attachments,
-                description,
-                spaceID,
-                userID,
-                scope,
-                title,
-                type,
+                authenticationRequired, 
+                singleShipping, 
+                collectEmail, 
+                description, 
+                questions,
+                shuffle, 
+                images, 
+                name,
             }); 
 
             return await newForm.save();
@@ -38,4 +39,4 @@ const ticketResource = {
     },
 };
 
-export default ticketResource;
+export default formsResource;
