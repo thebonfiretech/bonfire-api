@@ -42,6 +42,15 @@ const userSchema = new mongoose.Schema({
             ref: "space"
         } 
     }],
+    classes: [{
+        _id: false,
+        entryAt: Date,
+        name: String,
+        id: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "class"
+        } 
+    }],
     description: {
         type: String
     },

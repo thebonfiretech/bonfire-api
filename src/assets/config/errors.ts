@@ -8,6 +8,7 @@ export type ResponseErrorsParams =
   | "user_already_registered"
   | "no_execution_permission"
   | "user_already_in_space"
+  | "user_already_in_class"
   | "space_already_exists" 
   | "admin_access_denied"
   | "no_credentials_send" 
@@ -19,12 +20,17 @@ export type ResponseErrorsParams =
   | "no_slots_available"
   | "token_is_not_valid"
   | "user_not_in_space"
+  | "user_not_in_class"
+  | "ticket_not_found" 
+  | "class_not_found" 
   | "space_not_found" 
   | "internal_error" 
   | "invalid_params" 
   | "user_not_found" 
   | "role_not_found" 
+  | "food_not_found" 
   | "key_not_found" 
+  | "post_not_found" 
   | "access_denied"
   | "invalid_data" 
   | "no_data_send" 
@@ -65,6 +71,22 @@ export const ResponseErrors: Record<ResponseErrorsParams, ResponseError> = {
   },
   user_not_found: {
     message: "User not found",
+    statusCode: 404,
+  },
+  post_not_found: {
+    message: "Post not found",
+    statusCode: 404,
+  },
+  ticket_not_found: {
+    message: "Ticket not found",
+    statusCode: 404,
+  },
+  class_not_found: {
+    message: "Class not found",
+    statusCode: 404,
+  },
+  food_not_found: {
+    message: "Food not found",
     statusCode: 404,
   },
   key_not_found: {
@@ -133,6 +155,14 @@ export const ResponseErrors: Record<ResponseErrorsParams, ResponseError> = {
   },
   user_not_in_space: {
     message: "User is not in the space",
+    statusCode: 404,
+  },
+  user_already_in_class: {
+    message: "User is already in the class",
+    statusCode: 409,
+  },
+  user_not_in_class: {
+    message: "User is not in the class",
     statusCode: 404,
   },
 };

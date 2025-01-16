@@ -5,6 +5,12 @@ export interface UserSpaceType {
     id: string;
 };
 
+export interface UserClassType {
+    entryAt?: Date;
+    name: string;
+    id: string;
+};
+
 export interface UserModelType {
     _id: string;
     id: string;
@@ -17,6 +23,7 @@ export interface UserModelType {
     firstSignup?: Date;
     lastGetUser?: Date;
     spaces?: UserSpaceType[];
+    classes?: UserClassType[];
     description?: string;
     images?: {
         profile?: string;
