@@ -121,69 +121,45 @@ const postsResource = {
             manageError({ code: "internal_error", error });
         }
     },
-    updateClass: async ({ manageError, params, data, ids }: ManageRequestBody) => {
+    updatePost: async ({ manageError, params, data, ids }: ManageRequestBody) => {
         try {
-            const { classID } =  params;
-            if (!classID) return manageError({ code: "invalid_params" });
+            const { postID } =  params;
+            if (!postID) return manageError({ code: "invalid_params" });
 
-            const classe = await classModel.findById(classID);
-            if (!classe) return manageError({ code: "class_not_found" });
+            const post = await postModel.findById(postID);
+            if (!post) return manageError({ code: "post_not_found" });
+            
             const { userID } = ids;
-
             const user = await hasUser({ _id: userID }, manageError);
             if (!user) return;
 
-            const userSpace = user.spaces?.find(x => x.id == String(classe?.space?.id || ""));
-            const hasPermisson = await hasRolePermission(userSpace?.role.toString() || "", ["administrator", "manage_space", "manage_classes", "owner"]);
-            if (!hasPermisson) return manageError({ code: "no_execution_permission" });
+            if (user._id != (post.creator?.id || "").toString()) return manageError({ code: "no_execution_permission" });
 
-            const filteredClass = objectService.filterObject(data, ["createAt", "_id", "space"]);
+            let filteredPost = objectService.getObject(data, ["title", "content", "attachments", "type"]);
 
-            if (filteredClass.name){
-                filteredClass.name = stringService.normalizeString(filteredClass.name);
+            if (filteredPost.content) filteredPost.content = stringService.filterBadwords(stringService.normalizeString(filteredPost.content));
+            if (filteredPost.title) filteredPost.title = stringService.filterBadwords(stringService.normalizeString(filteredPost.title));
 
-                const usersWithClasses = await userModel.find({ "classes.id": classID });
-                for (const classUser of usersWithClasses) {
-                    const index = classUser.classes.findIndex(classe => String(classe.id) === String(classID));
-                    if (index) {
-                        classUser.classes[index].name = filteredClass.name;
-                        await classUser.save();
-                    };
-                };
-            };
-
-            if (filteredClass.description){
-                filteredClass.description = stringService.normalizeString(filteredClass.description);
-            };
-
-            return await classModel.findByIdAndUpdate(classID, { $set:{ ...filteredClass, lastUpdate: Date.now() } }, { new: true });
+            return await postModel.findByIdAndUpdate(postID, { $set:{ ...filteredPost, lastUpdate: Date.now() } }, { new: true });
         } catch (error) {
             manageError({ code: "internal_error", error });
         }
     },
-    deleteClass: async ({ manageError, params, data, ids }: ManageRequestBody) => {
+    deletePost: async ({ manageError, params, data, ids }: ManageRequestBody) => {
         try {
-            const { classID } =  params;
-            if (!classID) return manageError({ code: "invalid_params" });
+            const { postID } =  params;
+            if (!postID) return manageError({ code: "invalid_params" });
 
-            const classe = await classModel.findById(classID);
-            if (!classe) return manageError({ code: "class_not_found" });
+            const post = await postModel.findById(postID);
+            if (!post) return manageError({ code: "post_not_found" });
+            
             const { userID } = ids;
-
             const user = await hasUser({ _id: userID }, manageError);
             if (!user) return;
 
-            const userSpace = user.spaces?.find(x => x.id == String(classe?.space?.id || ""));
-            const hasPermisson = await hasRolePermission(userSpace?.role.toString() || "", ["owner"]);
-            if (!hasPermisson) return manageError({ code: "no_execution_permission" });
-
-            const usersWithClasses = await userModel.find({ "classes.id": classID });
-            for (const classUser of usersWithClasses) {
-                classUser.classes.pull({ id: classID });
-                await classUser.save();
-            };
-           
-            await classModel.findByIdAndDelete(classID);
+            if (user._id != (post.creator?.id || "").toString()) return manageError({ code: "no_execution_permission" });
+            
+            await postModel.findByIdAndDelete(postID);
 
             return {
                 delete: true

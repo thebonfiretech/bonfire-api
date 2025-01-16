@@ -11,7 +11,8 @@ const postSchema = new mongoose.Schema({
     creator: {
         id:{
             type: mongoose.Schema.Types.ObjectId,
-            ref: "user"
+            ref: "user",
+            require: true
         },
         avatar: String,
         name: String
