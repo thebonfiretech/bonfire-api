@@ -100,25 +100,23 @@ const postsResource = {
             manageError({ code: "internal_error", error });
         }
     },
-    getClassUsers: async ({ manageError, params }: ManageRequestBody) => {
+    getPosts: async ({ manageError, params }: ManageRequestBody) => {
         try {
-            const { classID } =  params;
-            if (!classID) return manageError({ code: "invalid_params" });
+            const { scope, id } =  params;
+            if (!scope || !id) return manageError({ code: "invalid_params" });
 
-            const classe = await classModel.findById(classID);
-            if (!classe) return manageError({ code: "class_not_found" });
+            let extra = {
+                scope
+            };
 
-            return await userModel.find({ "classes.id": classID }).select("-password");
-        } catch (error) {
-            manageError({ code: "internal_error", error });
-        }
-    },
-    getSpaceClasses: async ({ manageError, params }: ManageRequestBody) => {
-        try {
-            const { spaceID } =  params;
-            if (!spaceID) return manageError({ code: "invalid_params" });
+            if (scope == "space" && scope == "class" && scope == "role"){
+                extra = {
+                    ...extra,
+                    [`${scope}.id`]: id
+                }
+            };
 
-            return await classModel.find({ spaceID });
+            return await postModel.find(extra);
         } catch (error) {
             manageError({ code: "internal_error", error });
         }
@@ -193,97 +191,7 @@ const postsResource = {
         } catch (error) {
             manageError({ code: "internal_error", error });
         }
-    },
-    addClassUser: async ({ manageError, params, data, ids }: ManageRequestBody) => {
-        try {
-            const { classID } =  params;
-            if (!classID) return manageError({ code: "invalid_params" });
-
-            const classe = await classModel.findById(classID);
-            if (!classe) return manageError({ code: "class_not_found" });
-            const { userID } = ids;
-
-            const user = await hasUser({ _id: userID }, manageError);
-            if (!user) return;
-
-            const userSpace = user.spaces?.find(x => x.id == String(classe?.space?.id || ""));
-            const hasPermisson = await hasRolePermission(userSpace?.role.toString() || "", ["administrator", "manage_classes", "owner"]);
-            if (!hasPermisson) return manageError({ code: "no_execution_permission" });
-
-            let { id } = data;
-            if (!id) return manageError({ code: "invalid_data" });
-
-            id = stringService.removeSpacesAndLowerCase(id);
-
-            const invitedUser = await hasUser({ _id: id }, manageError);
-            if (!invitedUser) return;
-
-            const hasExistentClass = invitedUser.classes?.find(x => String(x.id) == classID);
-            if (hasExistentClass) return manageError({ code: "user_already_in_class"});
-
-            let newClass = {
-                entryAt: new Date(),
-                name: classe.name,
-                id: classe._id
-            };
-        
-            const classes  = [...(invitedUser.classes || []), newClass];
-
-            let classUserMetrics = classe.metrics?.users || 0;
-
-            await classModel.findByIdAndUpdate(classID, { $set:{ metrics: { user: classUserMetrics + 1 } } }, { new: true });
-            
-            const updatedUser  = await userModel.findByIdAndUpdate(invitedUser._id, { $set:{ classes, lastUpdate: Date.now() } }, { new: true }).select("-password");
-
-            return {
-                user: updatedUser
-            };
-        } catch (error) {
-            manageError({ code: "internal_error", error });
-        }
-    },
-    removeClassUser: async ({ manageError, params, data, ids }: ManageRequestBody) => {
-        try {
-            const { classID } =  params;
-            if (!classID) return manageError({ code: "invalid_params" });
-
-            const classe = await classModel.findById(classID);
-            if (!classe) return manageError({ code: "class_not_found" });
-            const { userID } = ids;
-
-            const user = await hasUser({ _id: userID }, manageError);
-            if (!user) return;
-
-            const userSpace = user.spaces?.find(x => x.id == String(classe?.space?.id || ""));
-            const hasPermisson = await hasRolePermission(userSpace?.role.toString() || "", ["administrator", "manage_classes", "owner"]);
-            if (!hasPermisson) return manageError({ code: "no_execution_permission" });
-
-            let { id } = data;
-            if (!id) return manageError({ code: "invalid_data" });
-
-            id = stringService.removeSpacesAndLowerCase(id);
-
-            const removedUser = await hasUser({ _id: id }, manageError);
-            if (!removedUser) return;
-
-            const hasExistentClass = removedUser.classes?.find(x => String(x.id) == classID);
-            if (!hasExistentClass) return manageError({ code: "user_not_in_class" });
-        
-            const classes = removedUser.classes?.filter(x => String(x.id) != classID);
-
-            let classUserMetrics = classe.metrics?.users || 0;
-
-            await classModel.findByIdAndUpdate(classID, { $set:{ metrics: { user: classUserMetrics - 1 } } }, { new: true });
-            
-            const updatedUser  = await userModel.findByIdAndUpdate(removedUser._id, { $set:{ classes, lastUpdate: Date.now() } }, { new: true }).select("-password");
-
-            return {
-                user: updatedUser
-            };
-        } catch (error) {
-            manageError({ code: "internal_error", error });
-        }
-    },
+    }, 
 };
 
 export default postsResource;
