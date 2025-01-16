@@ -1,21 +1,21 @@
 import mongoose from "mongoose";
 
 const postSchema = new mongoose.Schema({
-    spaceID: {
+    space: {
         id:{
             type: mongoose.Schema.Types.ObjectId,
             ref: "space"
         },
         name: String
     }, 
-    classID: {
+    class: {
         id:{
             type: mongoose.Schema.Types.ObjectId,
             ref: "class"
         },
         name: String
     }, 
-    roleID: {
+    role: {
         id:{
             type: mongoose.Schema.Types.ObjectId,
             ref: "class"
@@ -45,7 +45,8 @@ const postSchema = new mongoose.Schema({
     },
     scope: {
         type: String,
-        enum: ["all", "space", "class", "role", "administrators"]
+        enum: ["all", "space", "class", "role", "administrators"],
+        default: "all"
     },
 });
 
