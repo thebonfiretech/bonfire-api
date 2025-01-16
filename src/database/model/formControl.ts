@@ -1,90 +1,34 @@
-import mongoose from "mongoose";
+import { ObjectId } from "mongoose";
 
-const questionSchema = new mongoose.Schema({
-    type: {
-        type: String,
-        enum: ["text", "multiple-choice", "single-choice"],
-        required: true,
-    },
-    text: {
-        type: String,
-        required: true,
-    },
-    options: {
-        type: [
-            {
-                id: {
-                    type: mongoose.Schema.Types.ObjectId,
-                    default: new mongoose.Types.ObjectId(),
-                },
-                text: {
-                    type: String,
-                    required: true,
-                },
-            },
-        ],
-        default: [],
-    },
-    required: {
-        type: Boolean,
-        default: false,
-    },
-});
+export interface OptionFormType {
+    id: ObjectId;
+    text: string;
+}
 
-const formControlSchema = new mongoose.Schema({
-    name: {
-        required: true,
-        type: String,
-        unique: true,
-    },
+export interface QuestionFormType {
+    type: "text" | "multiple-choice" | "single-choice";
+    text: string;
+    options: OptionFormType[];
+    required: boolean;
+}
+
+export interface FormControlModelType {
+    name: string;
     user: {
-        id: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "user",
-        },
-        avatar: String,
-        name: String,
-    },
-    status: {
-        type: String,
-        enum: ["active", "inactive"],
-        default: "active",
-    },
-    createAt: {
-        type: Date,
-        default: Date.now(),
-    },
-    lastUpdate: {
-        type: Date,
-    },
-    description: {
-        type: String,
-    },
-    images: {
-        banner: String,
-    },
-    authenticationRequired: {
-        type: Boolean,
-        default: false,
-    },
-    singleShipping: {
-        type: Boolean,
-        default: false,
-    },
-    shuffle: {
-        type: Boolean,
-        default: false,
-    },
-    collectEmail: {
-        type: Boolean,
-        default: true,
-    },
-    questions: {
-        type: [questionSchema],
-        default: [],
-    },
-});
-
-const formControlModel = mongoose.model("form-control", formControlSchema);
-
-export default formControlModel;
+        id: ObjectId;
+        avatar?: string;
+        name: string;
+    };
+    status: "active" | "inactive";
+    createAt: Date;
+    lastUpdate?: Date;
+    description?: string;
+    images?: {
+        banner?: string;
+    };
+    authenticationRequired: boolean;
+    singleShipping: boolean;
+    shuffle: boolean;
+    collectEmail: boolean;
+    questions: QuestionFormType[];
+}
