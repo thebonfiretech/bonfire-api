@@ -1,14 +1,11 @@
+import { PostModelType, PostScopeType } from "@utils/types/models/post";
 import { ManageRequestBody } from "@middlewares/manageRequest";
 import { hasRolePermission } from "@database/functions/space";
 import stringService from "@utils/services/stringServices";
 import objectService from "@utils/services/objectServices";
-import { UserClassType } from "@utils/types/models/user";
 import { hasUser } from "@database/functions/user";
 import spaceModel from "@database/model/space";
 import classModel from "@database/model/class";
-import userModel from "@database/model/user";
-import { PostModelType, PostScopeType } from "@utils/types/models/post";
-import { ObjectId } from "mongoose";
 import postModel from "@database/model/post";
 
 const postsResource = {
@@ -100,7 +97,7 @@ const postsResource = {
             manageError({ code: "internal_error", error });
         }
     },
-    getPosts: async ({ manageError, params }: ManageRequestBody) => {
+    getPostsWithScope: async ({ manageError, params }: ManageRequestBody) => {
         try {
             const { scope, id } =  params;
             if (!scope || !id) return manageError({ code: "invalid_params" });

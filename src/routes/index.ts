@@ -6,11 +6,11 @@ import ticketsRouter from "./resources/tickets.router";
 import spacesRouter from "./resources/spaces.router";
 import usersRouter from "./resources/users.router";
 import adminRouter from "./resources/admin.router";
+import postsRouter from "./resources/posts.router";
 import foodsRouter from "./resources/food.router";
 import keysRouter from "./resources/keys.router";
 import hasAdmin from "@middlewares/hasAdmin";
 import auth from "@middlewares/auth";
-import postsRouter from "./resources/posts.router";
 
 const router = Router();
 
