@@ -8,6 +8,14 @@ const postSchema = new mongoose.Schema({
         },
         name: String
     }, 
+    creator: {
+        id:{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "user"
+        },
+        avatar: String,
+        name: String
+    }, 
     class: {
         id:{
             type: mongoose.Schema.Types.ObjectId,
@@ -35,8 +43,9 @@ const postSchema = new mongoose.Schema({
     title: {
         type: String
     },
-    images: {
-        profile: String
+    attachments: {
+        type: [String],
+        default: []
     },
     type: {
         type: String,

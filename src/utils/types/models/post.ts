@@ -1,5 +1,8 @@
 import { ObjectId } from "mongoose";
 
+export type PostScopeType = "all" | "space" | "class" | "role" | "administrators";
+export type PostType = "default" | "report" | "warn";
+
 export interface PostModelType {
     space: {
         id: ObjectId;
@@ -7,6 +10,11 @@ export interface PostModelType {
     };
     class: {
         id: ObjectId;
+        name: string;
+    };
+    creator: {
+        id: ObjectId;
+        avatar: string;
         name: string;
     };
     role: {
@@ -17,9 +25,7 @@ export interface PostModelType {
     lastUpdate?: Date;
     content?: string;
     title?: string;
-    images?: {
-        profile?: string;
-    };
-    type: "default" | "report" | "warn";
-    scope: "all" | "space" | "class" | "role" | "administrators";
+    attachments: string[];
+    type: PostType;
+    scope: PostScopeType;
 };

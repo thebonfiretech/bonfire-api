@@ -6,6 +6,7 @@ export const SpaceRolePermissionsValues = [
     "manage_space",
     "manage_roles",
     "manage_users",
+    "manage_posts",
     "manage_coins",
     "manage_food",
     "owner", 
