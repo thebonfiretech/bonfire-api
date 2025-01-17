@@ -24,9 +24,9 @@ router.use("/tickets", [controlAccess, auth],  ticketsRouter);
 router.use("/classes", [controlAccess, auth],  classesRouter);
 router.use("/spaces", [controlAccess, auth],  spacesRouter);
 router.use("/posts", [controlAccess, auth],  postsRouter);
-router.use("/forms", [controlAccess, auth],  formsRouter);
 router.use("/foods", [controlAccess, auth],  foodsRouter);
 router.use("/keys", [controlAccess, auth],  keysRouter);
+router.use("/forms", [controlAccess],  formsRouter);
 router.use("/users", [controlAccess],  usersRouter);
 
 export default router;
