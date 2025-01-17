@@ -61,6 +61,19 @@ const formsResource = {
             manageError({ code: "internal_error", error });
         }
     },
+    deleteFormControl: async ({  manageError, params }: ManageRequestBody) => {
+        try {
+            const { formControlID } = params;
+            if (!formControlID) return manageError({ code: "invalid_params" });
+
+            const formControl = await formControlModel.findById(formControlID);
+            if (!formControl) return manageError({ code: "form_not_found" });
+
+            return await formControlModel.findByIdAndDelete(formControlID);
+        } catch (error) {
+            manageError({ code: "internal_error", error });
+        }
+    },
     getFormControl: async ({ manageError, params }: ManageRequestBody) => {
         try {
             const { formControlID } = params;
