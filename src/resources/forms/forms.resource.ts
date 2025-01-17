@@ -55,6 +55,13 @@ const formsResource = {
             manageError({ code: "internal_error", error });
         }
     },
+    getFormsControl: async ({ manageError }: ManageRequestBody) => {
+        try {
+            return await formControlModel.find();
+        } catch (error) {
+            manageError({ code: "internal_error", error });
+        }
+    },
 };
 
 export default formsResource;

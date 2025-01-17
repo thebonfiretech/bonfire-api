@@ -13,10 +13,6 @@ const questionSchema = new mongoose.Schema({
     options: {
         type: [
             {
-                id: {
-                    type: mongoose.Schema.Types.ObjectId,
-                    default: new mongoose.Types.ObjectId(),
-                },
                 text: {
                     type: String,
                     required: true,

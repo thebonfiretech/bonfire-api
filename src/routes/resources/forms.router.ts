@@ -8,5 +8,6 @@ const formsRouter = Router();
 
 formsRouter.post("/control/create", [hasAdmin], manageRequest(formsResource.createFormControl));
 formsRouter.get("/control/:formControlID", manageRequest(formsResource.getFormControl));
+formsRouter.get("/control/", manageRequest(formsResource.getFormsControl));
 
 export default formsRouter;
