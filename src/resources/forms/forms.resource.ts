@@ -20,9 +20,16 @@ const formsResource = {
 
             name = stringService.removeSpacesAndLowerCase(name);
 
+            const hasFormControl = await formControlModel.findOne({ name });
+            if (hasFormControl) return manageError({ code: "form_not_found" });
+
             const newForm = new formControlModel({
-                createAt: Date.now(),
                 authenticationRequired, 
+                user: {
+                    name: user.name,
+                    id: user._id
+                },
+                createAt: Date.now(),
                 singleShipping, 
                 collectEmail, 
                 description, 

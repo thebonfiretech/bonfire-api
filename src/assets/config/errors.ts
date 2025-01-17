@@ -13,6 +13,7 @@ export type ResponseErrorsParams =
   | "admin_access_denied"
   | "no_credentials_send" 
   | "user_already_exists" 
+  | "form_already_exists" 
   | "role_already_exists" 
   | "invalid_credentials" 
   | "user_not_registered"
@@ -29,6 +30,7 @@ export type ResponseErrorsParams =
   | "user_not_found" 
   | "role_not_found" 
   | "food_not_found" 
+  | "form_not_found" 
   | "key_not_found" 
   | "post_not_found" 
   | "access_denied"
@@ -73,6 +75,10 @@ export const ResponseErrors: Record<ResponseErrorsParams, ResponseError> = {
     message: "User not found",
     statusCode: 404,
   },
+  form_not_found: {
+    message: "Form not found",
+    statusCode: 404,
+  },
   post_not_found: {
     message: "Post not found",
     statusCode: 404,
@@ -107,6 +113,10 @@ export const ResponseErrors: Record<ResponseErrorsParams, ResponseError> = {
   },
   role_already_exists: {
     message: "Role already exists",
+    statusCode: 409,
+  },
+  form_already_exists: {
+    message: "Form already exists",
     statusCode: 409,
   },
   user_already_registered: {
