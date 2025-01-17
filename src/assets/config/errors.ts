@@ -2,8 +2,10 @@ interface ResponseError {
   statusCode: 100 | 101 | 102 | 200 | 201 | 202 | 204 | 301 | 302 | 304 | 400 | 401 | 403 | 404 | 409 | 429 | 500 | 501 | 502 | 503;
   message: string;
 };
+
 export type ResponseErrorsParams = 
   | "system_role_modification_forbidden"
+  | "unauthorized_form_submission"
   | "content_contains_badwords"
   | "user_already_registered"
   | "no_execution_permission"
@@ -174,5 +176,9 @@ export const ResponseErrors: Record<ResponseErrorsParams, ResponseError> = {
   user_not_in_class: {
     message: "User is not in the class",
     statusCode: 404,
+  },
+  unauthorized_form_submission: {
+    message: "Unauthorized form submission",
+    statusCode: 403,
   },
 };

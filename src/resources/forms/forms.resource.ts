@@ -135,25 +135,38 @@ const formsResource = {
             manageError({ code: "internal_error", error });
         }
     },
-    sendForm: async ({ manageError, params, ids }: ManageRequestBody) => {
+    sendForm: async ({ manageError, params, data, defaultExpress }: ManageRequestBody) => {
         try {
-            const { userID } =  ids;
-            if (!userID) return manageError({ code: "invalid_params" });
-
-            const user = await hasUser({ _id: userID }, manageError);
-            if (!user) return;
-
-            const { name } = params;
+            let { name } = params;
             if (!name ) return manageError({ code: "invalid_params" });
+
+            name = stringService.removeSpacesAndLowerCase(name);
 
             const formControl = await formControlModel.findOne({name});
             if (!formControl) return manageError({ code: "form_not_found" });
 
-            const hasFillForm = await formModel.exists({ formControlID: formControl._id, "user.id": userID });
-            
-            return {
-                authorized: !hasFillForm
+            const { answers, user } = data;
+
+            if (formControl.authenticationRequired){
+                var token = defaultExpress.req.header('authorization');
+                if (!token || !user.id) return manageError({ code: "unauthorized_form_submission" });
             };
+
+            if (formControl.collectEmail && !user.email) return manageError({ code: "unauthorized_form_submission" });
+
+            if (formControl.singleShipping){
+                const hasFillForm = await formModel.exists({ formControlID: formControl._id, "user.id": user.id });
+                if (hasFillForm) return manageError({ code: "unauthorized_form_submission" });
+            };
+            
+            const newForm = new formModel({
+                formControlID: formControl._id,
+                answers,
+                user
+            });
+
+            return await newForm.save();
+
         } catch (error) {
             manageError({ code: "internal_error", error });
         }
