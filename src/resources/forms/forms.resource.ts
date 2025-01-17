@@ -70,6 +70,11 @@ const formsResource = {
             const formControl = await formControlModel.findById(formControlID);
             if (!formControl) return manageError({ code: "form_not_found" });
 
+            const forms = await formModel.find({ formControlID });
+            for (const form of forms) {
+                await formModel.findByIdAndDelete(form._id);
+            };
+
             await formControlModel.findByIdAndDelete(formControlID);
             
             return {
