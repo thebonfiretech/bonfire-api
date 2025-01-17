@@ -13,4 +13,6 @@ formsRouter.get("/control/name/:name", manageRequest(formsResource.getFormContro
 formsRouter.get("/control/:formControlID", manageRequest(formsResource.getFormControl));
 formsRouter.get("/control/", [hasAdmin], manageRequest(formsResource.getFormsControl));
 
+formsRouter.get("/:name/canSendForm", manageRequest(formsResource.canSendForm));
+
 export default formsRouter;

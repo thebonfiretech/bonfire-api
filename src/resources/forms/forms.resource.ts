@@ -3,6 +3,7 @@ import formControlModel from "@database/model/formControl";
 import stringService from "@utils/services/stringServices";
 import objectService from "@utils/services/objectServices";
 import { hasUser } from "@database/functions/user";
+import formModel from "@database/model/form";
 
 
 const formsResource = {
@@ -107,6 +108,29 @@ const formsResource = {
     getFormsControl: async ({ manageError }: ManageRequestBody) => {
         try {
             return await formControlModel.find();
+        } catch (error) {
+            manageError({ code: "internal_error", error });
+        }
+    },
+    canSendForm: async ({ manageError, params, ids }: ManageRequestBody) => {
+        try {
+            const { userID } =  ids;
+            if (!userID) return manageError({ code: "invalid_params" });
+
+            const user = await hasUser({ _id: userID }, manageError);
+            if (!user) return;
+
+            const { name } = params;
+            if (!name ) return manageError({ code: "invalid_params" });
+
+            const formControl = await formControlModel.findOne({name});
+            if (!formControl) return manageError({ code: "form_not_found" });
+
+            const hasFillForm = await formModel.exists({ formControlID: formControl._id, "user.id": userID });
+            
+            return {
+                authorized: !hasFillForm
+            };
         } catch (error) {
             manageError({ code: "internal_error", error });
         }
