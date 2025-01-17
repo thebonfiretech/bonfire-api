@@ -74,6 +74,19 @@ const formsResource = {
             manageError({ code: "internal_error", error });
         }
     },
+    getFormControlWithName: async ({ manageError, params }: ManageRequestBody) => {
+        try {
+            const { name } = params;
+            if (!name) return manageError({ code: "invalid_params" });
+
+            const formControl = await formControlModel.findOne({name});
+            if (!formControl) return manageError({ code: "form_not_found" });
+
+            return formControl;
+        } catch (error) {
+            manageError({ code: "internal_error", error });
+        }
+    },
     getFormsControl: async ({ manageError }: ManageRequestBody) => {
         try {
             return await formControlModel.find();
