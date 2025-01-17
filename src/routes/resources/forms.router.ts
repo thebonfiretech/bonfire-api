@@ -10,6 +10,7 @@ const formsRouter = Router();
 formsRouter.delete("/control/:formControlID/delete", [auth, hasAdmin], manageRequest(formsResource.deleteFormControl));
 formsRouter.patch("/control/:formControlID/update", [auth, hasAdmin], manageRequest(formsResource.updateFormControl));
 formsRouter.post("/control/create", [auth, hasAdmin], manageRequest(formsResource.createFormControl));
+formsRouter.get("/control/:formControlID/completed", manageRequest(formsResource.getCompletedForms));
 formsRouter.get("/control/", [auth, hasAdmin], manageRequest(formsResource.getFormsControl));
 formsRouter.get("/control/name/:name", manageRequest(formsResource.getFormControlWithName));
 formsRouter.get("/control/:formControlID", manageRequest(formsResource.getFormControl));

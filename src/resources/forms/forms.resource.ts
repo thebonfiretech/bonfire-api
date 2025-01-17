@@ -112,6 +112,19 @@ const formsResource = {
             manageError({ code: "internal_error", error });
         }
     },
+    getCompletedForms: async ({ manageError, params }: ManageRequestBody) => {
+        try {
+            const { formControlID } = params;
+            if (!formControlID) return manageError({ code: "invalid_params" });
+
+            const formControl = await formControlModel.findById(formControlID);
+            if (!formControl) return manageError({ code: "form_not_found" });
+
+            return await formModel.find({ formControlID: formControlID });
+        } catch (error) {
+            manageError({ code: "internal_error", error });
+        }
+    },
     canSendForm: async ({ manageError, params, ids }: ManageRequestBody) => {
         try {
             const { userID } =  ids;
