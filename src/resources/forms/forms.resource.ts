@@ -1,6 +1,7 @@
 import { ManageRequestBody } from "@middlewares/manageRequest";
 import formControlModel from "@database/model/formControl";
 import stringService from "@utils/services/stringServices";
+import objectService from "@utils/services/objectServices";
 import { hasUser } from "@database/functions/user";
 
 
@@ -38,6 +39,24 @@ const formsResource = {
             }); 
 
             return await newForm.save();
+        } catch (error) {
+            manageError({ code: "internal_error", error });
+        }
+    },
+    updateFormControl: async ({ data, manageError, params }: ManageRequestBody) => {
+        try {
+            const { formControlID } = params;
+            if (!formControlID) return manageError({ code: "invalid_params" });
+
+            const formControl = await formControlModel.findById(formControlID);
+            if (!formControl) return manageError({ code: "form_not_found" });
+
+            let filteredFormControl = objectService.filterObject(data, ["user", "createAt", "_id"]);
+
+            if (filteredFormControl.name) filteredFormControl.name = stringService.removeSpacesAndLowerCase(filteredFormControl.name);
+           
+            return await formControlModel.findByIdAndUpdate(formControlID, { $set:{ ...filteredFormControl, lastUpdate: Date.now() } }, { new: true });
+
         } catch (error) {
             manageError({ code: "internal_error", error });
         }
