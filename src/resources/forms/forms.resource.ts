@@ -13,15 +13,13 @@ const formsResource = {
             const user = await hasUser({ _id: userID }, manageError);
             if (!user) return;
 
-            if (user.role != "admin") return manageError({ code: "admin_access_denied" });
-
             let { name, description, images, authenticationRequired, singleShipping, shuffle, collectEmail, questions } = data;
             if (!name || !questions) return manageError({ code: "invalid_data" });
 
             name = stringService.removeSpacesAndLowerCase(name);
 
             const hasFormControl = await formControlModel.findOne({ name });
-            if (hasFormControl) return manageError({ code: "form_not_found" });
+            if (hasFormControl) return manageError({ code: "form_already_exists" });
 
             const newForm = new formControlModel({
                 authenticationRequired, 
@@ -40,6 +38,19 @@ const formsResource = {
             }); 
 
             return await newForm.save();
+        } catch (error) {
+            manageError({ code: "internal_error", error });
+        }
+    },
+    getFormControl: async ({ manageError, params }: ManageRequestBody) => {
+        try {
+            const { formControlID } = params;
+            if (!formControlID) return manageError({ code: "invalid_params" });
+
+            const formControl = await formControlModel.findById(formControlID);
+            if (!formControl) return manageError({ code: "form_not_found" });
+
+            return formControl;
         } catch (error) {
             manageError({ code: "internal_error", error });
         }

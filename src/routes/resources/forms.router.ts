@@ -7,5 +7,6 @@ import hasAdmin from "@middlewares/hasAdmin";
 const formsRouter = Router();
 
 formsRouter.post("/control/create", [hasAdmin], manageRequest(formsResource.createFormControl));
+formsRouter.get("/control/:formControlID", manageRequest(formsResource.getFormControl));
 
 export default formsRouter;
