@@ -73,7 +73,7 @@ const formControlSchema = new mongoose.Schema({
     },
     collectEmail: {
         type: Boolean,
-        default: true,
+        default: false,
     },
     questions: {
         type: [questionSchema],

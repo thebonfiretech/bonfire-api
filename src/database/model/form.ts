@@ -6,18 +6,19 @@ const answerSchema = new mongoose.Schema({
         enum: ["text", "multiple-choice", "single-choice"],
         required: true,
     },
+    id: String,
     answer: {
         type: [
             {
                 text: {
                     type: String,
-                    required: true,
                 },
                 id: String
             },
         ],
         default: [],
-    }
+        _id: false,
+    },
 });
 
 const formSchema = new mongoose.Schema({
@@ -42,6 +43,7 @@ const formSchema = new mongoose.Schema({
     answers: {
         type: [answerSchema],
         default: [],
+        _id: false
     },
 });
 
