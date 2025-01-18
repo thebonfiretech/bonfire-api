@@ -6,5 +6,8 @@ export interface TransactionModelType {
   description?: string;
   type: "buy" | "pix" | "other";
   userID: ObjectId;
+  value: number;
   fromID?: ObjectId;
+  toID?: ObjectId;
+  items: any;
 }

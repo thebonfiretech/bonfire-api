@@ -21,10 +21,20 @@ const transactionSchema = new mongoose.Schema({
         required: true,
         ref: "user"
     },
+    value:{
+        type: Number
+    },
     fromID: {
         type: mongoose.Schema.Types.ObjectId,
         ref: "user"
-    }
+    },
+    toID: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "user"
+    },
+    items: {
+        type: mongoose.Schema.Types.Mixed,
+    },
 });
 
 const transactionModel = mongoose.model("transaction", transactionSchema);
