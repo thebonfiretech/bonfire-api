@@ -2,6 +2,7 @@ import { createTransaction } from "@database/functions/transaction";
 import { ManageRequestBody } from "@middlewares/manageRequest";
 import userModel from "@database/model/user";
 import keyModel from "@database/model/key";
+import transactionModel from "@database/model/transaction";
 
 const economyResource = {
     sendPix: async ({ manageError, ids, params, data }: ManageRequestBody) => {
@@ -31,11 +32,13 @@ const economyResource = {
 
             await createTransaction({
                 fromID: key.userID as any,
+                userID: user._id as any,
                 value: -value,
                 type: "pix",
             });
 
             await createTransaction({
+                userID: key.userID as any,
                 toID: userID as any,
                 value: value,
                 type: "pix",
@@ -45,6 +48,20 @@ const economyResource = {
                 receiver,
                 user
             };  
+        } catch (error) {
+            manageError({ code: "internal_error", error });
+        }
+    },
+    getTransactions: async ({ manageError, ids }: ManageRequestBody) => {
+        try {
+            const { userID } =  ids;
+
+            if (!userID) return manageError({ code: "invalid_params" });
+
+            const user = await userModel.findById(userID).select("-password");
+            if (!user) return manageError({ code: "user_not_found" }); 
+            
+            return await transactionModel.find({ userID });
         } catch (error) {
             manageError({ code: "internal_error", error });
         }
