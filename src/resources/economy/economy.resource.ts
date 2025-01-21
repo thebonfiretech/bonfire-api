@@ -1,14 +1,50 @@
+import { createTransaction } from "@database/functions/transaction";
 import { ManageRequestBody } from "@middlewares/manageRequest";
-import stringService from "@utils/services/stringServices";
-import { KeyModelType } from "@utils/types/models/key";
-import { hasUser } from "@database/functions/user";
+import userModel from "@database/model/user";
 import keyModel from "@database/model/key";
 
 const economyResource = {
-    createKey: async ({ data, manageError, ids }: ManageRequestBody) => {
+    sendPix: async ({ manageError, ids, params, data }: ManageRequestBody) => {
         try {
-  
+            const { keyID } = params;
+            const { userID } =  ids;
+            const { value } = data;
 
+            if (!userID || !value) return manageError({ code: "invalid_params" });
+
+            const user = await userModel.findById(userID).select("-password");
+            if (!user) return manageError({ code: "user_not_found" }); 
+            
+            const key = await keyModel.findOne({ name: keyID });
+            if (!key) return manageError({ code: "key_not_found" });
+            
+            const receiver = await userModel.findById(key.userID.toString()).select("-password");
+            if (!receiver) return manageError({ code: "user_not_found" }); 
+
+            if ((user.coins || 0) < value) return manageError({ code: "insufficient_coins" });
+
+            user.coins -= value;
+            await user.save();
+
+            receiver.coins += value;
+            await receiver.save();
+
+            await createTransaction({
+                fromID: key.userID as any,
+                value: -value,
+                type: "pix",
+            });
+
+            await createTransaction({
+                toID: userID as any,
+                value: value,
+                type: "pix",
+            });
+
+            return {
+                receiver,
+                user
+            };  
         } catch (error) {
             manageError({ code: "internal_error", error });
         }

@@ -29,7 +29,7 @@ export interface UserModelType {
         profile?: string;
     };
     badges?: any[];
-    coins?: number;
+    coins: number;
     password?: string;
     email?: string;
     keys: {

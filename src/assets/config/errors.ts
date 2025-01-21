@@ -22,6 +22,7 @@ export type ResponseErrorsParams =
   | "key_already_exists" 
   | "no_slots_available"
   | "token_is_not_valid"
+  | "insufficient_coins" 
   | "user_not_in_space"
   | "user_not_in_class"
   | "ticket_not_found" 
@@ -155,6 +156,10 @@ export const ResponseErrors: Record<ResponseErrorsParams, ResponseError> = {
   },
   no_slots_available: { 
     message: "No slots available",
+    statusCode: 409,
+  },
+  insufficient_coins: { 
+    message: "Insufficient coins",
     statusCode: 409,
   },
   content_contains_badwords: {
