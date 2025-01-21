@@ -1,8 +1,8 @@
 import { createTransaction } from "@database/functions/transaction";
 import { ManageRequestBody } from "@middlewares/manageRequest";
+import transactionModel from "@database/model/transaction";
 import userModel from "@database/model/user";
 import keyModel from "@database/model/key";
-import transactionModel from "@database/model/transaction";
 
 const economyResource = {
     sendPix: async ({ manageError, ids, params, data }: ManageRequestBody) => {
