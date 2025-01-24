@@ -50,6 +50,7 @@ export interface SpaceModelType {
             systemConfig: {
                 initialCoins: number;
                 coinPerAddeduser: number;
+                investmentsSlots: number;
             };
             config: {}
         };

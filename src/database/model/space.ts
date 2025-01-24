@@ -82,6 +82,10 @@ const spaceSchema = new mongoose.Schema({
                     type: Number,
                     default: 25
                 },
+                investmentsSlots: {
+                    type: Number,
+                    default: 6
+                }
             },
             config: {
                 default: {}

@@ -6,7 +6,7 @@ import keyModel from "@database/model/key";
 import { hasUser } from "@database/functions/user";
 import investmentModel from "@database/model/investment";
 import stringService from "@utils/services/stringServices";
-import { hasRolePermission } from "@database/functions/space";
+import { hasRolePermission, hasSpace } from "@database/functions/space";
 
 const economyResource = {
     sendPix: async ({ manageError, ids, params, data }: ManageRequestBody) => {
@@ -79,9 +79,16 @@ const economyResource = {
             const user = await hasUser({ _id: userID }, manageError);
             if (!user) return;
 
+            const space = await hasSpace({ _id: spaceID }, manageError);
+            if (!space) return;
+
             const userSpace = user.spaces?.find(x => x.id == String(spaceID));
             const hasPermisson = await hasRolePermission(userSpace?.role.toString() || "", ["administrator", "manage_coins", "owner"]);
             if (!hasPermisson) return manageError({ code: "no_execution_permission" });
+
+            const spaceInvestmentsCount = await investmentModel.countDocuments({ spaceID });
+            const availableSlot = space.modules.economy.systemConfig.investmentsSlots > spaceInvestmentsCount;
+            if (!availableSlot) return manageError({ code: "no_slots_available" });
 
             let { name, description, type, attachments, ...props } = data;
             if (!name || !description || !type) return manageError({ code: "invalid_data" });
