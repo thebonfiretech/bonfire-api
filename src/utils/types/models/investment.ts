@@ -1,7 +1,7 @@
 import { Types } from "mongoose";
 
 export interface InvestmentModelType {
-    type: "CDB" | "poupanca" | "acao" | "fundo" | "tesouro" | "cripto" | "outro";
+    type: "CDB" | "CDI" | "poupanca";
     yieldFrequency: "diario" | "semanal" | "mensal";
     riskLevel: "baixo" | "moderado" | "alto";
     spaceID: Types.ObjectId;

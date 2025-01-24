@@ -8,6 +8,7 @@ import investmentModel from "@database/model/investment";
 import stringService from "@utils/services/stringServices";
 import { hasRolePermission, hasSpace } from "@database/functions/space";
 import { InvestmentModelType } from "@utils/types/models/investment";
+import randomService from "@utils/services/randomService";
 
 const economyResource = {
     sendPix: async ({ manageError, ids, params, data }: ManageRequestBody) => {
@@ -127,9 +128,57 @@ const economyResource = {
     },
     generateRandomInvestment: async ({ manageError }: ManageRequestBody) => {
         try {
-            const investment: Partial<InvestmentModelType> = {};                    
+            let investment: any = {};
 
-
+            investment.yieldFrequency = randomService.chooseRandomItems(["diario", "semanal", "mensal"], 1)[0];
+            investment.riskLevel = randomService.chooseRandomItems(["baixo", "moderado", "alto"], 1)[0];
+            investment.type = randomService.chooseRandomItems(["CDB", "CDI", "poupanca"], 1)[0];
+            investment.minInvestment = randomService.getRandomNumberInRange(1, 25);
+            investment.duration = randomService.getRandomNumberInRange(1, 3);
+            investment.isRecurring = randomService.getRandomBoolean();
+            
+            investment.interestRate = 0;
+            investment.penaltyRate = 5;
+            
+            switch (investment.riskLevel) {
+                case "baixo":
+                    investment.maxInvestment = randomService.getRandomNumberInRange(investment.minInvestment, investment.minInvestment + 15);
+                    investment.penaltyRate = randomService.getRandomNumberInRange(1, 3);
+                    break;
+                case "moderado":
+                    investment.maxInvestment = randomService.getRandomNumberInRange(investment.minInvestment, investment.minInvestment + 25 );
+                    investment.penaltyRate = randomService.getRandomNumberInRange(4, 7);
+                    break;
+                case "alto":
+                    investment.maxInvestment = randomService.getRandomNumberInRange(investment.minInvestment, investment.minInvestment + 50);
+                    investment.penaltyRate = randomService.getRandomNumberInRange(8, 12);
+                    break;
+            }
+            
+            switch (investment.type) {
+                case "CDB":
+                    investment.interestRate = investment.riskLevel === "baixo" ? 3 : investment.riskLevel === "moderado" ? 5 : 7;
+                    break;
+                case "CDI":
+                    investment.interestRate = investment.riskLevel === "baixo" ? 4 : investment.riskLevel === "moderado" ? 6 : 8;
+                    break;
+                case "poupanca":
+                    investment.interestRate = investment.riskLevel === "baixo" ? 2 : investment.riskLevel === "moderado" ? 3 : 4;
+                    break;
+            }
+            
+            switch (investment.yieldFrequency) {
+                case "diario":
+                    investment.interestRate += 0.5;
+                    break;
+                case "semanal":
+                    investment.interestRate += 0.3;
+                    break;
+                case "mensal":
+                    break;
+            }
+            
+            return investment;           
         } catch (error) {
             manageError({ code: "internal_error", error });
         }
