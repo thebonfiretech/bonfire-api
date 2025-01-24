@@ -3,6 +3,10 @@ import { ManageRequestBody } from "@middlewares/manageRequest";
 import transactionModel from "@database/model/transaction";
 import userModel from "@database/model/user";
 import keyModel from "@database/model/key";
+import { hasUser } from "@database/functions/user";
+import investmentModel from "@database/model/investment";
+import stringService from "@utils/services/stringServices";
+import { hasRolePermission } from "@database/functions/space";
 
 const economyResource = {
     sendPix: async ({ manageError, ids, params, data }: ManageRequestBody) => {
@@ -62,6 +66,41 @@ const economyResource = {
             if (!user) return manageError({ code: "user_not_found" }); 
             
             return await transactionModel.find({ userID });
+        } catch (error) {
+            manageError({ code: "internal_error", error });
+        }
+    },
+    createInvestment: async ({ data, manageError, ids, params }: ManageRequestBody) => {
+        try {
+            const { spaceID } = params;
+            const { userID } =  ids;
+            if (!userID) return manageError({ code: "invalid_params" });
+
+            const user = await hasUser({ _id: userID }, manageError);
+            if (!user) return;
+
+            const userSpace = user.spaces?.find(x => x.id == String(spaceID));
+            const hasPermisson = await hasRolePermission(userSpace?.role.toString() || "", ["administrator", "manage_coins", "owner"]);
+            if (!hasPermisson) return manageError({ code: "no_execution_permission" });
+
+            let { name, description, type, attachments, ...props } = data;
+            if (!name || !description || !type) return manageError({ code: "invalid_data" });
+
+            description = stringService.filterBadwords(description);
+            name = stringService.filterBadwords(name);
+
+            const newInvestment = new investmentModel({
+                createAt: Date.now(),
+                ownerID: userID,
+                attachments,
+                description,
+                ...props,
+                spaceID,
+                name,
+                type,
+            }); 
+
+            return await newInvestment.save();
         } catch (error) {
             manageError({ code: "internal_error", error });
         }

@@ -8,4 +8,6 @@ const economyRouter = Router();
 economyRouter.get("/transactions", manageRequest(economyResource.getTransactions));
 economyRouter.post("/pix/:keyID", manageRequest(economyResource.sendPix));
 
+economyRouter.post("/:spaceID/investments/create", manageRequest(economyResource.createInvestment));
+
 export default economyRouter;
