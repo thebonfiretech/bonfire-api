@@ -70,6 +70,18 @@ const economyResource = {
             manageError({ code: "internal_error", error });
         }
     },
+    getInvestments: async ({ manageError, params }: ManageRequestBody) => {
+        try {
+            const { spaceID } = params;
+
+            const space = await hasSpace({ _id: spaceID }, manageError);
+            if (!space) return;
+            
+            return await investmentModel.find({ spaceID });
+        } catch (error) {
+            manageError({ code: "internal_error", error });
+        }
+    },
     createInvestment: async ({ data, manageError, ids, params }: ManageRequestBody) => {
         try {
             const { spaceID } = params;
