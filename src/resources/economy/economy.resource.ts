@@ -7,6 +7,7 @@ import { hasUser } from "@database/functions/user";
 import investmentModel from "@database/model/investment";
 import stringService from "@utils/services/stringServices";
 import { hasRolePermission, hasSpace } from "@database/functions/space";
+import { InvestmentModelType } from "@utils/types/models/investment";
 
 const economyResource = {
     sendPix: async ({ manageError, ids, params, data }: ManageRequestBody) => {
@@ -120,6 +121,15 @@ const economyResource = {
             }); 
 
             return await newInvestment.save();
+        } catch (error) {
+            manageError({ code: "internal_error", error });
+        }
+    },
+    generateRandomInvestment: async ({ manageError }: ManageRequestBody) => {
+        try {
+            const investment: Partial<InvestmentModelType> = {};                    
+
+
         } catch (error) {
             manageError({ code: "internal_error", error });
         }
