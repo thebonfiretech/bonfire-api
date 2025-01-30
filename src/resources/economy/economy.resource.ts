@@ -156,6 +156,34 @@ const economyResource = {
             manageError({ code: "internal_error", error });
         }
     },
+    deleteInvestment: async ({ manageError, ids, params }: ManageRequestBody) => {
+        try {
+            const { investmentID } = params;
+            const { userID } =  ids;
+            
+            if (!userID) return manageError({ code: "invalid_params" });
+            const user = await hasUser({ _id: userID }, manageError);
+            if (!user) return;
+
+            const investment = await investmentModel.findById(investmentID);
+            if (!investment) return manageError({ code: "investment_not_found" });
+
+            const space = await hasSpace({ _id: investment.spaceID.toString() }, manageError);
+            if (!space) return;
+
+            const userSpace = user.spaces?.find(x => x.id == String(investment.spaceID));
+            const hasPermisson = await hasRolePermission(userSpace?.role.toString() || "", ["administrator", "manage_coins", "owner"]);
+            if (!hasPermisson) return manageError({ code: "no_execution_permission" });
+
+            await investmentModel.findByIdAndDelete(investmentID);
+
+            return {
+                delete: true
+            };
+        } catch (error) {
+            manageError({ code: "internal_error", error });
+        }
+    },
     generateRandomInvestment: async ({ manageError }: ManageRequestBody) => {
         try {
             let investment: any = {};
