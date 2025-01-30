@@ -343,6 +343,23 @@ const economyResource = {
             manageError({ code: "internal_error", error });
         }
     },
+    getWallet: async ({ manageError, ids, params }: ManageRequestBody) => {
+        try {
+            const { walletID } = params;
+            const { userID } =  ids;
+            
+            if (!userID) return manageError({ code: "invalid_params" });
+            const user = await hasUser({ _id: userID }, manageError);
+            if (!user) return;
+
+            let wallet = await walletModel.findById(walletID);
+            if (!wallet) return manageError({ code: "wallet_not_found" });
+
+            return wallet;
+        } catch (error) {
+            manageError({ code: "internal_error", error });
+        }
+    },
 };
 
 export default economyResource;
