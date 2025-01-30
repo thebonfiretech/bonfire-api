@@ -9,6 +9,7 @@ economyRouter.get("/transactions", manageRequest(economyResource.getTransactions
 economyRouter.post("/pix/:keyID", manageRequest(economyResource.sendPix));
 
 economyRouter.get("/investments/generate/random", manageRequest(economyResource.generateRandomInvestment));
+economyRouter.patch("/:spaceID/investments/update", manageRequest(economyResource.updateInvestment));
 economyRouter.post("/:spaceID/investments/create", manageRequest(economyResource.createInvestment));
 economyRouter.get("/:spaceID/investments", manageRequest(economyResource.getInvestments));
 

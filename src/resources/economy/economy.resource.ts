@@ -9,6 +9,7 @@ import stringService from "@utils/services/stringServices";
 import { hasRolePermission, hasSpace } from "@database/functions/space";
 import { InvestmentModelType } from "@utils/types/models/investment";
 import randomService from "@utils/services/randomService";
+import objectService from "@utils/services/objectServices";
 
 const economyResource = {
     sendPix: async ({ manageError, ids, params, data }: ManageRequestBody) => {
@@ -88,8 +89,8 @@ const economyResource = {
         try {
             const { spaceID } = params;
             const { userID } =  ids;
+            
             if (!userID) return manageError({ code: "invalid_params" });
-
             const user = await hasUser({ _id: userID }, manageError);
             if (!user) return;
 
@@ -105,10 +106,10 @@ const economyResource = {
             if (!availableSlot) return manageError({ code: "no_slots_available" });
 
             let { name, description, type, attachments, ...props } = data;
-            if (!name || !description || !type) return manageError({ code: "invalid_data" });
+            if (!name || !type) return manageError({ code: "invalid_data" });
 
-            description = stringService.filterBadwords(description);
-            name = stringService.filterBadwords(name);
+            if (description) description = stringService.filterBadwords(description);
+            if (name) name = stringService.filterBadwords(name);
 
             const newInvestment = new investmentModel({
                 createAt: Date.now(),
@@ -122,6 +123,35 @@ const economyResource = {
             }); 
 
             return await newInvestment.save();
+        } catch (error) {
+            manageError({ code: "internal_error", error });
+        }
+    },
+    updateInvestment: async ({ data, manageError, ids, params }: ManageRequestBody) => {
+        try {
+            const { investmentID } = params;
+            const { userID } =  ids;
+            
+            if (!userID) return manageError({ code: "invalid_params" });
+            const user = await hasUser({ _id: userID }, manageError);
+            if (!user) return;
+
+            const investment = await investmentModel.findById(investmentID);
+            if (!investment) return manageError({ code: "investment_not_found" });
+
+            const space = await hasSpace({ _id: investment.spaceID.toString() }, manageError);
+            if (!space) return;
+
+            const userSpace = user.spaces?.find(x => x.id == String(investment.spaceID));
+            const hasPermisson = await hasRolePermission(userSpace?.role.toString() || "", ["administrator", "manage_coins", "owner"]);
+            if (!hasPermisson) return manageError({ code: "no_execution_permission" });
+
+            let filteredInvestment = objectService.filterObject(data, ["_id", "createdAt", "ownerID", "spaceID"])
+
+            if (filteredInvestment.description) filteredInvestment.description = stringService.filterBadwords(filteredInvestment.description);
+            if (filteredInvestment.name) filteredInvestment.name = stringService.filterBadwords(filteredInvestment.name);
+
+            return await investmentModel.findByIdAndUpdate(investmentID, { $set: { ...filteredInvestment, lastUpdate: Date.now()}}, { new: true });
         } catch (error) {
             manageError({ code: "internal_error", error });
         }

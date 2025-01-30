@@ -11,6 +11,7 @@ export type ResponseErrorsParams =
   | "no_execution_permission"
   | "user_already_in_space"
   | "user_already_in_class"
+  | "investment_not_found"
   | "space_already_exists" 
   | "admin_access_denied"
   | "no_credentials_send" 
@@ -108,6 +109,10 @@ export const ResponseErrors: Record<ResponseErrorsParams, ResponseError> = {
   },
   space_not_found: {
     message: "Space not found",
+    statusCode: 404,
+  },
+  investment_not_found: {
+    message: "Investment not found",
     statusCode: 404,
   },
   user_already_exists: {
