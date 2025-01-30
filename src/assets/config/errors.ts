@@ -20,6 +20,7 @@ export type ResponseErrorsParams =
   | "role_already_exists" 
   | "invalid_credentials" 
   | "user_not_registered"
+  | "category_not_found"
   | "key_already_exists" 
   | "no_slots_available"
   | "token_is_not_valid"
@@ -78,6 +79,10 @@ export const ResponseErrors: Record<ResponseErrorsParams, ResponseError> = {
   },
   user_not_found: {
     message: "User not found",
+    statusCode: 404,
+  },
+  category_not_found: {
+    message: "Category not found",
     statusCode: 404,
   },
   form_not_found: {

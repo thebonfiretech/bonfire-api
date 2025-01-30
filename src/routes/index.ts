@@ -1,5 +1,6 @@
 import { Router } from "express";
 
+import categoryRouter from "./resources/category.router";
 import controlAccess from "@middlewares/controlAccess";
 import classesRouter from "./resources/classes.router";
 import ticketsRouter from "./resources/tickets.router";
@@ -21,6 +22,7 @@ router.get("/ping", (req, res) => {
 });
 
 router.use("/admin", [controlAccess, auth, hasAdmin],  adminRouter);
+router.use("/categorys", [controlAccess, auth],  categoryRouter);
 router.use("/tickets", [controlAccess, auth],  ticketsRouter);
 router.use("/economy", [controlAccess, auth],  economyRouter);
 router.use("/classes", [controlAccess, auth],  classesRouter);

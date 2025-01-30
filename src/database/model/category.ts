@@ -20,10 +20,10 @@ const categorySchema = new mongoose.Schema({
         required: true,
         ref: "user",
     },
-    linked: {
+    id: {
         type: String,
     },
-    type: {
+    scope: {
         type: String,
         enum: ["product"],
     }
