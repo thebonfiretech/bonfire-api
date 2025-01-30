@@ -19,6 +19,11 @@ const productSchema = new mongoose.Schema({
         type: Date,
         default: Date.now,
     },
+    status: {
+        enum: ["active", "inactive"],
+        default: "active",
+        type: String,
+    },
     userID: {
         type: mongoose.Schema.Types.ObjectId,
         required: true,
