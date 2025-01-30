@@ -9,6 +9,7 @@ export type ResponseErrorsParams =
   | "content_contains_badwords"
   | "user_already_registered"
   | "no_execution_permission"
+  |  "no_products_available"
   | "user_already_in_space"
   | "user_already_in_class"
   | "investment_not_found"
@@ -26,6 +27,7 @@ export type ResponseErrorsParams =
   | "token_is_not_valid"
   | "insufficient_coins" 
   | "user_not_in_space"
+  | "product_not_found"
   | "user_not_in_class"
   | "ticket_not_found" 
   | "wallet_not_found" 
@@ -83,6 +85,10 @@ export const ResponseErrors: Record<ResponseErrorsParams, ResponseError> = {
   },
   category_not_found: {
     message: "Category not found",
+    statusCode: 404,
+  },
+  product_not_found: {
+    message: "Product not found",
     statusCode: 404,
   },
   form_not_found: {
@@ -171,6 +177,10 @@ export const ResponseErrors: Record<ResponseErrorsParams, ResponseError> = {
   },
   no_slots_available: { 
     message: "No slots available",
+    statusCode: 409,
+  },
+  no_products_available: { 
+    message: "No products available",
     statusCode: 409,
   },
   insufficient_coins: { 

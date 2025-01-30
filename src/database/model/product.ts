@@ -20,7 +20,7 @@ const productSchema = new mongoose.Schema({
         default: Date.now,
     },
     status: {
-        enum: ["active", "inactive"],
+        enum: ["active", "inactive", "exhausted"],
         default: "active",
         type: String,
     },
