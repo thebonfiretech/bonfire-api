@@ -297,6 +297,52 @@ const economyResource = {
             manageError({ code: "internal_error", error });
         }
     },
+    removeWalletCoins: async ({ data, manageError, ids, params }: ManageRequestBody) => {
+        try {
+            const { investmentID } = params;
+            const { userID } =  ids;
+            
+            if (!userID) return manageError({ code: "invalid_params" });
+            const user = await hasUser({ _id: userID }, manageError);
+            if (!user) return;
+
+            const investment = await investmentModel.findById(investmentID);
+            if (!investment) return manageError({ code: "investment_not_found" });
+            
+            let { value } = data;
+            if (!value) return manageError({ code: "invalid_data" });
+            
+            
+            let userWallet = await walletModel.findOne({ investmentID, userID });
+            if (!userWallet) return manageError({ code: "wallet_not_found" });
+
+            if ((userWallet.availableValue || 0) < value) return manageError({ code: "insufficient_coins" });
+
+            const newWallet = walletModel.findByIdAndUpdate(userWallet._id, { $set:{ 
+                availableValue: userWallet.availableValue - value, 
+                logs: [...userWallet.logs, {
+                    description: `Você removeu ${value} gentilezas da carteira.`
+                }],
+                lastUpdate: Date.now(),
+            }}, { new: true });
+
+            const newUser = userModel.findByIdAndUpdate(userID, { $set:{ coins: (user.coins + value), lastUpdate: Date.now() } }, { new: true });
+
+            await createTransaction({
+                userID: user._id as any,
+                type: "investment",
+                value: value,
+            });
+
+            return {
+                wallet: newWallet,
+                user: newUser,
+            };
+            
+        } catch (error) {
+            manageError({ code: "internal_error", error });
+        }
+    },
 };
 
 export default economyResource;

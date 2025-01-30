@@ -27,6 +27,7 @@ export type ResponseErrorsParams =
   | "user_not_in_space"
   | "user_not_in_class"
   | "ticket_not_found" 
+  | "wallet_not_found" 
   | "class_not_found" 
   | "space_not_found" 
   | "internal_error" 
@@ -81,6 +82,10 @@ export const ResponseErrors: Record<ResponseErrorsParams, ResponseError> = {
   },
   form_not_found: {
     message: "Form not found",
+    statusCode: 404,
+  },
+  wallet_not_found: {
+    message: "Wallet not found",
     statusCode: 404,
   },
   post_not_found: {
