@@ -36,11 +36,17 @@ const walletSchema = new mongoose.Schema({
             type: Number,
             default: 0,
         },
-        addeAt: Date
+        addeAt: {
+            type: Date,
+            default: Date.now,
+        }
     }],
     logs: [{
         description: String,
-        date: Date
+        date: {
+            type: Date,
+            default: Date.now,
+        }
     }]
 });
 

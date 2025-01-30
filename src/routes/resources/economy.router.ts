@@ -14,4 +14,6 @@ economyRouter.patch("/investments/:investmentID/update", manageRequest(economyRe
 economyRouter.post("/:spaceID/investments/create", manageRequest(economyResource.createInvestment));
 economyRouter.get("/:spaceID/investments", manageRequest(economyResource.getInvestments));
 
+economyRouter.patch("/investments/:investmentID/wallet/add", manageRequest(economyResource.updateInvestment));
+
 export default economyRouter;

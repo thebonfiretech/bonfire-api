@@ -10,6 +10,7 @@ import { hasRolePermission, hasSpace } from "@database/functions/space";
 import { InvestmentModelType } from "@utils/types/models/investment";
 import randomService from "@utils/services/randomService";
 import objectService from "@utils/services/objectServices";
+import walletModel from "@database/model/wallet";
 
 const economyResource = {
     sendPix: async ({ manageError, ids, params, data }: ManageRequestBody) => {
@@ -237,6 +238,61 @@ const economyResource = {
             }
             
             return investment;           
+        } catch (error) {
+            manageError({ code: "internal_error", error });
+        }
+    },
+    addWalletCoins: async ({ data, manageError, ids, params }: ManageRequestBody) => {
+        try {
+            const { investmentID } = params;
+            const { userID } =  ids;
+            
+            if (!userID) return manageError({ code: "invalid_params" });
+            const user = await hasUser({ _id: userID }, manageError);
+            if (!user) return;
+
+            const investment = await investmentModel.findById(investmentID);
+            if (!investment) return manageError({ code: "investment_not_found" });
+            
+            let { value } = data;
+            if (!value) return manageError({ code: "invalid_data" });
+            
+            if ((user.coins || 0) < value) return manageError({ code: "insufficient_coins" });
+
+            let userWallet = await walletModel.findOne({ investmentID, userID });
+            if (!userWallet){
+                userWallet = new walletModel({
+                    spaceID: investment.spaceID,
+                    investmentID,
+                    userID,
+                    logs: [{
+                        description: "Carteira de investimentos criada."
+                    }]
+                });
+                await userWallet.save();
+            };
+
+            const newWallet = walletModel.findByIdAndUpdate(userWallet._id, { $set:{ 
+                yielding: [...userWallet.yielding, { value }], 
+                logs: [...userWallet.logs, {
+                    description: `Você adicionou ${value} gentilezas à carteira para render.`
+                }],
+                lastUpdate: Date.now(),
+            }}, { new: true });
+
+            const newUser = userModel.findByIdAndUpdate(userID, { $set:{ coins: (user.coins - value), lastUpdate: Date.now() } }, { new: true });
+
+            await createTransaction({
+                userID: user._id as any,
+                type: "investment",
+                value: -value,
+            });
+
+            return {
+                wallet: newWallet,
+                user: newUser,
+            };
+            
         } catch (error) {
             manageError({ code: "internal_error", error });
         }

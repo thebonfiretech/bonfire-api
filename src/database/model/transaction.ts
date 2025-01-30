@@ -13,7 +13,7 @@ const transactionSchema = new mongoose.Schema({
     },
     type: {
         type: String,
-        enum: ["buy", "pix", "other"],
+        enum: ["buy", "pix", "other", "investment"],
         required: true
     },
     userID: {
