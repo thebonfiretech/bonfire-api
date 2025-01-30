@@ -360,6 +360,19 @@ const economyResource = {
             manageError({ code: "internal_error", error });
         }
     },
+    getWallets: async ({ manageError, ids, params }: ManageRequestBody) => {
+        try {
+            const { userID } =  ids;
+            
+            if (!userID) return manageError({ code: "invalid_params" });
+            const user = await hasUser({ _id: userID }, manageError);
+            if (!user) return;
+
+            return  await walletModel.find({ userID });
+        } catch (error) {
+            manageError({ code: "internal_error", error });
+        }
+    },
 };
 
 export default economyResource;
