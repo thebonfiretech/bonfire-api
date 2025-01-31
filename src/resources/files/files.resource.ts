@@ -1,6 +1,7 @@
 import { ManageRequestBody } from "@middlewares/manageRequest";
 import stringService from "@utils/services/stringServices";
 import fileModel from "@database/model/file";
+import storage from "@database/storage";
 
 const filesResource = {
     uploadFile: async ({ manageError, files, ids, params }: ManageRequestBody) => {
@@ -13,11 +14,12 @@ const filesResource = {
             const errorFiles = [];
 
             for (const file of files) {
-                const { originalname, mimetype } = file;
+                const { originalname, mimetype, buffer } = file;
+
                 if (!originalname || !mimetype) {
                     errorFiles.push(file);
-                    continue
-                };
+                    continue;
+                }
 
                 const newFile = new fileModel({
                     name: stringService.normalizeString(originalname),
@@ -26,14 +28,22 @@ const filesResource = {
                     userID,
                     id,
                 });
-                
+
                 await newFile.save();
+
+                const filePath = `${scope}`;
+                await storage.uploadFile(newFile._id.toString(), buffer, mimetype, filePath);
+
+                newFile.url = `${process.env.STORAGE_URL}${process.env.STORAGE_BUCKET_NAME}/${filePath}/${newFile._id.toString()}`;
+
+                await newFile.save();
+
                 uploadedFiles.push(newFile);
             }
 
             return {
                 uploaded: uploadedFiles,
-                errors:  errorFiles 
+                errors: errorFiles,
             };
         } catch (error) {
             manageError({ code: "internal_error", error });
