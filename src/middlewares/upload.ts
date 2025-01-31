@@ -10,6 +10,16 @@ const ensureDirectoryExists = async (dirPath: string) => {
     }
 };
 
+export const deleteCacheFiles = async (files: Express.Multer.File[]) => {
+    if (files?.length > 0){
+        await Promise.all(
+            files.map(async (file) => {
+                if (file.path) await fs.unlink(file.path);
+            })
+        );
+    }
+};
+
 const storage = multer.diskStorage({
     destination: async (req, file, cb) => {
         try {
