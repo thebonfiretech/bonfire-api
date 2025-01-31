@@ -5,7 +5,8 @@ import chalk from "chalk";
 
 import defaultConfig from "@assets/config/default";
 import logger from "@utils/functions/logger";
-import database from "@database/index";
+import database from "@database/database";
+import storage from "@database/storage";
 import app  from "./app";
 
 const server = app.listen(process.env.PORT, async () => {
@@ -16,7 +17,8 @@ const server = app.listen(process.env.PORT, async () => {
         logger.info(`🚀 Server started in: ${chalk.blueBright('http://' + host + ':' + address.port)}`);
         const databaseInfo = await database.connectMongoose();
         defaultConfig.clusterName = databaseInfo.clusterName;
-        logger.info(`mode: ${mode =='developing' ? chalk.green(mode) : chalk.red(mode)}`);
+        await storage.checkStorageConnect();
+        logger.info(`mode: ${mode =='developing' ? chalk.green(mode) : chalk.red(mode)} - version: ${chalk.yellow(defaultConfig.version)}`);
     };
 });
 
