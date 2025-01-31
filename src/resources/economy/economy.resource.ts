@@ -1,16 +1,15 @@
+import { hasRolePermission, hasSpace } from "@database/functions/space";
 import { createTransaction } from "@database/functions/transaction";
 import { ManageRequestBody } from "@middlewares/manageRequest";
 import transactionModel from "@database/model/transaction";
+import stringService from "@utils/services/stringServices";
+import objectService from "@utils/services/objectServices";
+import randomService from "@utils/services/randomService";
+import investmentModel from "@database/model/investment";
+import { hasUser } from "@database/functions/user";
+import walletModel from "@database/model/wallet";
 import userModel from "@database/model/user";
 import keyModel from "@database/model/key";
-import { hasUser } from "@database/functions/user";
-import investmentModel from "@database/model/investment";
-import stringService from "@utils/services/stringServices";
-import { hasRolePermission, hasSpace } from "@database/functions/space";
-import { InvestmentModelType } from "@utils/types/models/investment";
-import randomService from "@utils/services/randomService";
-import objectService from "@utils/services/objectServices";
-import walletModel from "@database/model/wallet";
 
 const economyResource = {
     sendPix: async ({ manageError, ids, params, data }: ManageRequestBody) => {
