@@ -14,6 +14,7 @@ import foodsRouter from "./resources/food.router";
 import shopRouter from "./resources/shop.router";
 import keysRouter from "./resources/keys.router";
 import hasAdmin from "@middlewares/hasAdmin";
+import filesRouter from "./resources/files";
 import auth from "@middlewares/auth";
 
 const router = Router();
@@ -29,6 +30,7 @@ router.use("/economy", [controlAccess, auth],  economyRouter);
 router.use("/classes", [controlAccess, auth],  classesRouter);
 router.use("/spaces", [controlAccess, auth],  spacesRouter);
 router.use("/posts", [controlAccess, auth],  postsRouter);
+router.use("/files", [controlAccess, auth],  filesRouter);
 router.use("/foods", [controlAccess, auth],  foodsRouter);
 router.use("/shop", [controlAccess, auth],  shopRouter);
 router.use("/keys", [controlAccess, auth],  keysRouter);
