@@ -2,6 +2,8 @@ import fs from "fs/promises";
 import multer from "multer";
 import path from "path";
 
+import stringService from "@utils/services/stringServices";
+
 const ensureDirectoryExists = async (dirPath: string) => {
     try {
         await fs.access(dirPath);
@@ -31,7 +33,7 @@ const storage = multer.diskStorage({
         }
     },
     filename: (req, file, cb) => {
-        cb(null, `${Date.now()}-${file.originalname}`);
+        cb(null, `${Date.now()}-${stringService.removeSpacesAndLowerCase(file.originalname)}`);
     },
 });
 

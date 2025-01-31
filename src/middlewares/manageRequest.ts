@@ -63,7 +63,7 @@ const manageRequest = (service: ManageRequestParams["service"], options?: Manage
             const result = await service(manageRequestBody);
 
             if (options?.upload) {
-                await deleteCacheFiles(files);
+               await deleteCacheFiles(files);
             };
 
             if (headersSent) return;

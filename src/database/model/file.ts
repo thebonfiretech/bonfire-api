@@ -4,6 +4,11 @@ const fileSchema = new mongoose.Schema({
     name: {
         type: String,
     },
+    status: {
+        enum: ["active", "inactive"],
+        default: "active",
+        type: String,
+    },
     createdAt: {
         type: Date,
         default: Date.now,
@@ -25,6 +30,7 @@ const fileSchema = new mongoose.Schema({
     scope: {
         type: String,
         enum: ["general"],
+        default: "general"
     }
 });
 

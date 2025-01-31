@@ -6,6 +6,6 @@ import upload from "@middlewares/upload";
 
 const filesRouter = Router();
 
-filesRouter.post("/upload", upload.array("files", 10), manageRequest(filesResource.uploadFile));
+filesRouter.post("/upload/:scope/:id", upload.array("files", 10), manageRequest(filesResource.uploadFile, { upload: true }));
 
 export default filesRouter;

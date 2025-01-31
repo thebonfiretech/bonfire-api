@@ -10,11 +10,11 @@ import usersRouter from "./resources/users.router";
 import adminRouter from "./resources/admin.router";
 import postsRouter from "./resources/posts.router";
 import formsRouter from "./resources/forms.router";
+import filesRouter from "./resources/files.router";
 import foodsRouter from "./resources/food.router";
 import shopRouter from "./resources/shop.router";
 import keysRouter from "./resources/keys.router";
 import hasAdmin from "@middlewares/hasAdmin";
-import filesRouter from "./resources/files";
 import auth from "@middlewares/auth";
 
 const router = Router();
