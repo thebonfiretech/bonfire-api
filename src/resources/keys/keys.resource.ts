@@ -40,10 +40,11 @@ const keysResource = {
                 const newKey = new keyModel({
                     lastUpdate: Date.now(),
                     description,
+                    key: name,
                     slotType,
                     keyType,
                     userID,
-                    name
+                    name,
                 });
 
                 return await newKey.save();
