@@ -131,9 +131,7 @@ const spacesResource = {
             const createdUser = new userModel({ id, name, ...extra });
             await createdUser.save();
 
-            return {
-                user: createdUser
-            };
+            return createdUser;
         } catch (error) {
             manageError({ code: "internal_error", error });
         }
