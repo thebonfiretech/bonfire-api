@@ -1,8 +1,9 @@
+import { Response } from "express";
 import { isValidObjectId } from "mongoose";
 
-import { SpaceModelType, SpaceRoleType } from "@utils/types/models/space";
-import spaceModel from "@database/model/space";
+import { SpaceModelType } from "@utils/types/models/space";
 import { UserModelType } from "@utils/types/models/user";
+import spaceModel from "@database/model/space";
 import userModel from "@database/model/user";
 
 export const hasExistsSpace = async (space: Partial<SpaceModelType>, manageError: Function): Promise<boolean | undefined> => {
@@ -39,8 +40,7 @@ export const hasRolePermission = async (roleID: string, permissions: string[]): 
     return permissions.some((permission) => role?.permissions.lenght == 0 ? true :  role.permissions.includes(permission));
 };
 
-export const checkUserHasPermissions = async (user: UserModelType | string, manageError: Function, permissions: string[], spaceID: string): Promise<boolean> => {
-    
+export const checkUserHasPermissions = async (user: UserModelType | string, manageError: Function, permissions: string[], spaceID: string, res: Response): Promise<boolean> => {
     if (typeof user === "string"){
         if (!user || !isValidObjectId(user)){
             manageError({ code: "no_execution_permission" });
@@ -55,9 +55,12 @@ export const checkUserHasPermissions = async (user: UserModelType | string, mana
         user = ((response as any) as UserModelType);
     };
     
-    if (user.role === "admin") return true;
+    if (user.role === "admin"){
+        res.set("checkUserHasPermissions", "admin-user");
+        return true
+    };
 
-   // permissions = ["administrator", "manage_classes", "owner", ...permissions];
+    permissions = ["administrator", "manage_classes", "owner", ...permissions];
 
     const userSpace = user.spaces?.find(x => x.id == spaceID);
     const roleID = userSpace?.role.toString();

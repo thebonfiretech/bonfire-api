@@ -54,7 +54,7 @@ const manageRequest = (service: ManageRequestParams["service"], options?: Manage
         };
 
         const manageCheckUserHasPermissions = async (user: UserModelType | string, permissions: string[]): Promise<boolean> => {
-            const hasPermissions = await checkUserHasPermissions(user, manageError, permissions, req.header('spaceID') || "");
+            const hasPermissions = await checkUserHasPermissions(user, manageError, permissions, req.header('spaceID') || "", res);
             return hasPermissions;
         };
 
