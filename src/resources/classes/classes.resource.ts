@@ -9,22 +9,20 @@ import classModel from "@database/model/class";
 import userModel from "@database/model/user";
 
 const classesResource = {
-    createClass: async ({ manageError, data, ids }: ManageRequestBody) => {
+    createClass: async ({ manageError, manageCheckUserHasPermissions, data, ids }: ManageRequestBody) => {
         try {
-            let { name, description, spaceID } = data;
+            let { name, description } = data;
+            const { userID, spaceID } = ids;
             if (!name || !spaceID) return manageError({ code: "invalid_data" });
 
             if (description) description = stringService.filterBadwords(stringService.normalizeString(description));
             name = stringService.normalizeString(name);
 
-            const { userID } = ids;
 
             const user = await hasUser({ _id: userID }, manageError);
             if (!user) return;
 
-            const userSpace = user.spaces?.find(x => x.id == spaceID);
-            const hasPermisson = await hasRolePermission(userSpace?.role.toString() || "", ["administrator", "manage_classes", "owner"]);
-            if (!hasPermisson) return manageError({ code: "no_execution_permission" });
+            if (!manageCheckUserHasPermissions(user, ["manage_classes"])) return;
 
             const space = await spaceModel.findById(spaceID);
             if (!space) return manageError({ code: "space_not_found" });

@@ -2,6 +2,8 @@ import { isValidObjectId } from "mongoose";
 
 import { SpaceModelType, SpaceRoleType } from "@utils/types/models/space";
 import spaceModel from "@database/model/space";
+import { UserModelType } from "@utils/types/models/user";
+import userModel from "@database/model/user";
 
 export const hasExistsSpace = async (space: Partial<SpaceModelType>, manageError: Function): Promise<boolean | undefined> => {
     if (space._id && !isValidObjectId(space._id)){
@@ -35,4 +37,49 @@ export const hasRolePermission = async (roleID: string, permissions: string[]): 
     const role =  Array.isArray(space.roles) ? space.roles.find((x) =>  String(x._id), String(roleID)) : null;
 
     return permissions.some((permission) => role?.permissions.lenght == 0 ? true :  role.permissions.includes(permission));
+};
+
+export const checkUserHasPermissions = async (user: UserModelType | string, manageError: Function, permissions: string[], spaceID: string): Promise<boolean> => {
+    
+    if (typeof user === "string"){
+        if (!user || !isValidObjectId(user)){
+            manageError({ code: "no_execution_permission" });
+            return false;
+        };
+        const response = await userModel.findById(user);
+        if (!response){
+            manageError({ code: "no_execution_permission" });
+            return false;       
+        }
+
+        user = ((response as any) as UserModelType);
+    };
+    
+    if (user.role === "admin") return true;
+
+   // permissions = ["administrator", "manage_classes", "owner", ...permissions];
+
+    const userSpace = user.spaces?.find(x => x.id == spaceID);
+    const roleID = userSpace?.role.toString();
+
+    if (!roleID){
+        manageError({ code: "no_execution_permission" });
+        return false;
+    };
+
+    const space: SpaceModelType | null = await spaceModel.findOne({ "space.role.id": roleID });
+    if (!space){
+        manageError({ code: "no_execution_permission" });
+        return false;
+    };
+    
+    const role =  Array.isArray(space.roles) ? space.roles.find((x) =>  String(x._id), String(roleID)) : null;
+    const hasPermisson = permissions.some((permission) => role?.permissions.lenght == 0 ? true :  role.permissions.includes(permission));
+
+    if (!hasPermisson){
+        manageError({ code: "no_execution_permission" });
+        return false;
+    };
+
+    return true;
 };
