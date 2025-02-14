@@ -16,7 +16,7 @@ economyRouter.get("/:spaceID/investments", manageRequest(economyResource.getInve
 
 economyRouter.patch("/investments/:investmentID/wallets/remove", manageRequest(economyResource.removeWalletCoins));
 economyRouter.patch("/investments/:investmentID/wallets/add", manageRequest(economyResource.addWalletCoins));
-economyRouter.patch("/investments/wallets/:walletID", manageRequest(economyResource.getWallet));
-economyRouter.patch("/investments/wallets/", manageRequest(economyResource.getWallets));
+economyRouter.get("/investments/wallets/:walletID", manageRequest(economyResource.getWallet));
+economyRouter.get("/investments/wallets/", manageRequest(economyResource.getWallets));
 
 export default economyRouter;
