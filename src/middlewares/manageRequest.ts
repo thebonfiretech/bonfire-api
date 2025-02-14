@@ -17,6 +17,8 @@ export interface ManageRequestBody {
         req: Request;
     };
     ids: {
+        spaceID?: string;
+        classID?: string;
         userID?: string;
     };
     manageError: (data: ManageErrorParams) => void;
@@ -56,6 +58,8 @@ const manageRequest = (service: ManageRequestParams["service"], options?: Manage
                 manageError,
                 files,
                 ids: {
+                    spaceID: req.header('spaceID'),
+                    classID: req.header('classID'),
                     userID: res.locals?.userID,
                 },
             };
