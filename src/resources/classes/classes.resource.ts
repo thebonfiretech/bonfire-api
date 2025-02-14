@@ -1,5 +1,4 @@
 import { ManageRequestBody } from "@middlewares/manageRequest";
-import { hasRolePermission } from "@database/functions/space";
 import stringService from "@utils/services/stringServices";
 import objectService from "@utils/services/objectServices";
 import { UserClassType } from "@utils/types/models/user";
@@ -22,7 +21,7 @@ const classesResource = {
             const user = await hasUser({ _id: userID }, manageError);
             if (!user) return;
 
-            if (!manageCheckUserHasPermissions(user, ["manage_classes"])) return;
+            if (!manageCheckUserHasPermissions(user, ["manage_classes", "manage_space"])) return;
 
             const space = await spaceModel.findById(spaceID);
             if (!space) return manageError({ code: "space_not_found" });
@@ -91,7 +90,7 @@ const classesResource = {
             manageError({ code: "internal_error", error });
         }
     },
-    updateClass: async ({ manageError, params, data, ids }: ManageRequestBody) => {
+    updateClass: async ({ manageError, params, data, ids, manageCheckUserHasPermissions }: ManageRequestBody) => {
         try {
             const { classID } =  params;
             if (!classID) return manageError({ code: "invalid_params" });
@@ -103,9 +102,7 @@ const classesResource = {
             const user = await hasUser({ _id: userID }, manageError);
             if (!user) return;
 
-            const userSpace = user.spaces?.find(x => x.id == String(classe?.space?.id || ""));
-            const hasPermisson = await hasRolePermission(userSpace?.role.toString() || "", ["administrator", "manage_space", "manage_classes", "owner"]);
-            if (!hasPermisson) return manageError({ code: "no_execution_permission" });
+            if (!manageCheckUserHasPermissions(user, ["manage_classes", "manage_space"])) return;
 
             const filteredClass = objectService.filterObject(data, ["createAt", "_id", "space"]);
 
@@ -131,7 +128,7 @@ const classesResource = {
             manageError({ code: "internal_error", error });
         }
     },
-    deleteClass: async ({ manageError, params, data, ids }: ManageRequestBody) => {
+    deleteClass: async ({ manageError, params, manageCheckUserHasPermissions, ids }: ManageRequestBody) => {
         try {
             const { classID } =  params;
             if (!classID) return manageError({ code: "invalid_params" });
@@ -143,9 +140,7 @@ const classesResource = {
             const user = await hasUser({ _id: userID }, manageError);
             if (!user) return;
 
-            const userSpace = user.spaces?.find(x => x.id == String(classe?.space?.id || ""));
-            const hasPermisson = await hasRolePermission(userSpace?.role.toString() || "", ["owner"]);
-            if (!hasPermisson) return manageError({ code: "no_execution_permission" });
+            if (!manageCheckUserHasPermissions(user, ["manage_space"])) return;
 
             const usersWithClasses = await userModel.find({ "classes.id": classID });
             for (const classUser of usersWithClasses) {
@@ -162,7 +157,7 @@ const classesResource = {
             manageError({ code: "internal_error", error });
         }
     },
-    addClassUser: async ({ manageError, params, data, ids }: ManageRequestBody) => {
+    addClassUser: async ({ manageError, params, data, ids, manageCheckUserHasPermissions }: ManageRequestBody) => {
         try {
             const { classID } =  params;
             if (!classID) return manageError({ code: "invalid_params" });
@@ -174,9 +169,7 @@ const classesResource = {
             const user = await hasUser({ _id: userID }, manageError);
             if (!user) return;
 
-            const userSpace = user.spaces?.find(x => x.id == String(classe?.space?.id || ""));
-            const hasPermisson = await hasRolePermission(userSpace?.role.toString() || "", ["administrator", "manage_classes", "owner"]);
-            if (!hasPermisson) return manageError({ code: "no_execution_permission" });
+            if (!manageCheckUserHasPermissions(user, ["manage_classes", "manage_space"])) return;
 
             let { id } = data;
             if (!id) return manageError({ code: "invalid_data" });
@@ -210,7 +203,7 @@ const classesResource = {
             manageError({ code: "internal_error", error });
         }
     },
-    removeClassUser: async ({ manageError, params, data, ids }: ManageRequestBody) => {
+    removeClassUser: async ({ manageError, params, data, ids, manageCheckUserHasPermissions }: ManageRequestBody) => {
         try {
             const { classID } =  params;
             if (!classID) return manageError({ code: "invalid_params" });
@@ -222,9 +215,7 @@ const classesResource = {
             const user = await hasUser({ _id: userID }, manageError);
             if (!user) return;
 
-            const userSpace = user.spaces?.find(x => x.id == String(classe?.space?.id || ""));
-            const hasPermisson = await hasRolePermission(userSpace?.role.toString() || "", ["administrator", "manage_classes", "owner"]);
-            if (!hasPermisson) return manageError({ code: "no_execution_permission" });
+            if (!manageCheckUserHasPermissions(user, ["manage_classes", "manage_space"])) return;
 
             let { id } = data;
             if (!id) return manageError({ code: "invalid_data" });

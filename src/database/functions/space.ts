@@ -31,15 +31,6 @@ export const hasSpace = async (space: Partial<SpaceModelType>, manageError: Func
     return hasSpace;
 };
 
-export const hasRolePermission = async (roleID: string, permissions: string[]): Promise<boolean> => {
-    const space: SpaceModelType | null = await spaceModel.findOne({ "space.role.id": roleID });
-    if (!space) return false;
-    
-    const role =  Array.isArray(space.roles) ? space.roles.find((x) =>  String(x._id), String(roleID)) : null;
-
-    return permissions.some((permission) => role?.permissions.lenght == 0 ? true :  role.permissions.includes(permission));
-};
-
 export const checkUserHasPermissions = async (user: UserModelType | string, manageError: Function, permissions: string[], spaceID: string, res: Response): Promise<boolean> => {
     if (typeof user === "string"){
         if (!user || !isValidObjectId(user)){
