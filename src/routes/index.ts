@@ -23,6 +23,10 @@ router.get("/ping", (req, res) => {
     res.sendStatus(200);
 });
 
+router.get("/validate/control-access", controlAccess, (req, res) => {
+    res.sendStatus(200);
+});
+
 router.use("/admin", [controlAccess, auth, hasAdmin],  adminRouter);
 router.use("/categorys", [controlAccess, auth],  categoryRouter);
 router.use("/tickets", [controlAccess, auth],  ticketsRouter);
