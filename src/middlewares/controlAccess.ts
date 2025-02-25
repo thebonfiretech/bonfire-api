@@ -8,19 +8,19 @@ const controlAccess = async (req: Request, res: Response, next: NextFunction): P
   try {
     var controlAccessToken = req.header('controlAccess');
     if (!controlAccessToken){
-      sendError({ code: "access_denied", res });
+      sendError({ code: "control_access_denied", res });
       return;
     };
 
     jwt.verify(controlAccessToken, (process.env.PRIVATE_ACCESS_TOKEN || ""), (error, decoded) => {
       if (error || !decoded || typeof decoded === 'string') {
-        sendError({ code: "access_denied", res });
+        sendError({ code: "control_access_denied", res });
         return;
       };
 
       const publicToken = decoded?.publicToken as string | undefined;
       if (publicToken != process.env.PUBLIC_ACCESS_TOKEN){
-        sendError({ code: "access_denied", res });
+        sendError({ code: "control_access_denied", res });
         return;
       }
       next();

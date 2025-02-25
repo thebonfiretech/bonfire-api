@@ -11,6 +11,7 @@ export type ResponseErrorsParams =
   | "no_execution_permission"
   |  "no_products_available"
   | "user_already_in_space"
+  | "control_access_denied"
   | "user_already_in_class"
   | "investment_not_found"
   | "space_already_exists" 
@@ -157,6 +158,10 @@ export const ResponseErrors: Record<ResponseErrorsParams, ResponseError> = {
   },
   access_denied: {
     message: "Access Denied",
+    statusCode: 401,
+  },
+  control_access_denied: {
+    message: "Control Access Denied",
     statusCode: 401,
   },
   admin_access_denied: {
