@@ -131,9 +131,7 @@ const spacesResource = {
             const createdUser = new userModel({ id, name, ...extra });
             await createdUser.save();
 
-            return {
-                user: createdUser
-            };
+            return createdUser;
         } catch (error) {
             manageError({ code: "internal_error", error });
         }
@@ -184,9 +182,7 @@ const spacesResource = {
             
             const updatedUser  = await userModel.findByIdAndUpdate(invitedUser._id, { $set:{ spaces, lastUpdate: Date.now() } }, { new: true }).select("-password");
 
-            return {
-                user: updatedUser
-            };
+            return updatedUser;
         } catch (error) {
             manageError({ code: "internal_error", error });
         }
@@ -227,9 +223,7 @@ const spacesResource = {
             
             const removedUser  = await userModel.findByIdAndUpdate(removeUser._id, { $set:{ spaces, lastUpdate: Date.now() } }, { new: true }).select("-password");
 
-            return {
-                user: removedUser
-            };
+            return removedUser;
         } catch (error) {
             manageError({ code: "internal_error", error });
         }

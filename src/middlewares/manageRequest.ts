@@ -5,6 +5,8 @@ import defaultConfig from "@assets/config/default";
 import sendError from "@utils/functions/error";
 import logger from "@utils/functions/logger";
 import { deleteCacheFiles } from "./upload";
+import { UserModelType } from "@utils/types/models/user";
+import { checkUserHasPermissions } from "@database/functions/space";
 
 interface ManageErrorParams {
     code: ResponseErrorsParams;
@@ -17,9 +19,12 @@ export interface ManageRequestBody {
         req: Request;
     };
     ids: {
+        spaceID?: string;
+        classID?: string;
         userID?: string;
     };
     manageError: (data: ManageErrorParams) => void;
+    manageCheckUserHasPermissions: (user: UserModelType | string, permissions: string[]) => Promise<boolean>;
     files: Express.Multer.File[];
     params: any;
     data: any;
@@ -48,14 +53,22 @@ const manageRequest = (service: ManageRequestParams["service"], options?: Manage
             sendError({ code, error, res, local: service.name });
         };
 
+        const manageCheckUserHasPermissions = async (user: UserModelType | string, permissions: string[]): Promise<boolean> => {
+            const hasPermissions = await checkUserHasPermissions(user, manageError, permissions, req.header('spaceID') || "", res);
+            return hasPermissions;
+        };
+
         try {
             const manageRequestBody: ManageRequestBody = {
                 defaultExpress: { res, req },
                 params: req.params,
                 data: req.body,
                 manageError,
+                manageCheckUserHasPermissions,
                 files,
                 ids: {
+                    spaceID: req.header('spaceID'),
+                    classID: req.header('classID'),
                     userID: res.locals?.userID,
                 },
             };
