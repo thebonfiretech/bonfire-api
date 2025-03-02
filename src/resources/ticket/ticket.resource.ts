@@ -1,4 +1,4 @@
-import { TicketModelType } from "@utils/types/models/ticket";
+import { TicketModelType } from "bonfire-shared-types";
 import { ManageRequestBody } from "@middlewares/manageRequest";
 import stringService from "@utils/services/stringServices";
 import { hasUser } from "@database/functions/user";
