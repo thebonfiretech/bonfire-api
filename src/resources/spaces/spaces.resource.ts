@@ -1,7 +1,7 @@
-import { hasRolePermission, hasSpace } from "@database/functions/space";
 import { UserModelType, UserSpaceType } from "@utils/types/models/user";
 import { hasExistsUser, hasUser } from "@database/functions/user";
 import { ManageRequestBody } from "@middlewares/manageRequest";
+import { hasSpace } from "@database/functions/space";
 import stringService from "@utils/services/stringServices";
 import spaceModel from "@database/model/space";
 import userModel from "@database/model/user";
@@ -43,7 +43,7 @@ const spacesResource = {
             manageError({ code: "internal_error", error });
         }
     },
-    createSpaceRole: async ({ manageError, params, data, ids }: ManageRequestBody) => {
+    createSpaceRole: async ({ manageError, params, data, ids, manageCheckUserHasPermissions }: ManageRequestBody) => {
         try {
             const { spaceID } =  params;
             if (!spaceID) return manageError({ code: "invalid_params" });
@@ -59,9 +59,7 @@ const spacesResource = {
             const user = await hasUser({ _id: userID }, manageError);
             if (!user) return;
 
-            const userSpace = user.spaces?.find(x => x.id == spaceID);
-            const hasPermisson = await hasRolePermission(userSpace?.role.toString() || "", ["administrator", "manage_roles", "owner"]);
-            if (!hasPermisson) return manageError({ code: "no_execution_permission" });
+            if (!manageCheckUserHasPermissions(user, ["manage_roles"])) return;
 
             name = stringService.removeSpacesAndLowerCase(name);
 
@@ -82,7 +80,7 @@ const spacesResource = {
             manageError({ code: "internal_error", error });
         }
     },
-    createSpaceUser: async ({ manageError, params, data, ids }: ManageRequestBody) => {
+    createSpaceUser: async ({ manageError, params, data, ids, manageCheckUserHasPermissions }: ManageRequestBody) => {
         try {
             const { spaceID } =  params;
             if (!spaceID) return manageError({ code: "invalid_params" });
@@ -98,10 +96,7 @@ const spacesResource = {
             const user = await hasUser({ _id: userID }, manageError);
             if (!user) return;
 
-            const userSpace = user.spaces?.find(x => x.id == spaceID);
-            const hasPermisson = await hasRolePermission(userSpace?.role.toString() || "", ["administrator", "manage_users", "owner"]);
-            if (!hasPermisson) return manageError({ code: "no_execution_permission" });
-
+            if (!manageCheckUserHasPermissions(user, ["manage_users"])) return;
 
             id = stringService.removeSpacesAndLowerCase(id);
             name = stringService.normalizeString(name);
@@ -136,7 +131,7 @@ const spacesResource = {
             manageError({ code: "internal_error", error });
         }
     },
-    addSpaceUser: async ({ manageError, params, data, ids }: ManageRequestBody) => {
+    addSpaceUser: async ({ manageError, params, data, ids, manageCheckUserHasPermissions }: ManageRequestBody) => {
         try {
             const { spaceID } =  params;
             if (!spaceID) return manageError({ code: "invalid_params" });
@@ -152,10 +147,7 @@ const spacesResource = {
             const user = await hasUser({ _id: userID }, manageError);
             if (!user) return;
 
-            const userSpace = user.spaces?.find(x => x.id == spaceID);
-            const hasPermisson = await hasRolePermission(userSpace?.role.toString() || "", ["administrator", "manage_users", "owner"]);
-            if (!hasPermisson) return manageError({ code: "no_execution_permission" });
-
+            if (!manageCheckUserHasPermissions(user, ["manage_users"])) return;
 
             id = stringService.removeSpacesAndLowerCase(id);
 
@@ -187,7 +179,7 @@ const spacesResource = {
             manageError({ code: "internal_error", error });
         }
     },
-    removeSpaceUser: async ({ manageError, params, data, ids }: ManageRequestBody) => {
+    removeSpaceUser: async ({ manageError, params, data, ids, manageCheckUserHasPermissions }: ManageRequestBody) => {
         try {
             const { spaceID } =  params;
             if (!spaceID) return manageError({ code: "invalid_params" });
@@ -203,9 +195,7 @@ const spacesResource = {
             const user = await hasUser({ _id: userID }, manageError);
             if (!user) return;
 
-            const userSpace = user.spaces?.find(x => x.id == spaceID);
-            const hasPermisson = await hasRolePermission(userSpace?.role.toString() || "", ["administrator", "manage_users", "owner"]);
-            if (!hasPermisson) return manageError({ code: "no_execution_permission" });
+            if (!manageCheckUserHasPermissions(user, ["manage_users"])) return;
 
             id = stringService.removeSpacesAndLowerCase(id);
 
@@ -228,7 +218,7 @@ const spacesResource = {
             manageError({ code: "internal_error", error });
         }
     },
-    updateSpaceRole: async ({ manageError, params, data, ids }: ManageRequestBody) => {
+    updateSpaceRole: async ({ manageError, params, data, ids, manageCheckUserHasPermissions}: ManageRequestBody) => {
         try {
             const { spaceID, roleID } =  params;
             const { userID } =  ids;
@@ -241,9 +231,7 @@ const spacesResource = {
 
             if (!space) return;
 
-            const userSpace = user.spaces?.find(x => x.id == spaceID);
-            const hasPermisson = await hasRolePermission(userSpace?.role.toString() || "", ["administrator", "manage_roles", "owner"]);
-            if (!hasPermisson) return manageError({ code: "no_execution_permission" });
+            if (!manageCheckUserHasPermissions(user, ["manage_roles"])) return;
  
             const spaceRole = Array.isArray(space.roles) ? space.roles.find((x) => String(x._id) === roleID) : null;
             if (!spaceRole) return manageError({ code: "role_not_found" });
@@ -285,7 +273,7 @@ const spacesResource = {
             manageError({ code: "internal_error", error });
         }
     },
-    deleteSpaceRole: async ({ manageError, params, ids }: ManageRequestBody) => {
+    deleteSpaceRole: async ({ manageError, params, ids, manageCheckUserHasPermissions }: ManageRequestBody) => {
         try {
             const { spaceID, roleID } =  params;
             if (!spaceID || !roleID) return manageError({ code: "invalid_params" });
@@ -298,9 +286,7 @@ const spacesResource = {
             const user = await hasUser({ _id: userID }, manageError);
             if (!user) return;
 
-            const userSpace = user.spaces?.find(x => x.id == spaceID);
-            const hasPermisson = await hasRolePermission(userSpace?.role.toString() || "", ["administrator", "manage_roles", "owner"]);
-            if (!hasPermisson) return manageError({ code: "no_execution_permission" });
+            if (!manageCheckUserHasPermissions(user, ["manage_roles"])) return;
 
             const spaceRole = Array.isArray(space.roles) ? space.roles.find((x) => String(x._id) === roleID) : null;
             if (!spaceRole) return manageError({ code: "role_not_found" });
@@ -325,7 +311,7 @@ const spacesResource = {
             manageError({ code: "internal_error", error });
         }
     },
-    configSpaceModule: async ({ manageError, params, data, ids }: ManageRequestBody) => {
+    configSpaceModule: async ({ manageError, params, data, ids, manageCheckUserHasPermissions }: ManageRequestBody) => {
         try {
             const { spaceID, module } = params;
             if (!spaceID || !module) return manageError({ code: "invalid_params" });
@@ -345,9 +331,7 @@ const spacesResource = {
             const user = await hasUser({ _id: userID }, manageError);
             if (!user) return;
 
-            const userSpace = user.spaces?.find(x => x.id == spaceID);
-            const hasPermisson = await hasRolePermission(userSpace?.role.toString() || "", ["administrator", "manage_modules", "owner"]);
-            if (!hasPermisson) return manageError({ code: "no_execution_permission" });
+            if (!manageCheckUserHasPermissions(user, ["manage_modules"])) return;
 
             const { config } = data;
 
