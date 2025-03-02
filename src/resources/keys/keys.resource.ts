@@ -1,6 +1,6 @@
 import { ManageRequestBody } from "@middlewares/manageRequest";
 import stringService from "@utils/services/stringServices";
-import { KeyModelType } from "@utils/types/models/key";
+import { KeyModelType } from "bonfire-shared-types";
 import { hasUser } from "@database/functions/user";
 import keyModel from "@database/model/key";
 
