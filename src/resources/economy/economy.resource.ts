@@ -1,4 +1,4 @@
-import { hasRolePermission, hasSpace } from "@database/functions/space";
+import { hasSpace } from "@database/functions/space";
 import { createTransaction } from "@database/functions/transaction";
 import { ManageRequestBody } from "@middlewares/manageRequest";
 import transactionModel from "@database/model/transaction";
@@ -85,7 +85,7 @@ const economyResource = {
             manageError({ code: "internal_error", error });
         }
     },
-    createInvestment: async ({ data, manageError, ids, params }: ManageRequestBody) => {
+    createInvestment: async ({ data, manageError, ids, params, manageCheckUserHasPermissions }: ManageRequestBody) => {
         try {
             const { spaceID } = params;
             const { userID } =  ids;
@@ -97,9 +97,7 @@ const economyResource = {
             const space = await hasSpace({ _id: spaceID }, manageError);
             if (!space) return;
 
-            const userSpace = user.spaces?.find(x => x.id == String(spaceID));
-            const hasPermisson = await hasRolePermission(userSpace?.role.toString() || "", ["administrator", "manage_coins", "owner"]);
-            if (!hasPermisson) return manageError({ code: "no_execution_permission" });
+            if (!manageCheckUserHasPermissions(user, ["manage_coins"])) return;
 
             const spaceInvestmentsCount = await investmentModel.countDocuments({ spaceID });
             const availableSlot = space.modules.economy.systemConfig.investmentsSlots > spaceInvestmentsCount;
@@ -127,7 +125,7 @@ const economyResource = {
             manageError({ code: "internal_error", error });
         }
     },
-    updateInvestment: async ({ data, manageError, ids, params }: ManageRequestBody) => {
+    updateInvestment: async ({ data, manageError, ids, params, manageCheckUserHasPermissions }: ManageRequestBody) => {
         try {
             const { investmentID } = params;
             const { userID } =  ids;
@@ -142,9 +140,7 @@ const economyResource = {
             const space = await hasSpace({ _id: investment.spaceID.toString() }, manageError);
             if (!space) return;
 
-            const userSpace = user.spaces?.find(x => x.id == String(investment.spaceID));
-            const hasPermisson = await hasRolePermission(userSpace?.role.toString() || "", ["administrator", "manage_coins", "owner"]);
-            if (!hasPermisson) return manageError({ code: "no_execution_permission" });
+            if (!manageCheckUserHasPermissions(user, ["manage_coins"])) return;
 
             let filteredInvestment = objectService.filterObject(data, ["_id", "createdAt", "ownerID", "spaceID"])
 
@@ -156,7 +152,7 @@ const economyResource = {
             manageError({ code: "internal_error", error });
         }
     },
-    deleteInvestment: async ({ manageError, ids, params }: ManageRequestBody) => {
+    deleteInvestment: async ({ manageError, ids, params, manageCheckUserHasPermissions }: ManageRequestBody) => {
         try {
             const { investmentID } = params;
             const { userID } =  ids;
@@ -171,9 +167,7 @@ const economyResource = {
             const space = await hasSpace({ _id: investment.spaceID.toString() }, manageError);
             if (!space) return;
 
-            const userSpace = user.spaces?.find(x => x.id == String(investment.spaceID));
-            const hasPermisson = await hasRolePermission(userSpace?.role.toString() || "", ["administrator", "manage_coins", "owner"]);
-            if (!hasPermisson) return manageError({ code: "no_execution_permission" });
+            if (!manageCheckUserHasPermissions(user, ["manage_coins"])) return;
 
             await investmentModel.findByIdAndDelete(investmentID);
 
