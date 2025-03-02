@@ -1,6 +1,5 @@
 import { PostModelType, PostScopeType } from "@utils/types/models/post";
 import { ManageRequestBody } from "@middlewares/manageRequest";
-import { hasRolePermission } from "@database/functions/space";
 import stringService from "@utils/services/stringServices";
 import objectService from "@utils/services/objectServices";
 import { hasUser } from "@database/functions/user";
@@ -9,7 +8,7 @@ import classModel from "@database/model/class";
 import postModel from "@database/model/post";
 
 const postsResource = {
-    createPost: async ({ manageError, data, ids }: ManageRequestBody) => {
+    createPost: async ({ manageError, data, ids , manageCheckUserHasPermissions }: ManageRequestBody) => {
         try {
             let { title, content, spaceID, classID, roleID, attachments, type, scope } = data;
             if (!title || !content || !type || !scope || (!classID && !roleID && !spaceID)) return manageError({ code: "invalid_data" });
@@ -34,7 +33,7 @@ const postsResource = {
                 case "space":
                     const space = creator.spaces?.find(x => x.id == spaceID);
                     if (!space) return manageError({ code: "user_not_in_space" });
-                    if (!(await hasRolePermission(space?.role.toString() || "", ["administrator", "manage_posts", "owner"]))) hasPermisson = false;
+                    if (!manageCheckUserHasPermissions(creator, ["manage_posts"])) return;
                     extra.space = {
                         name: space?.name || "",
                         id: space.id as any,
@@ -44,12 +43,12 @@ const postsResource = {
                     const classe = await classModel.findById(classID);
                     if (!classe) return manageError({ code: "class_not_found" });
                     const classSpace = creator.spaces?.find(x => x.id == String(classe.space?.id));
-                    if (!(await hasRolePermission(classSpace?.role.toString() || "", ["administrator", "manage_posts", "owner"]))) hasPermisson = false;
+                    if (!manageCheckUserHasPermissions(creator, ["manage_posts"])) return;
                 break;
                 case "role":
                     const roleSpace = creator.spaces?.find(x => x.id == spaceID);
                     if (!roleSpace) return manageError({ code: "user_not_in_space" });
-                    if (!(await hasRolePermission(roleSpace?.role.toString() || "", ["administrator", "manage_posts", "owner"]))) hasPermisson = false;
+                    if (!manageCheckUserHasPermissions(creator, ["manage_posts"])) return;
                     
                     const creatorSpace = await spaceModel.findOne({ "space.role.id": roleID });
                     if (!creatorSpace) hasPermisson = false;
