@@ -1,7 +1,7 @@
 import { ManageRequestBody } from "@middlewares/manageRequest";
 import stringService from "@utils/services/stringServices";
 import objectService from "@utils/services/objectServices";
-import { UserClassType } from "@utils/types/models/user";
+import { UserClassType } from "bonfire-shared-types";
 import { hasUser } from "@database/functions/user";
 import spaceModel from "@database/model/space";
 import classModel from "@database/model/class";
@@ -179,7 +179,7 @@ const classesResource = {
             const invitedUser = await hasUser({ _id: id }, manageError);
             if (!invitedUser) return;
 
-            const hasExistentClass = invitedUser.classes?.find(x => String(x.id) == classID);
+            const hasExistentClass = invitedUser.classes?.find((x: any) => String(x.id) == classID);
             if (hasExistentClass) return manageError({ code: "user_already_in_class"});
 
             let newClass = {
@@ -225,10 +225,10 @@ const classesResource = {
             const removedUser = await hasUser({ _id: id }, manageError);
             if (!removedUser) return;
 
-            const hasExistentClass = removedUser.classes?.find(x => String(x.id) == classID);
+            const hasExistentClass = removedUser.classes?.find((x: any) => String(x.id) == classID);
             if (!hasExistentClass) return manageError({ code: "user_not_in_class" });
         
-            const classes = removedUser.classes?.filter(x => String(x.id) != classID);
+            const classes = removedUser.classes?.filter((x: any) => String(x.id) != classID);
 
             let classUserMetrics = classe.metrics?.users || 0;
 
