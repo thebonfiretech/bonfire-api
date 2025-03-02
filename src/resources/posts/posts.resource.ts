@@ -1,4 +1,4 @@
-import { PostModelType, PostScopeType } from "@utils/types/models/post";
+import { PostModelType, PostScopeType } from "bonfire-shared-types";
 import { ManageRequestBody } from "@middlewares/manageRequest";
 import stringService from "@utils/services/stringServices";
 import objectService from "@utils/services/objectServices";
@@ -31,7 +31,7 @@ const postsResource = {
                     if (creator.role !== "admin") hasPermisson = false;    
                 break;
                 case "space":
-                    const space = creator.spaces?.find(x => x.id == spaceID);
+                    const space = creator.spaces?.find((x: any) => x.id == spaceID);
                     if (!space) return manageError({ code: "user_not_in_space" });
                     if (!manageCheckUserHasPermissions(creator, ["manage_posts"])) return;
                     extra.space = {
@@ -42,11 +42,11 @@ const postsResource = {
                 case "class":
                     const classe = await classModel.findById(classID);
                     if (!classe) return manageError({ code: "class_not_found" });
-                    const classSpace = creator.spaces?.find(x => x.id == String(classe.space?.id));
+                    const classSpace = creator.spaces?.find((x: any) => x.id == String(classe.space?.id));
                     if (!manageCheckUserHasPermissions(creator, ["manage_posts"])) return;
                 break;
                 case "role":
-                    const roleSpace = creator.spaces?.find(x => x.id == spaceID);
+                    const roleSpace = creator.spaces?.find((x: any) => x.id == spaceID);
                     if (!roleSpace) return manageError({ code: "user_not_in_space" });
                     if (!manageCheckUserHasPermissions(creator, ["manage_posts"])) return;
                     
