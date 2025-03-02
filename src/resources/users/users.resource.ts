@@ -4,7 +4,7 @@ import bcrypt from "bcrypt";
 import { ManageRequestBody } from "@middlewares/manageRequest";
 import stringService from "@utils/services/stringServices";
 import objectService from "@utils/services/objectServices";
-import { UserModelType } from "@utils/types/models/user";
+import { UserModelType } from "bonfire-shared-types";
 import { hasUser } from "@database/functions/user";
 import userModel from "@database/model/user";
 
