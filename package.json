@@ -42,6 +42,7 @@
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.8.3",
     "multer": "^1.4.5-lts.1",
-    "tsconfig-paths": "^4.2.0"
+    "tsconfig-paths": "^4.2.0",
+    "bonfire-shared-types": "git+https://github.com/thebonfiretech/shared-types.git"
   }
 }

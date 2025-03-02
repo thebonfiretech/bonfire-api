@@ -1,4 +1,4 @@
-import { UserModelType, UserSpaceType } from "@utils/types/models/user";
+import { UserModelType, UserSpaceType } from "bonfire-shared-types";
 import { hasExistsSpace, hasSpace } from "@database/functions/space";
 import { hasUser, hasExistsUser } from "@database/functions/user";
 import { ManageRequestBody } from "@middlewares/manageRequest";
@@ -83,7 +83,7 @@ const adminResource = {
             
             await userModel.findByIdAndDelete(userID);
 
-            const spacesWithUser = user.spaces?.map(x => String(x.id)) || [];
+            const spacesWithUser = user.spaces?.map((x: any) => String(x.id)) || [];
             for (const spaceUser of spacesWithUser) {
                 const space = await hasSpace({ _id: spaceUser }, manageError);
                 if (space){
