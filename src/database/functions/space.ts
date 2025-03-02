@@ -1,8 +1,7 @@
 import { Response } from "express";
 import { isValidObjectId } from "mongoose";
 
-import { SpaceModelType } from "@utils/types/models/space";
-import { UserModelType } from "@utils/types/models/user";
+import { UserModelType, SpaceModelType } from "bonfire-shared-types"
 import spaceModel from "@database/model/space";
 import userModel from "@database/model/user";
 

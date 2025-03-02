@@ -1,6 +1,6 @@
 import { isValidObjectId } from "mongoose";
 
-import { UserModelType } from "@utils/types/models/user";
+import { UserModelType } from "bonfire-shared-types";
 import userModel from "@database/model/user";
 
 export const hasExistsUser = async (user: Partial<UserModelType>, manageError: Function): Promise<boolean | undefined> => {

@@ -1,4 +1,4 @@
-import { TransactionModelType } from "@utils/types/models/transaction";
+import { TransactionModelType } from "bonfire-shared-types";
 import transactionModel from "@database/model/transaction";
 import userModel from "@database/model/user";
 

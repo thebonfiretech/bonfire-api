@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-import { SpaceRolePermissionsValues } from "@utils/types/models/space";
+import { SpaceRolePermissionsValues } from "bonfire-shared-types";
 
 const spaceSchema = new mongoose.Schema({
     name: String,
