@@ -1,4 +1,4 @@
-import { UserModelType, UserSpaceType } from "@utils/types/models/user";
+import { UserModelType, UserSpaceType } from "bonfire-shared-types";
 import { hasExistsUser, hasUser } from "@database/functions/user";
 import { ManageRequestBody } from "@middlewares/manageRequest";
 import { hasSpace } from "@database/functions/space";
@@ -63,7 +63,7 @@ const spacesResource = {
 
             name = stringService.removeSpacesAndLowerCase(name);
 
-            const hasExistentRole = Array.isArray(space.roles) ? space.roles.find((x) => x.name === name) : null;
+            const hasExistentRole = Array.isArray(space.roles) ? space.roles.find((x: any) => x.name === name) : null;
             if (hasExistentRole) return manageError({ code: "role_already_exists" });
 
             const newRole = {
@@ -108,7 +108,7 @@ const spacesResource = {
                 lastUpdate: new Date(Date.now()),
             };
 
-            const normalRole = Array.isArray(space.roles) ? space.roles.find((x) =>  x.name == "normal") : null;
+            const normalRole = Array.isArray(space.roles) ? space.roles.find((x: any) =>  x.name == "normal") : null;
 
             let newSpace: UserSpaceType= {
                 entryAt: new Date(),
@@ -154,10 +154,10 @@ const spacesResource = {
             const invitedUser = await hasUser({ _id: id }, manageError);
             if (!invitedUser) return;
 
-            const hasExistentSpace = invitedUser.spaces?.find(x => String(x.id) == spaceID);
+            const hasExistentSpace = invitedUser.spaces?.find((x: any) => String(x.id) == spaceID);
             if (hasExistentSpace) return manageError({ code: "user_already_in_space"});
 
-            const normalRole = Array.isArray(space.roles) ? space.roles.find((x) =>  x.name == "normal") : null;
+            const normalRole = Array.isArray(space.roles) ? space.roles.find((x: any) =>  x.name == "normal") : null;
 
             let newSpace: UserSpaceType= {
                 role: roleID ? roleID : normalRole._id,
@@ -202,10 +202,10 @@ const spacesResource = {
             const removeUser = await hasUser({ _id: id }, manageError);
             if (!removeUser) return;
 
-            const hasExistentSpace = removeUser.spaces?.find(x => String(x.id) == spaceID);
+            const hasExistentSpace = removeUser.spaces?.find((x: any) => String(x.id) == spaceID);
             if (!hasExistentSpace) return manageError({ code: "user_not_in_space" });
 
-            const spaces = removeUser.spaces?.filter(x => String(x.id) != spaceID);
+            const spaces = removeUser.spaces?.filter((x: any) => String(x.id) != spaceID);
         
             let spaceUserMetrics = space.metrics?.users || 0;
 
@@ -233,7 +233,7 @@ const spacesResource = {
 
             if (!manageCheckUserHasPermissions(user, ["manage_roles"])) return;
  
-            const spaceRole = Array.isArray(space.roles) ? space.roles.find((x) => String(x._id) === roleID) : null;
+            const spaceRole = Array.isArray(space.roles) ? space.roles.find((x: any) => String(x._id) === roleID) : null;
             if (!spaceRole) return manageError({ code: "role_not_found" });
 
             if (spaceRole.system) return manageError({ code: "system_role_modification_forbidden" });
@@ -244,7 +244,7 @@ const spacesResource = {
                 name = stringService.removeSpacesAndLowerCase(name);
     
                 if (name !== spaceRole.name) {
-                    const hasExistentRole = Array.isArray(space.roles) ? space.roles.find((x) => x.name === name) : null;
+                    const hasExistentRole = Array.isArray(space.roles) ? space.roles.find((x: any) => x.name === name) : null;
                     if (hasExistentRole) return manageError({ code: "role_already_exists" });
                 };
             };
@@ -265,7 +265,7 @@ const spacesResource = {
             const space = await hasSpace({ _id: spaceID }, manageError);
             if (!space) return;
 
-            const spaceRole = Array.isArray(space.roles) ? space.roles.find((x) => String(x._id) === roleID) : null;
+            const spaceRole = Array.isArray(space.roles) ? space.roles.find((x: any) => String(x._id) === roleID) : null;
             if (!spaceRole) return manageError({ code: "role_not_found" });
 
             return spaceRole;
@@ -288,10 +288,10 @@ const spacesResource = {
 
             if (!manageCheckUserHasPermissions(user, ["manage_roles"])) return;
 
-            const spaceRole = Array.isArray(space.roles) ? space.roles.find((x) => String(x._id) === roleID) : null;
+            const spaceRole = Array.isArray(space.roles) ? space.roles.find((x: any) => String(x._id) === roleID) : null;
             if (!spaceRole) return manageError({ code: "role_not_found" });
             
-            const normalRole = Array.isArray(space.roles) ? space.roles.find((x) => x.name === "normal") : null;
+            const normalRole = Array.isArray(space.roles) ? space.roles.find((x: any) => x.name === "normal") : null;
             if (!normalRole) return manageError({ code: "role_not_found" });
 
             if (spaceRole.system) return manageError({ code: "system_role_modification_forbidden" });
@@ -305,7 +305,7 @@ const spacesResource = {
                 await spaceUser.save();
             }
     
-            const newRoles = Array.isArray(space.roles) ? space.roles.filter((x) => String(x._id) !== roleID) : null;
+            const newRoles = Array.isArray(space.roles) ? space.roles.filter((x: any) => String(x._id) !== roleID) : null;
             return await spaceModel.findByIdAndUpdate(spaceID, { $set: { roles: newRoles, lastUpdate: Date.now() } }, { new: true });   
         } catch (error) { 
             manageError({ code: "internal_error", error });
