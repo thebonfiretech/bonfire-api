@@ -1,6 +1,5 @@
 import { TicketModelType } from "@utils/types/models/ticket";
 import { ManageRequestBody } from "@middlewares/manageRequest";
-import { hasRolePermission } from "@database/functions/space";
 import stringService from "@utils/services/stringServices";
 import { hasUser } from "@database/functions/user";
 import ticketModel from "@database/model/ticket";
@@ -50,7 +49,7 @@ const ticketResource = {
             manageError({ code: "internal_error", error });
         }
     },
-    getTicket: async ({ manageError, ids, params }: ManageRequestBody) => {
+    getTicket: async ({ manageError, ids, params, manageCheckUserHasPermissions }: ManageRequestBody) => {
         try {
             const { ticketID } =  params;
 
@@ -64,9 +63,7 @@ const ticketResource = {
             if (!ticket) return manageError({ code: "ticket_not_found" });
 
             if (userID !== String(ticket.userID) && ticket.scope === "space"){
-                const userSpace = user.spaces?.find(x => x.id == String(ticket.spaceID));
-                const hasPermisson = await hasRolePermission(userSpace?.role.toString() || "", ["administrator", "manage_tickets", "owner"]);
-                if (!hasPermisson) return manageError({ code: "no_execution_permission" });
+                if (!manageCheckUserHasPermissions(user, ["manage_tickets"])) return;
             };
 
             if (userID !== String(ticket.userID) && ticket.scope === "system"){   
@@ -78,7 +75,7 @@ const ticketResource = {
             manageError({ code: "internal_error", error });
         }
     },
-    getSpaceTickets: async ({ manageError, ids, params }: ManageRequestBody) => {
+    getSpaceTickets: async ({ manageError, ids, params, manageCheckUserHasPermissions }: ManageRequestBody) => {
         try {
             const { spaceID } =  params;
 
@@ -88,9 +85,7 @@ const ticketResource = {
             const user = await hasUser({ _id: userID }, manageError);
             if (!user) return;
 
-            const userSpace = user.spaces?.find(x => x.id == spaceID);
-            const hasPermisson = await hasRolePermission(userSpace?.role.toString() || "", ["administrator", "manage_tickets", "owner"]);
-            if (!hasPermisson) return manageError({ code: "no_execution_permission" });
+            if (!manageCheckUserHasPermissions(user, ["manage_tickets"])) return;
 
             return await ticketModel.find({ spaceID, scope: "space" });
         } catch (error) {
@@ -112,7 +107,7 @@ const ticketResource = {
             manageError({ code: "internal_error", error });
         }
     },
-    addTicketMessage: async ({ manageError, ids, params, data }: ManageRequestBody) => {
+    addTicketMessage: async ({ manageError, ids, params, data, manageCheckUserHasPermissions }: ManageRequestBody) => {
         try {
             const { ticketID } =  params;
 
@@ -130,9 +125,7 @@ const ticketResource = {
             content = stringService.filterBadwords(content || "");
 
             if (userID !== String(ticket.userID) && ticket.scope === "space"){
-                const userSpace = user.spaces?.find(x => x.id == spaceID);
-                const hasPermisson = await hasRolePermission(userSpace?.role.toString() || "", ["administrator", "manage_tickets", "owner"]);
-                if (!hasPermisson) return manageError({ code: "no_execution_permission" });
+                if (!manageCheckUserHasPermissions(user, ["manage_tickets"])) return;
             };
 
             if (userID !== String(ticket.userID) && ticket.scope === "system"){   
