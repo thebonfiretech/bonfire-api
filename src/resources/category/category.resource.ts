@@ -1,12 +1,11 @@
 import { ManageRequestBody } from "@middlewares/manageRequest";
-import { hasRolePermission } from "@database/functions/space";
 import stringService from "@utils/services/stringServices";
 import objectService from "@utils/services/objectServices";
 import categoryModel from "@database/model/category";
 import { hasUser } from "@database/functions/user";
 
 const categoryResource = {
-    createCategory: async ({ manageError, data, ids }: ManageRequestBody) => {
+    createCategory: async ({ manageError, data, ids, manageCheckUserHasPermissions }: ManageRequestBody) => {
         try {
             let { name, description, scope } = data;
             if (!name || !scope) return manageError({ code: "invalid_data" });
@@ -18,9 +17,7 @@ const categoryResource = {
             const user = await hasUser({ _id: userID }, manageError);
             if (!user) return;
 
-            const userSpace = user.spaces?.find(x => x.id == String(scope || ""));
-            const hasPermisson = await hasRolePermission(userSpace?.role.toString() || "", ["administrator", "manage_categorys", "owner"]);
-            if (!hasPermisson) return manageError({ code: "no_execution_permission" });
+            if (!manageCheckUserHasPermissions(user, ["manage_categorys"])) return;
 
             const newCategory = new categoryModel({
                 name,
@@ -62,7 +59,7 @@ const categoryResource = {
         }
     },
     
-    updateCategory: async ({ manageError, params, data, ids }: ManageRequestBody) => {
+    updateCategory: async ({ manageError, params, data, ids, manageCheckUserHasPermissions}: ManageRequestBody) => {
         try {
             const { categoryID } = params;
             if (!categoryID) return manageError({ code: "invalid_params" });
@@ -74,9 +71,7 @@ const categoryResource = {
             const user = await hasUser({ _id: userID }, manageError);
             if (!user) return;
 
-            const userSpace = user.spaces?.find(x => x.id == String(category.scope || ""));
-            const hasPermisson = await hasRolePermission(userSpace?.role.toString() || "", ["administrator", "manage_categorys", "owner"]);
-            if (!hasPermisson) return manageError({ code: "no_execution_permission" });
+            if (!manageCheckUserHasPermissions(user, ["manage_categorys"])) return;
 
             const filteredData = objectService.filterObject(data, ["_id", "userID", "createdAt"]);
             if (filteredData.name) filteredData.name = stringService.filterBadwords(stringService.normalizeString(filteredData.name));
@@ -88,7 +83,7 @@ const categoryResource = {
         }
     },
     
-    deleteCategory: async ({ manageError, params, ids }: ManageRequestBody) => {
+    deleteCategory: async ({ manageError, params, ids, manageCheckUserHasPermissions }: ManageRequestBody) => {
         try {
             const { categoryID } = params;
             if (!categoryID) return manageError({ code: "invalid_params" });
@@ -100,9 +95,7 @@ const categoryResource = {
             const user = await hasUser({ _id: userID }, manageError);
             if (!user) return;
 
-            const userSpace = user.spaces?.find(x => x.id == String(category.scope || ""));
-            const hasPermisson = await hasRolePermission(userSpace?.role.toString() || "", ["administrator", "manage_categorys", "owner"]);
-            if (!hasPermisson) return manageError({ code: "no_execution_permission" });
+            if (!manageCheckUserHasPermissions(user, ["manage_categorys"])) return;
             
             await categoryModel.findByIdAndDelete(categoryID);
             return { delete: true };
