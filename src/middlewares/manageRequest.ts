@@ -5,7 +5,7 @@ import defaultConfig from "@assets/config/default";
 import sendError from "@utils/functions/error";
 import logger from "@utils/functions/logger";
 import { deleteCacheFiles } from "./upload";
-import { UserModelType } from "@utils/types/models/user";
+import { UserModelType } from "bonfire-shared-types";
 import { checkUserHasPermissions } from "@database/functions/space";
 
 interface ManageErrorParams {
