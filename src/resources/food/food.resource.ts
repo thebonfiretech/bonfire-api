@@ -1,5 +1,5 @@
 import { ManageRequestBody } from "@middlewares/manageRequest";
-import { FoodModelType } from "@utils/types/models/food";
+import { FoodModelType } from "bonfire-shared-types";
 import { hasUser } from "@database/functions/user";
 import foodModel from "@database/model/food";
 
