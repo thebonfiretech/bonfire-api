@@ -21,4 +21,5 @@ RUN npm install --only=production
 
 EXPOSE 7201
 
-CMD ["node", "dist/server.js"]
+# CMD ["node", "dist/server.js"]
+CMD ["npm", "run", "start:dev"]
