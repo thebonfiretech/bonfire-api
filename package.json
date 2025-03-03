@@ -10,6 +10,7 @@
     "build": "tsc && tsc-alias",
     "dev": "npx nodemon"
   },
+  "type": "module",
   "repository": {
     "type": "git",
     "url": "git+ssh://git@github.com/thebonfiretech/bonfire-api.git"
