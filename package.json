@@ -1,15 +1,16 @@
 {
   "name": "bonfire-api",
-  "version": "1.0.0",
+  "version": "1.4.2",
   "description": "API responsavel por gerir dados dos sistemas do Bonfire",
   "main": "src/server.ts",
   "scripts": {
-    "control-access": "ts-node -r tsconfig-paths/register src/utils/functions/controlAccess.ts",
-    "start:dev": "npx ts-node -r tsconfig-paths/register src/server.ts",
+    "control-access": "tsx -r tsconfig-paths/register src/utils/functions/controlAccess.ts",
+    "start:dev": "tsx -r tsconfig-paths/register src/server.ts",
     "start": "node dist/server.js",
     "build": "tsc && tsc-alias",
     "dev": "npx nodemon"
   },
+  "type": "module",
   "repository": {
     "type": "git",
     "url": "git+ssh://git@github.com/thebonfiretech/bonfire-api.git"
@@ -21,21 +22,30 @@
   },
   "homepage": "https://github.com/thebonfiretech/bonfire-api#readme",
   "devDependencies": {
+    "@types/bcrypt": "^5.0.2",
     "@types/chalk": "^0.4.31",
     "@types/cors": "^2.8.17",
     "@types/express": "^5.0.0",
+    "@types/jsonwebtoken": "^9.0.7",
     "@types/morgan": "^1.9.9",
+    "@types/multer": "^1.4.12",
+    "@types/node": "^22.13.9",
     "ts-node": "^10.9.2",
     "tsc-alias": "^1.8.10",
+    "tsx": "^4.19.3",
     "typescript": "^5.7.2"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.722.0",
+    "bcrypt": "^5.1.1",
+    "bonfire-shared-types": "git+https://github.com/thebonfiretech/shared-types.git",
     "chalk": "^4.1.2",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",
     "express": "^4.21.1",
+    "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.8.3",
-    "morgan": "^1.10.0",
+    "multer": "^1.4.5-lts.1",
     "tsconfig-paths": "^4.2.0"
   }
 }
