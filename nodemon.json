@@ -1,5 +1,5 @@
 {
-  "exec": "ts-node -r tsconfig-paths/register src/server.ts",
+  "exec": "tsx -r tsconfig-paths/register src/server.ts",
   "watch": ["src", "package.json", ".env", "tsconfig.json"],
   "restartable": "rs",
   "quiet": true,
