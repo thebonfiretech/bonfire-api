@@ -1,4 +1,4 @@
-const badwords: string[] = [
+const badWords: string[] = [
     "aidético", "aidética", "aleijado", "aleijada", "analfabeto", "analfabeta", "anus", "anão", "anã", 
     "arrombado", "apenado", "apenada", "baba-ovo", "babaca", "babaovo", "bacura", "bagos", "baianada", 
     "baitola", "barbeiro", "barraco", "beata", "bebum", "besta", "bicha", "bisca", "bixa", "boazuda", "boceta", 
@@ -41,5 +41,5 @@ const badwords: string[] = [
     "bastard", "douche", "fucking", "cuntface", "dickhead", "fuckhead", "shitface", "clit", "testicle", "rape", "asswipe", "poha"
   ];
   
-  export default badwords;
+  export default badWords;
   

@@ -16,7 +16,7 @@ export type ResponseErrorsParams =
   | "investment_not_found"
   | "space_already_exists" 
   | "admin_access_denied"
-  | "no_credentials_send" 
+  | "no_credentials_sent" 
   | "user_already_exists" 
   | "form_already_exists" 
   | "role_already_exists" 
@@ -44,7 +44,7 @@ export type ResponseErrorsParams =
   | "post_not_found" 
   | "access_denied"
   | "invalid_data" 
-  | "no_data_send" 
+  | "no_data_sent" 
   | "no_token"
 
 export const ResponseErrors: Record<ResponseErrorsParams, ResponseError> = {
@@ -60,12 +60,12 @@ export const ResponseErrors: Record<ResponseErrorsParams, ResponseError> = {
     message: "Server Error",
     statusCode: 500,
   },
-  no_credentials_send: {
-    message: "No credentials send",
+  no_credentials_sent: {
+    message: "No credentials sent",
     statusCode: 401,
   },
-  no_data_send: {
-    message: "No data send",
+  no_data_sent: {
+    message: "No data sent",
     statusCode: 400,
   },
   invalid_credentials: {
@@ -169,11 +169,11 @@ export const ResponseErrors: Record<ResponseErrorsParams, ResponseError> = {
     statusCode: 401,
   },
   invalid_params: {
-    message: "Invalid params send",
+    message: "Invalid params sent",
     statusCode: 400,
   },
   invalid_data: {
-    message: "Invalid data send",
+    message: "Invalid data sent",
     statusCode: 400,
   },
   user_not_registered: {

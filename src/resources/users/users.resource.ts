@@ -40,7 +40,7 @@ const usersResource = {
     signIn: async ({ data, manageError }: ManageRequestBody) => {
         try {
             let { id, password } = data;
-            if (!id || !password) return manageError({ code: "no_credentials_send" });
+            if (!id || !password) return manageError({ code: "no_credentials_sent" });
 
             const findUser = await userModel.findOne({ id });
             if (!findUser) return manageError({ code: "user_not_found" });

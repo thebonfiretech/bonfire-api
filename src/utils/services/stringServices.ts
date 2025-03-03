@@ -1,4 +1,4 @@
-import badwords from "@assets/content/badwords";
+import badWords from "@assets/content/badwords";
 
 const stringService = {
     normalizeString: (str: string): string => {
@@ -19,7 +19,7 @@ const stringService = {
         return str
             .split(' ')
             .map(word => {
-                if (badwords.includes(word.toLowerCase())) {
+                if (badWords.includes(word.toLowerCase())) {
                     return '****';
                 }
                 return word;
@@ -29,7 +29,7 @@ const stringService = {
     containsBadwords: (str: string): boolean => {
         return str
             .split(' ')
-            .some(word => badwords.includes(word.toLowerCase()));
+            .some(word => badWords.includes(word.toLowerCase()));
     }
 };
 
