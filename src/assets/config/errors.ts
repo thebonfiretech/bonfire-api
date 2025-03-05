@@ -15,6 +15,7 @@ export type ResponseErrorsParams =
   | "user_already_in_class"
   | "investment_not_found"
   | "space_already_exists" 
+  | "class_already_exists" 
   | "admin_access_denied"
   | "no_credentials_sent" 
   | "user_already_exists" 
@@ -138,6 +139,10 @@ export const ResponseErrors: Record<ResponseErrorsParams, ResponseError> = {
   },
   role_already_exists: {
     message: "Role already exists",
+    statusCode: 409,
+  },
+  class_already_exists: {
+    message: "Class already exists",
     statusCode: 409,
   },
   form_already_exists: {

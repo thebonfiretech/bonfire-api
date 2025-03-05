@@ -17,7 +17,6 @@ const classesResource = {
             if (description) description = stringService.filterBadwords(stringService.normalizeString(description));
             name = stringService.normalizeString(name);
 
-
             const user = await hasUser({ _id: userID }, manageError);
             if (!user) return;
 
@@ -25,6 +24,9 @@ const classesResource = {
 
             const space = await spaceModel.findById(spaceID);
             if (!space) return manageError({ code: "space_not_found" });
+
+            const hasClasse = await classModel.findOne({ name });
+            if (hasClasse) return manageError({ code: "class_already_exists" });
             
             const newClass = new classModel({
                 lastUpdate: new Date(Date.now()),
