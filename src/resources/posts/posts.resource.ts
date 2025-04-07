@@ -129,7 +129,9 @@ const postsResource = {
             const user = await hasUser({ _id: userID }, manageError);
             if (!user) return;
 
-            if (user._id != (post.creator?.id || "").toString()) return manageError({ code: "no_execution_permission" });
+            const hasPermisson = (user._id != (post.creator?.id || "").toString()) || user.role == "admin";
+
+            if (!hasPermisson) return manageError({ code: "no_execution_permission" });
 
             let filteredPost = objectService.getObject(data, ["title", "content", "attachments", "type"]);
 
