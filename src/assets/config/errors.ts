@@ -177,7 +177,7 @@ export const ResponseErrors: Record<ResponseErrorsParams, ResponseError> = {
     statusCode: 400,
   },
   user_not_registered: {
-    message: "User not registered",
+    message: "Unregistered user",
     statusCode: 404,
   },
   no_slots_available: { 
