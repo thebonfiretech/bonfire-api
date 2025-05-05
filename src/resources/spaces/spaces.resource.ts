@@ -17,15 +17,19 @@ const spacesResource = {
             manageError({ code: "internal_error", error });
         }
     },
-    getSpaceAndRole: async ({ manageError, params }: ManageRequestBody) => {
+    getFullSpace: async ({ manageError, params, ids }: ManageRequestBody) => {
         try {
-            const { spaceID, roleID } =  params;
+            const { spaceID } =  params;
             if (!spaceID) return manageError({ code: "invalid_params" });
 
             const space = await hasSpace({ _id: spaceID }, manageError);
             if (!space) return;
 
-            const role = Array.isArray(space.roles) ? space.roles.find((x: any) => String(x._id) === roleID) : null;
+            const user = await userModel.findById(ids.userID);
+
+            const userSpace = user?.spaces.find(x => x.id == spaceID);
+
+            const role = Array.isArray(space.roles) ? space.roles.find((x: any) => String(x._id) === userSpace?.id) : null;
             if (!role) return manageError({ code: "role_not_found" });
 
             return {

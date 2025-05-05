@@ -18,7 +18,7 @@ spacesRouter.post("/:spaceID/users/remove", manageRequest(spacesResource.removeS
 spacesRouter.post("/:spaceID/users/add", manageRequest(spacesResource.addSpaceUser));
 spacesRouter.get("/:spaceID/users", manageRequest(spacesResource.getSpaceUsers));
 
-spacesRouter.get("/full/:spaceID/:roleID", manageRequest(spacesResource.getSpaceAndRole));
+spacesRouter.get("/full/:spaceID", manageRequest(spacesResource.getFullSpace));
 spacesRouter.get("/:spaceID", manageRequest(spacesResource.getSpace));
 
 export default spacesRouter;
