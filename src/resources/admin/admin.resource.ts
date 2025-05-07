@@ -203,13 +203,31 @@ const adminResource = {
             manageError({ code: "internal_error", error });
         }
     },
-    getAllSpaces: async ({ manageError }: ManageRequestBody) => {
+    getAllSpaces: async ({ manageError, querys }: ManageRequestBody) => {
         try {
-            return await spaceModel.find();
+          const pageNum = Number(querys.page) || 1;
+          const limitNum = Number(querys.limit) || 10;
+          if (pageNum < 1 || limitNum < 1) return manageError({ code: "invalid_params" });
+      
+          const skip = (pageNum - 1) * limitNum;
+          const [spaces, total] = await Promise.all([
+            spaceModel.find().skip(skip).limit(limitNum),
+            spaceModel.countDocuments()
+          ]);
+      
+          return {
+            data: spaces,
+            meta: {
+              total,
+              page: pageNum,
+              pages: Math.ceil(total / limitNum),
+              limit: limitNum
+            }
+          };
         } catch (error) {
-            manageError({ code: "internal_error", error });
+          manageError({ code: "internal_error", error });
         }
-    },
+      },      
     deleteSpace: async ({ manageError, params }: ManageRequestBody) => {
         try {
             const { spaceID } =  params;
