@@ -27,6 +27,7 @@ export interface ManageRequestBody {
     manageCheckUserHasPermissions: (user: UserModelType | string, permissions: string[]) => Promise<boolean>;
     files: Express.Multer.File[];
     params: any;
+    querys: any;
     data: any;
 }
 
@@ -63,6 +64,7 @@ const manageRequest = (service: ManageRequestParams["service"], options?: Manage
                 defaultExpress: { res, req },
                 params: req.params,
                 data: req.body,
+                querys: req.query,
                 manageError,
                 manageCheckUserHasPermissions,
                 files,
