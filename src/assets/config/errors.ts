@@ -45,175 +45,175 @@ export type ResponseErrorsParams =
   | "access_denied"
   | "invalid_data" 
   | "no_data_sent" 
-  | "no_token"
-
+  | "no_token";
+  
 export const ResponseErrors: Record<ResponseErrorsParams, ResponseError> = {
   system_role_modification_forbidden: {
-    message: "Not allowed to modify or delete system-created roles",
+    message: "Não é permitido modificar ou excluir cargos do sistema",
     statusCode: 403,
   },
   no_execution_permission: {
-    message: "Permission denied for execution",
+    message: "Permissão negada para execução",
     statusCode: 403,
   },
   internal_error: {
-    message: "Server Error",
+    message: "Erro no servidor",
     statusCode: 500,
   },
   no_credentials_sent: {
-    message: "No credentials sent",
+    message: "Nenhuma credencial enviada",
     statusCode: 401,
   },
   no_data_sent: {
-    message: "No data sent",
+    message: "Nenhum dado enviado",
     statusCode: 400,
   },
   invalid_credentials: {
-    message: "Invalid Credentials",
+    message: "Credenciais inválidas",
     statusCode: 401,
   },
   no_token: {
-    message: "No token, authorization denied",
+    message: "Token ausente, autorização negada",
     statusCode: 400,
   },
   token_is_not_valid: {
-    message: "Token is not valid",
+    message: "Token inválido",
     statusCode: 401,
   },
   user_not_found: {
-    message: "User not found",
+    message: "Usuário não encontrado",
     statusCode: 404,
   },
   category_not_found: {
-    message: "Category not found",
+    message: "Categoria não encontrada",
     statusCode: 404,
   },
   product_not_found: {
-    message: "Product not found",
+    message: "Produto não encontrado",
     statusCode: 404,
   },
   form_not_found: {
-    message: "Form not found",
+    message: "Formulário não encontrado",
     statusCode: 404,
   },
   wallet_not_found: {
-    message: "Wallet not found",
+    message: "Carteira não encontrada",
     statusCode: 404,
   },
   post_not_found: {
-    message: "Post not found",
+    message: "Publicação não encontrada",
     statusCode: 404,
   },
   ticket_not_found: {
-    message: "Ticket not found",
+    message: "Chamado não encontrado",
     statusCode: 404,
   },
   class_not_found: {
-    message: "Class not found",
+    message: "Turma não encontrada",
     statusCode: 404,
   },
   food_not_found: {
-    message: "Food not found",
+    message: "Alimento não encontrado",
     statusCode: 404,
   },
   key_not_found: {
-    message: "Key not found",
+    message: "Chave não encontrada",
     statusCode: 404,
   },
   role_not_found: {
-    message: "Role not found",
+    message: "Cargo não encontrado",
     statusCode: 404,
   },
   space_not_found: {
-    message: "Space not found",
+    message: "Espaço não encontrado",
     statusCode: 404,
   },
   investment_not_found: {
-    message: "Investment not found",
+    message: "Investimento não encontrado",
     statusCode: 404,
   },
   user_already_exists: {
-    message: "User already exists",
+    message: "Usuário já existe",
     statusCode: 409,
   },
   role_already_exists: {
-    message: "Role already exists",
+    message: "Cargo já existe",
     statusCode: 409,
   },
   form_already_exists: {
-    message: "Form already exists",
+    message: "Formulário já existe",
     statusCode: 409,
   },
   user_already_registered: {
-    message: "User already registered",
+    message: "Usuário já registrado",
     statusCode: 409,
   },
   space_already_exists: {
-    message: "Space already exists",
+    message: "Espaço já existe",
     statusCode: 409,
   },
   key_already_exists: {
-    message: "Key already exists",
+    message: "Chave já existe",
     statusCode: 409,
   },
   access_denied: {
-    message: "Access Denied",
+    message: "Acesso negado",
     statusCode: 401,
   },
   control_access_denied: {
-    message: "Control Access Denied",
+    message: "Acesso ao controle negado",
     statusCode: 401,
   },
   admin_access_denied: {
-    message: "No admin, Access Denied",
+    message: "Sem permissão de administrador, acesso negado",
     statusCode: 401,
   },
   invalid_params: {
-    message: "Invalid params sent",
+    message: "Parâmetros inválidos enviados",
     statusCode: 400,
   },
   invalid_data: {
-    message: "Invalid data sent",
+    message: "Dados inválidos enviados",
     statusCode: 400,
   },
   user_not_registered: {
-    message: "Unregistered user",
+    message: "Usuário não registrado",
     statusCode: 404,
   },
-  no_slots_available: { 
-    message: "No slots available",
+  no_slots_available: {
+    message: "Nenhuma vaga disponível",
     statusCode: 409,
   },
-  no_products_available: { 
-    message: "No products available",
+  no_products_available: {
+    message: "Nenhum produto disponível",
     statusCode: 409,
   },
-  insufficient_coins: { 
-    message: "Insufficient coins",
+  insufficient_coins: {
+    message: "Moedas insuficientes",
     statusCode: 409,
   },
   content_contains_badwords: {
-    message: "Content contains prohibited words",
+    message: "O conteúdo contém palavras proibidas",
     statusCode: 400,
   },
   user_already_in_space: {
-    message: "User is already in the space",
+    message: "Usuário já está no espaço",
     statusCode: 409,
   },
   user_not_in_space: {
-    message: "User is not in the space",
+    message: "Usuário não está no espaço",
     statusCode: 404,
   },
   user_already_in_class: {
-    message: "User is already in the class",
+    message: "Usuário já está na turma",
     statusCode: 409,
   },
   user_not_in_class: {
-    message: "User is not in the class",
+    message: "Usuário não está na turma",
     statusCode: 404,
   },
   unauthorized_form_submission: {
-    message: "Unauthorized form submission",
+    message: "Envio de formulário não autorizado",
     statusCode: 403,
   },
 };
