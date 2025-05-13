@@ -17,19 +17,23 @@ const stringService = {
     },
     filterBadwords: (str: string): string => {
         return str
-            .split(' ')
+            .split(/\b/)
             .map(word => {
-                if (badWords.includes(word.toLowerCase())) {
-                    return '****';
+                const clean = word.toLowerCase().replace(/[^\wÀ-ÿ]/g, '');
+                if (badWords.includes(clean)) {
+                    return '*'.repeat(word.length);
                 }
                 return word;
             })
-            .join(' ');
+            .join('');
     },
     containsBadwords: (str: string): boolean => {
         return str
-            .split(' ')
-            .some(word => badWords.includes(word.toLowerCase()));
+            .split(/\b/)
+            .some(word => {
+                const clean = word.toLowerCase().replace(/[^\wÀ-ÿ]/g, '');
+                return badWords.includes(clean);
+            });
     }
 };
 
