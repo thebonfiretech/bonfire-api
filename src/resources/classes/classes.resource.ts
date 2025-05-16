@@ -109,7 +109,7 @@ const classesResource = {
                 })
             );
 
-            return classesCompletas.filter(c => c !== null);
+            return classesCompletas.filter(c => c !== null && c._id !== spaceID);
         } catch (error) {
             return manageError({ code: "internal_error", error });
         }
