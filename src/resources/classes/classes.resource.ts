@@ -102,6 +102,9 @@ const classesResource = {
                 (user.classes || []).map(async ({ id, entryAt }) => {
                     const cls = await classModel.findOne({ _id: id, spaceID }).lean();
                     if (!cls) return null;
+
+                    if (cls.space?.id !== spaceID) return null;
+                    
                     return {
                         ...cls,
                         entryAt,
@@ -109,7 +112,7 @@ const classesResource = {
                 })
             );
 
-            return classesCompletas.filter(c => c !== null && c._id !== spaceID);
+            return classesCompletas.filter(c => c !== null);
         } catch (error) {
             return manageError({ code: "internal_error", error });
         }
