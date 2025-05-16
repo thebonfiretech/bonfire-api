@@ -90,6 +90,30 @@ const classesResource = {
             manageError({ code: "internal_error", error });
         }
     },
+    getSpaceUserClasses: async ({ manageError, params }: ManageRequestBody) => {
+        try {
+            const { spaceID, userID } = params;
+            if (!spaceID) return manageError({ code: "invalid_params" });
+
+            const user = await hasUser({ _id: userID }, manageError);
+            if (!user) return;
+
+            const classesCompletas = await Promise.all(
+                (user.classes || []).map(async ({ id, entryAt }) => {
+                    const cls = await classModel.findOne({ _id: id, spaceID }).lean();
+                    if (!cls) return null;
+                    return {
+                        ...cls,
+                        entryAt,
+                    };
+                })
+            );
+
+            return classesCompletas.filter(c => c !== null);
+        } catch (error) {
+            return manageError({ code: "internal_error", error });
+        }
+    },
     updateClass: async ({ manageError, params, data, ids, manageCheckUserHasPermissions }: ManageRequestBody) => {
         try {
             const { classID } =  params;

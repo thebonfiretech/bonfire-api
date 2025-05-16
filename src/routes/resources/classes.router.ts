@@ -15,5 +15,6 @@ classesRouter.post("/:classID/users/add", manageRequest(classesResource.addClass
 classesRouter.get("/:classID/users", manageRequest(classesResource.getClassUsers));
 
 classesRouter.get("/space/:spaceID", manageRequest(classesResource.getSpaceClasses));
+classesRouter.get("/space/user:spaceID/:userID", manageRequest(classesResource.getSpaceUserClasses));
 
 export default classesRouter;
