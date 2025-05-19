@@ -103,7 +103,7 @@ const classesResource = {
                     const cls = await classModel.findOne({ _id: id, spaceID }).lean();
                     if (!cls) return null;
 
-                    if (cls.space?.id !== spaceID) return null;
+                    if (String(cls?.space?.id) !== spaceID) return null;
                     
                     return {
                         ...cls,
