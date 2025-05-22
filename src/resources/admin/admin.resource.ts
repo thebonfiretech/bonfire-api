@@ -121,13 +121,32 @@ const adminResource = {
             manageError({ code: "internal_error", error });
         }
     },
-    getAllUsers: async ({ manageError }: ManageRequestBody) => {
+    getAllUsers: async ({ manageError, querys }: ManageRequestBody) => {
         try {
-           return await userModel.find().sort({ date: -1 }).select('-password');
+          const pageNum = Number(querys.page) || 1;
+          const limitNum = Number(querys.limit) || 10;
+          if (pageNum < 1 || limitNum < 1) return manageError({ code: "invalid_params" });
+      
+          const skip = (pageNum - 1) * limitNum;
+          const [users, total] = await Promise.all([
+            userModel.find().sort({ date: -1 }).skip(skip).limit(limitNum).select('-password'),
+            userModel.countDocuments()
+          ]);
+      
+          return {
+            data: users,
+            meta: {
+              total,
+              page: pageNum,
+              pages: Math.ceil(total / limitNum),
+              limit: limitNum
+            }
+          };
         } catch (error) {
-            manageError({ code: "internal_error", error });
+          manageError({ code: "internal_error", error });
         }
-    },
+      },
+      
     createSpace: async ({ manageError, data }: ManageRequestBody) => {
         try {
             let { name, description, ownerID } = data;
@@ -184,13 +203,31 @@ const adminResource = {
             manageError({ code: "internal_error", error });
         }
     },
-    getAllSpaces: async ({ manageError }: ManageRequestBody) => {
+    getAllSpaces: async ({ manageError, querys }: ManageRequestBody) => {
         try {
-            return await spaceModel.find();
+          const pageNum = Number(querys.page) || 1;
+          const limitNum = Number(querys.limit) || 10;
+          if (pageNum < 1 || limitNum < 1) return manageError({ code: "invalid_params" });
+      
+          const skip = (pageNum - 1) * limitNum;
+          const [spaces, total] = await Promise.all([
+            spaceModel.find().skip(skip).limit(limitNum),
+            spaceModel.countDocuments()
+          ]);
+      
+          return {
+            data: spaces,
+            meta: {
+              total,
+              page: pageNum,
+              pages: Math.ceil(total / limitNum),
+              limit: limitNum
+            }
+          };
         } catch (error) {
-            manageError({ code: "internal_error", error });
+          manageError({ code: "internal_error", error });
         }
-    },
+      },      
     deleteSpace: async ({ manageError, params }: ManageRequestBody) => {
         try {
             const { spaceID } =  params;

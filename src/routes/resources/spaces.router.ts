@@ -13,11 +13,13 @@ spacesRouter.get("/:spaceID/roles", manageRequest(spacesResource.getSpaceRoles))
 
 spacesRouter.patch("/:spaceID/modules/config/:module", manageRequest(spacesResource.configSpaceModule));
 
+spacesRouter.post("/:spaceID/users/update/role", manageRequest(spacesResource.updateUserRole));
 spacesRouter.post("/:spaceID/users/create", manageRequest(spacesResource.createSpaceUser));
 spacesRouter.post("/:spaceID/users/remove", manageRequest(spacesResource.removeSpaceUser));
 spacesRouter.post("/:spaceID/users/add", manageRequest(spacesResource.addSpaceUser));
 spacesRouter.get("/:spaceID/users", manageRequest(spacesResource.getSpaceUsers));
 
+spacesRouter.get("/full/:spaceID", manageRequest(spacesResource.getFullSpace));
 spacesRouter.get("/:spaceID", manageRequest(spacesResource.getSpace));
 
 export default spacesRouter;

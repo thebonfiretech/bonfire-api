@@ -17,7 +17,7 @@ const server = app.listen(process.env.PORT, async () => {
         logger.info(`🚀 Server started in: ${chalk.blueBright('http://' + host + ':' + address.port)}`);
         const databaseInfo = await database.connectMongoose();
         defaultConfig.clusterName = databaseInfo.clusterName;
-        await storage.checkStorageConnect();
+        //await storage.checkStorageConnect();
         logger.info(`mode: ${mode =='developing' ? chalk.green(mode) : chalk.red(mode)} - version: ${chalk.yellow(defaultConfig.version)}`);
     };
 });

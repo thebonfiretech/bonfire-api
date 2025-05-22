@@ -17,6 +17,29 @@ const spacesResource = {
             manageError({ code: "internal_error", error });
         }
     },
+    getFullSpace: async ({ manageError, params, ids }: ManageRequestBody) => {
+        try {
+            const { spaceID } =  params;
+            if (!spaceID) return manageError({ code: "invalid_params" });
+
+            const space = await hasSpace({ _id: spaceID }, manageError);
+            if (!space) return;
+
+            const user = await userModel.findById(ids.userID);
+
+            const userSpace = user?.spaces.find(x => x.id == spaceID);
+
+            const role = Array.isArray(space.roles) ? space.roles.find((x: any) => String(x._id) === String(userSpace?.role)) : null;
+            if (!role) return manageError({ code: "role_not_found" });
+
+            return {
+                space,
+                role,
+            };
+        } catch (error) {
+            manageError({ code: "internal_error", error });
+        }
+    },
     getSpaceRoles: async ({ manageError, params }: ManageRequestBody) => {
         try {
             const { spaceID } =  params;
@@ -30,19 +53,37 @@ const spacesResource = {
             manageError({ code: "internal_error", error });
         }
     },
-    getSpaceUsers: async ({ manageError, params }: ManageRequestBody) => {
+    getSpaceUsers: async ({ manageError, params, querys }: ManageRequestBody) => {
         try {
-            const { spaceID } =  params;
-            if (!spaceID) return manageError({ code: "invalid_params" });
-
-            const space = await hasSpace({ _id: spaceID }, manageError);
-            if (!space) return;
-
-            return await userModel.find({ "spaces.id": spaceID }).select("-password");
+          const { spaceID } = params;
+          if (!spaceID) return manageError({ code: "invalid_params" });
+      
+          const pageNum = Number(querys.page) || 1;
+          const limitNum = Number(querys.limit) || 10;
+          if (pageNum < 1 || limitNum < 1) return manageError({ code: "invalid_params" });
+      
+          const space = await hasSpace({ _id: spaceID }, manageError);
+          if (!space) return;
+      
+          const skip = (pageNum - 1) * limitNum;
+          const [users, total] = await Promise.all([
+            userModel.find({ "spaces.id": spaceID }).skip(skip).limit(limitNum).select("-password"),
+            userModel.countDocuments({ "spaces.id": spaceID })
+          ]);
+      
+          return {
+            data: users,
+            meta: {
+              total,
+              page: pageNum,
+              pages: Math.ceil(total / limitNum),
+              limit: limitNum
+            }
+          };
         } catch (error) {
-            manageError({ code: "internal_error", error });
+          manageError({ code: "internal_error", error });
         }
-    },
+      },
     createSpaceRole: async ({ manageError, params, data, ids, manageCheckUserHasPermissions }: ManageRequestBody) => {
         try {
             const { spaceID } =  params;
@@ -269,6 +310,47 @@ const spacesResource = {
             if (!spaceRole) return manageError({ code: "role_not_found" });
 
             return spaceRole;
+        } catch (error) { 
+            manageError({ code: "internal_error", error });
+        }
+    },
+    updateUserRole: async ({ manageError, params, data, ids, manageCheckUserHasPermissions }: ManageRequestBody) => {
+        try {
+            const { targetUserID, roleID } = data;
+            const { spaceID } = params;
+            const { userID } = ids;
+            
+            if (!spaceID || !roleID || !targetUserID) return manageError({ code: "invalid_params" });
+
+            const user = await hasUser({ _id: userID }, manageError);
+            if (!user) return;
+
+            if (!manageCheckUserHasPermissions(user, ["manage_roles"])) return;
+
+            const space = await hasSpace({ _id: spaceID }, manageError);
+            if (!space) return;
+
+            const spaceRole = Array.isArray(space.roles) ? space.roles.find((x: any) => String(x._id) === roleID) : null;
+            if (!spaceRole) return manageError({ code: "role_not_found" });
+
+            const targetUser = await hasUser({ _id: targetUserID }, manageError);
+            if (!targetUser) return;
+
+            const userSpace = targetUser.spaces?.find((x: any) => String(x.id) === spaceID);
+            if (!userSpace) return manageError({ code: "user_not_in_space" });
+
+            userSpace.role = roleID;
+
+            const updatedUser = await userModel.findByIdAndUpdate(
+                targetUserID, 
+                { $set: { spaces: targetUser.spaces, lastUpdate: Date.now() } }, 
+                { new: true }
+            ).select("-password");
+
+            return {
+                user: updatedUser,
+                role: spaceRole
+            };
         } catch (error) { 
             manageError({ code: "internal_error", error });
         }

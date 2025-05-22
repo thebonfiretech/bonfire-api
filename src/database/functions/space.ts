@@ -50,7 +50,7 @@ export const checkUserHasPermissions = async (user: UserModelType | string, mana
         return true
     };
 
-    permissions = ["administrator", "manage_classes", "owner", ...permissions];
+    permissions = ["administrator", "manage_space", "owner", ...permissions];
 
     const userSpace = user.spaces?.find(x => x.id == spaceID);
     const roleID = userSpace?.role.toString();
