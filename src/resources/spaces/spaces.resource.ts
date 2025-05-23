@@ -30,7 +30,7 @@ const spacesResource = {
             const userSpace = user?.spaces.find(x => x.id == spaceID);
 
             const role = Array.isArray(space.roles) ? space.roles.find((x: any) => String(x._id) === String(userSpace?.role)) : null;
-            if (!role) return manageError({ code: "role_not_found" });
+            // if (!role) return manageError({ code: "role_not_found" });
 
             return {
                 space,
