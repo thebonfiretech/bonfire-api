@@ -5,6 +5,10 @@ import { hasSpace } from "@database/functions/space";
 import stringService from "@utils/services/stringServices";
 import spaceModel from "@database/model/space";
 import userModel from "@database/model/user";
+import classModel from "@database/model/class";
+import postModel from "@database/model/post";
+import ticketModel from "@database/model/ticket";
+import { ObjectId, Types } from "mongoose";
 
 const spacesResource = {
     getSpace: async ({ manageError, params }: ManageRequestBody) => {
@@ -30,11 +34,163 @@ const spacesResource = {
             const userSpace = user?.spaces.find(x => x.id == spaceID);
 
             const role = Array.isArray(space.roles) ? space.roles.find((x: any) => String(x._id) === String(userSpace?.role)) : null;
-            // if (!role) return manageError({ code: "role_not_found" });
 
             return {
                 space,
                 role,
+            };
+        } catch (error) {
+            manageError({ code: "internal_error", error });
+        }
+    },
+    getSpaceMetrics: async ({ manageError, params, ids, manageCheckUserHasPermissions }: ManageRequestBody) => {
+        try {
+            const { spaceID } = params;
+            if (!spaceID) return manageError({ code: "invalid_params" });
+
+            const { userID } = ids;
+            const user = await hasUser({ _id: userID }, manageError);
+            if (!user) return;
+
+            if (!manageCheckUserHasPermissions(user, ["manage_space", "administrator"])) return;
+
+            const space = await hasSpace({ _id: spaceID }, manageError);
+            if (!space) return;
+
+            const [users, classes, posts, tickets] = await Promise.all([
+                userModel.find({ "spaces.id": spaceID }).select("-password"),
+                classModel.find({ "space.id": spaceID }),
+                postModel.find({ "space.id": spaceID }),
+                ticketModel.find({ spaceID, scope: "space" })
+            ]);
+
+            const usersByRole = users.reduce((acc, user) => {
+                const userSpace = user.spaces?.find(s => String(s.id) === spaceID);
+                const roleId = String(userSpace?.role || "unknown");
+                const role = space.roles?.find(r => String(r._id) === roleId);
+                const roleName = role?.name || "Sem cargo";
+                
+                acc[roleName] = (acc[roleName] || 0) + 1;
+                return acc;
+            }, {} as Record<string, number>);
+
+            const roleDistribution = Object.entries(usersByRole).map(([name, value]) => ({
+                name,
+                value,
+                percentage: Math.round((value / users.length) * 100)
+            }));
+
+            const userJoinTrend = users.reduce((acc, user) => {
+                const userSpace = user.spaces?.find(s => String(s.id) === spaceID);
+                const entryDate = userSpace?.entryAt ? new Date(userSpace.entryAt) : new Date();
+                const monthYear = `${entryDate.getMonth() + 1}/${entryDate.getFullYear()}`;
+                
+                acc[monthYear] = (acc[monthYear] || 0) + 1;
+                return acc;
+            }, {} as Record<string, number>);
+
+            const joinTrendData = Object.entries(userJoinTrend)
+                .sort(([a], [b]) => {
+                    const [monthA, yearA] = a.split('/').map(Number);
+                    const [monthB, yearB] = b.split('/').map(Number);
+                    return new Date(yearA, monthA - 1).getTime() - new Date(yearB, monthB - 1).getTime();
+                })
+                .map(([month, count]) => ({
+                    month,
+                    usuarios: count
+                }));
+
+            const userStatusDistribution = users.reduce((acc, user) => {
+                acc[user.status] = (acc[user.status] || 0) + 1;
+                return acc;
+            }, {} as Record<string, number>);
+
+            const statusData = Object.entries(userStatusDistribution).map(([name, value]) => ({
+                name: name === "loggedIn" ? "Logado" : name === "registered" ? "Registrado" : "Bloqueado",
+                value,
+                percentage: Math.round((value / users.length) * 100)
+            }));
+
+            const ticketsByStatus = tickets.reduce((acc, ticket) => {
+                const status = ticket.status === "pending" ? "Pendente" : 
+                             ticket.status === "answered" ? "Respondido" :
+                             ticket.status === "progress" ? "Em progresso" : "Concluído";
+                acc[status] = (acc[status] || 0) + 1;
+                return acc;
+            }, {} as Record<string, number>);
+
+            const ticketsData = Object.entries(ticketsByStatus).map(([name, value]) => ({
+                name,
+                value
+            }));
+
+            const postsByType = posts.reduce((acc, post) => {
+                const type = post.type === "default" ? "Padrão" :
+                           post.type === "report" ? "Relatório" : "Aviso";
+                acc[type] = (acc[type] || 0) + 1;
+                return acc;
+            }, {} as Record<string, number>);
+
+            const postsData = Object.entries(postsByType).map(([name, value]) => ({
+                name,
+                value
+            }));
+
+            const totalCoins = users.reduce((acc, user) => acc + (user.coins || 0), 0);
+            const averageCoins = users.length > 0 ? Math.round(totalCoins / users.length) : 0;
+
+            const activeModules = Object.entries(space.modules || {})
+                .filter(([_, module]: [string, any]) => module.status === "active")
+                .map(([name]) => name);
+
+            return {
+                summary: {
+                    totalUsers: users.length,
+                    totalRoles: space.roles?.length || 0,
+                    totalClasses: classes.length,
+                    totalPosts: posts.length,
+                    totalTickets: tickets.length,
+                    totalCoins,
+                    averageCoins,
+                    spaceCoins: space.coins || 0,
+                    activeModules: activeModules.length,
+                    modulesList: activeModules
+                },
+                charts: {
+                    roleDistribution,
+                    userJoinTrend: joinTrendData,
+                    userStatus: statusData,
+                    ticketStatus: ticketsData,
+                    postTypes: postsData
+                },
+                details: {
+                    roles: space.roles?.map(role => ({
+                        name: role.name,
+                        permissions: role.permissions?.length || 0,
+                        users: usersByRole[role.name] || 0,
+                        isSystem: role.system || false
+                    })) || [],
+                    recentUsers: users
+                        .sort((a, b) => {
+                            const aSpace = a.spaces?.find(s => String(s.id) === spaceID);
+                            const bSpace = b.spaces?.find(s => String(s.id) === spaceID);
+                            const aDate = aSpace?.entryAt ? new Date(aSpace.entryAt).getTime() : 0;
+                            const bDate = bSpace?.entryAt ? new Date(bSpace.entryAt).getTime() : 0;
+                            return bDate - aDate;
+                        })
+                        .slice(0, 10)
+                        .map(user => {
+                            const userSpace = user.spaces?.find(s => String(s.id) === spaceID);
+                            const role = space.roles?.find(r => String(r._id) === String(userSpace?.role));
+                            return {
+                                id: user.id,
+                                name: user.name,
+                                role: role?.name || "Sem cargo",
+                                entryAt: userSpace?.entryAt,
+                                coins: user.coins || 0
+                            };
+                        })
+                }
             };
         } catch (error) {
             manageError({ code: "internal_error", error });
@@ -108,7 +264,9 @@ const spacesResource = {
             if (hasExistentRole) return manageError({ code: "role_already_exists" });
 
             const newRole = {
+                _id: new Types.ObjectId().toString(),
                 permissions,
+                system: false,
                 name
             };
 
@@ -150,6 +308,7 @@ const spacesResource = {
             };
 
             const normalRole = Array.isArray(space.roles) ? space.roles.find((x: any) =>  x.name == "normal") : null;
+            if (!normalRole) return manageError({ code: "role_not_found" });
 
             let newSpace: UserSpaceType= {
                 entryAt: new Date(),
@@ -199,6 +358,7 @@ const spacesResource = {
             if (hasExistentSpace) return manageError({ code: "user_already_in_space"});
 
             const normalRole = Array.isArray(space.roles) ? space.roles.find((x: any) =>  x.name == "normal") : null;
+            if (!normalRole) return manageError({ code: "role_not_found" });
 
             let newSpace: UserSpaceType= {
                 role: roleID ? roleID : normalRole._id,
@@ -339,7 +499,7 @@ const spacesResource = {
             const userSpace = targetUser.spaces?.find((x: any) => String(x.id) === spaceID);
             if (!userSpace) return manageError({ code: "user_not_in_space" });
 
-            userSpace.role = roleID;
+            userSpace.role = new Types.ObjectId(roleID) as any;
 
             const updatedUser = await userModel.findByIdAndUpdate(
                 targetUserID, 
@@ -382,7 +542,7 @@ const spacesResource = {
             for (const spaceUser of usersWithSpace) {
                 const userSpace = spaceUser.spaces.find((space) => String(space.id) === spaceID && String(space.role) === roleID);
                 if (userSpace) {
-                    userSpace.role = normalRole._id; 
+                    userSpace.role = normalRole._id as any; 
                 }
                 await spaceUser.save();
             }

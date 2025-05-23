@@ -19,6 +19,7 @@ spacesRouter.post("/:spaceID/users/remove", manageRequest(spacesResource.removeS
 spacesRouter.post("/:spaceID/users/add", manageRequest(spacesResource.addSpaceUser));
 spacesRouter.get("/:spaceID/users", manageRequest(spacesResource.getSpaceUsers));
 
+spacesRouter.get("/:spaceID/metrics", manageRequest(spacesResource.getSpaceMetrics));
 spacesRouter.get("/full/:spaceID", manageRequest(spacesResource.getFullSpace));
 spacesRouter.get("/:spaceID", manageRequest(spacesResource.getSpace));
 
