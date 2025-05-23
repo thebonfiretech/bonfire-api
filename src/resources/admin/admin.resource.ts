@@ -207,6 +207,8 @@ const adminResource = {
         try {
           const pageNum = Number(querys.page) || 1;
           const limitNum = Number(querys.limit) || 10;
+          const returnType  = querys.returnType || "minimum";
+
           if (pageNum < 1 || limitNum < 1) return manageError({ code: "invalid_params" });
       
           const skip = (pageNum - 1) * limitNum;
@@ -214,9 +216,11 @@ const adminResource = {
             spaceModel.find().skip(skip).limit(limitNum),
             spaceModel.countDocuments()
           ]);
+
+          const data = returnType == "minimum" ? spaces.map(x => ({ _id: x._id, name: x.name })): spaces;
       
           return {
-            data: spaces,
+            data,
             meta: {
               total,
               page: pageNum,
