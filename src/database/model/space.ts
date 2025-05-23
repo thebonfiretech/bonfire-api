@@ -1,6 +1,20 @@
 import mongoose from "mongoose";
 
-import { SpaceRolePermissionsValues } from "bonfire-shared-types";
+export const SpaceRolePermissionsValues = [
+    "manage_categorys",
+    "manage_tickets",
+    "manage_modules",
+    "manage_classes",
+    "administrator", 
+    "manage_space",
+    "manage_roles",
+    "manage_users",
+    "manage_posts",
+    "manage_coins",
+    "manage_shop",
+    "manage_food",
+    "owner", 
+] as const;
 
 const spaceSchema = new mongoose.Schema({
     name: String,
